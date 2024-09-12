@@ -1,0 +1,61 @@
+/* css/widget-back.css */
+
+.widget__back {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px; /* Оставляем достаточно места для блока Source */
+  color: var(--primary-color);
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 80%;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.widget__back--hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.widget__back h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  margin-top: 0;
+  max-width: 60ch; /* Ограничиваем длину строки до 60 символов */
+  line-height: 1.2; /* Интерлиньяж для лучшей читабельности */
+  word-wrap: break-word; /* Переносим длинные слова */
+  hyphens: auto; /* Включаем переносы слов */
+}
+
+.widget__back p {
+  gap: 10px;
+}
+
+.widget__source {
+  position: absolute; /* Зафиксируем блок внизу */
+  bottom: 10px; /* Располагаем его в 10px от нижней части */
+  left: 10px; /* Отступ от левого края */
+}
+
+.widget__source-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--primary-color);
+  font-size: 14px;
+}
+
+.widget__source-link:hover {
+  text-decoration: underline;
+}
+
+.widget__source-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}

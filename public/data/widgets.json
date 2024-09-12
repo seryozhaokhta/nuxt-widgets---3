@@ -1,0 +1,51 @@
+[
+  {
+    "type": "image",
+    "image": "/assets/guillaume_bude_1467_1540.png",
+    "alt": "Portrait of Guillaume Budé",
+    "title": "Guillaume Budé",
+    "author": "Jean Clouet",
+    "description": "Clouet’s portrait of the librarian to the king of France...",
+    "tag": "Portrait",
+    "source": {
+      "url": "https://example.com/guillaume_bude_source",
+      "icon": "/assets/arrow-link.svg"
+    }
+  },
+  {
+    "type": "image",
+    "image": "/assets/self_portrait_with_death_playing_fiddle.jpg",
+    "alt": "Self-Portrait with Death Playing the Fiddle",
+    "title": "Self-Portrait with Death Playing the Fiddle",
+    "author": "Arnold Böcklin",
+    "description": "We will never know for certain whether or not the personification of death...",
+    "tag": "Portrait",
+    "source": {
+      "url": "https://example.com/self_portrait_source",
+      "icon": "/assets/arrow-link.svg"
+    }
+  },
+  {
+    "type": "focus-image",
+    "image": "/assets/sleeping_venus.jpg",
+    "alt": "Sleeping Venus",
+    "title": "Sleeping Venus",
+    "author": "Giorgione",
+    "year": "1508 – 1510",
+    "description": "This painting is one of the most famous works...",
+    "focusPoints": [
+      {
+        "coordinates": { "x": 33.25, "y": 25 },
+        "description": "The harmony of the sleeping figure and the landscape."
+      },
+      {
+        "coordinates": { "x": 66.5, "y": 41.67 },
+        "description": "The tree in the background adds depth to the composition."
+      },
+      {
+        "coordinates": { "x": 87.5, "y": 25 },
+        "description": "Another point of interest."
+      }
+    ]
+  }
+]

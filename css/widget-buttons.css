@@ -1,0 +1,48 @@
+/* css/widget-buttons.css */
+
+.widget__close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.2); /* Полупрозрачный размытый фон */
+  backdrop-filter: blur(15px); /* Размытие для крестика */
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color var(--transition-time) ease;
+}
+
+.widget__close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.4); /* Эффект при наведении */
+}
+
+.widget__toggle-description {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: transparent; /* Убираем полупрозрачный фон */
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Плавная анимация для обеих кнопок */
+.widget__toggle-description img,
+.widget__close-btn img {
+  width: 20px;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+/* Для плавного поворота стрелки на 180 градусов */
+.widget__toggle-description--rotated {
+  transform: rotate(180deg);
+}

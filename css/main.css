@@ -1,0 +1,26 @@
+/* css/main.css */
+
+@import "./variables.css";
+@import "./widget-front.css";
+@import "./widget-back.css";
+@import "./widget-minimized.css";
+@import "./widget-buttons.css";
+@import "./widget-details.css";
+
+body,
+html {
+  background-color: var(--background-color);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+}
+
+.widget-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  background-color: rgba(211, 211, 211, 0.2);
+  border-radius: 15px;
+}

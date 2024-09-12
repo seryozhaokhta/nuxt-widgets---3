@@ -1,0 +1,10 @@
+/* css/variables.css */
+
+:root {
+  --font-family: "Helvetica", sans-serif;
+  --primary-color: #ffffff;
+  --secondary-color: #888888;
+  --background-color: #000000;
+  --border-radius: 24px;
+  --transition-time: 0.3s;
+}
