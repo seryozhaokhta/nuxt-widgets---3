@@ -3,21 +3,23 @@
 <template>
     <div class="focus-image" tabindex="0" @keydown="handleKeydown" role="region"
         aria-label="Image viewer with focus points">
-        <img ref="imageRef" :src="data.image" :alt="data.alt" class="focus-image__img" :style="imageTransformStyle"
-            @click="handleImageClick" />
+        <div class="image-container">
+            <img ref="imageRef" :src="data.image" :alt="data.alt" class="focus-image__img" :style="imageTransformStyle"
+                @click="handleImageClick" />
 
-        <!-- Фокусирующая точка -->
-        <div v-if="currentFocusPoint" :style="getFocusPointStyle(currentFocusPoint.coordinates)" class="focus-point"
-            :class="{ 'focus-point--active': isZoomedIn }" @click="toggleZoomToPoint" aria-label="Zoom to focus point">
+            <!-- Focus Point -->
+            <div v-if="currentFocusPoint" :style="getFocusPointStyle(currentFocusPoint.coordinates)" class="focus-point"
+                :class="{ 'focus-point--active': isZoomedIn }" @click="toggleZoomToPoint"
+                aria-label="Zoom to focus point"></div>
         </div>
 
-        <!-- Описание текущей точки -->
+        <!-- Description -->
         <div class="focus-image__description" :style="descriptionPosition" aria-live="polite">
             <h2>{{ data.title }}</h2>
             <p>{{ currentFocusPoint.description }}</p>
         </div>
 
-        <!-- Прогресс-бар -->
+        <!-- Progress Bar -->
         <div class="progress-container">
             <div class="progress-bar">
                 <div v-for="(point, index) in data.focusPoints" :key="index" class="progress-bar__item"
@@ -26,12 +28,13 @@
                 </div>
             </div>
 
-            <!-- Иконки перезапуска и паузы -->
+            <!-- Control Icons -->
             <div class="controls">
                 <img src="/assets/restart.svg" alt="Restart" class="restart-icon" @click="restartProgress"
                     aria-label="Restart progress" />
-                <img src="/assets/pause.svg" alt="Pause" class="pause-icon" @click="togglePause"
-                    aria-label="Pause/Resume progress" />
+                <img :src="isPaused ? '/assets/play.svg' : '/assets/pause.svg'" :alt="isPaused ? 'Play' : 'Pause'"
+                    class="pause-icon" @click="togglePause"
+                    :aria-label="isPaused ? 'Resume progress' : 'Pause progress'" />
             </div>
         </div>
     </div>
@@ -61,32 +64,34 @@ let progressInterval = null;
 const PROGRESS_INTERVAL_MS = 100;
 const FOCUS_POINT_DURATION_MS = 5000;
 
-// Вычисляем текущую фокус-точку
+// Calculate current focus point
 const currentFocusPoint = computed(() => props.data.focusPoints[currentFocusIndex.value]);
 
-// Стиль трансформации изображения
+// Image transformation style
 const imageTransformStyle = computed(() => ({
     transform: `translate(${translate.value.x}px, ${translate.value.y}px) scale(${scaleValue.value})`,
     transition: 'transform 0.5s ease-in-out',
 }));
 
-// Стиль фокус-точки
+// Focus point style
 const getFocusPointStyle = (coordinates) => ({
     left: `${coordinates.x}%`,
     top: `${coordinates.y}%`,
     transform: 'translate(-50%, -50%)',
 });
 
-// Стиль прогресс-бара
+// Progress bar style
 const getProgressStyle = (index) => ({
     width: currentFocusIndex.value === index ? `${progress.value}%` : '0%',
     backgroundColor: currentFocusIndex.value === index ? '#fff' : 'rgba(255, 255, 255, 0.4)',
 });
 
-// Вычисляемое свойство для позиции описания
+// Description position
 const descriptionPosition = computed(() => {
+    if (isMobile.value) {
+        return {}; // Default positioning on mobile
+    }
     if (currentFocusPoint.value && currentFocusPoint.value.coordinates.x > 50) {
-        // Если фокус-точка находится в правой половине изображения
         return {
             top: '10px',
             left: '10px',
@@ -94,7 +99,6 @@ const descriptionPosition = computed(() => {
             transition: 'all 0.5s ease-in-out',
         };
     } else {
-        // Если фокус-точка находится в левой половине изображения
         return {
             top: '10px',
             right: '10px',
@@ -104,14 +108,31 @@ const descriptionPosition = computed(() => {
     }
 });
 
-// Устанавливаем текущую фокусирующую точку без автоматического зума
+// Determine if the device is mobile
+const isMobile = ref(false);
+const updateIsMobile = () => {
+    isMobile.value = window.innerWidth <= 768;
+};
+
+onMounted(() => {
+    updateIsMobile();
+    window.addEventListener('resize', updateIsMobile);
+    startProgress();
+});
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateIsMobile);
+    clearInterval(progressInterval);
+});
+
+// Set focus point without zoom
 const setFocusPoint = (index) => {
-    resetZoom(); // Сбрасываем зум при переключении фокус-точек
+    resetZoom();
     currentFocusIndex.value = index;
     resetProgress();
 };
 
-// Переключение зума при клике на фокус-точку
+// Toggle zoom on focus point click
 const toggleZoomToPoint = () => {
     if (isZoomedIn.value) {
         resetZoom();
@@ -120,7 +141,7 @@ const toggleZoomToPoint = () => {
     }
 };
 
-// Обработка клавиатуры
+// Keyboard navigation
 const handleKeydown = (event) => {
     if (event.key === 'ArrowRight') {
         event.preventDefault();
@@ -134,25 +155,24 @@ const handleKeydown = (event) => {
     }
 };
 
-// Следующая фокус-точка
+// Next focus point
 const nextFocusPoint = () => {
     setFocusPoint((currentFocusIndex.value + 1) % props.data.focusPoints.length);
 };
 
-// Предыдущая фокус-точка
+// Previous focus point
 const previousFocusPoint = () => {
     setFocusPoint(
-        (currentFocusIndex.value - 1 + props.data.focusPoints.length) %
-        props.data.focusPoints.length
+        (currentFocusIndex.value - 1 + props.data.focusPoints.length) % props.data.focusPoints.length
     );
 };
 
-// Сброс прогресса
+// Reset progress
 const resetProgress = () => {
     progress.value = 0;
 };
 
-// Перезапуск прогресса
+// Restart progress
 const restartProgress = () => {
     clearInterval(progressInterval);
     currentFocusIndex.value = 0;
@@ -162,7 +182,7 @@ const restartProgress = () => {
     startProgress();
 };
 
-// Пауза и возобновление прогресса
+// Toggle pause
 const togglePause = () => {
     if (isPaused.value) {
         startProgress();
@@ -172,7 +192,7 @@ const togglePause = () => {
     isPaused.value = !isPaused.value;
 };
 
-// Запуск прогресса
+// Start progress
 const startProgress = () => {
     if (progressInterval) clearInterval(progressInterval);
     progressInterval = setInterval(() => {
@@ -184,30 +204,27 @@ const startProgress = () => {
     }, PROGRESS_INTERVAL_MS);
 };
 
-// Приближение к фокус-точке с ограничением смещения
+// Zoom to focus point
 const zoomToFocusPoint = (coordinates) => {
     const img = imageRef.value;
     if (img) {
         const containerRect = img.getBoundingClientRect();
 
-        const scale = 2; // Коэффициент увеличения
+        const scale = 2; // Zoom factor
 
-        // Вычисляем позицию фокус-точки в пикселях относительно изображения
+        // Calculate focus point position in pixels
         const focusX = (coordinates.x / 100) * containerRect.width;
         const focusY = (coordinates.y / 100) * containerRect.height;
 
-        // Вычисляем максимальное смещение
+        // Calculate maximum translation
         const maxTranslateX = (containerRect.width * (scale - 1)) / 2;
         const maxTranslateY = (containerRect.height * (scale - 1)) / 2;
 
-        // Вычисляем смещение
-        const offsetX = (focusX - containerRect.width / 2) * (scale - 1);
-        const offsetY = (focusY - containerRect.height / 2) * (scale - 1);
+        // Calculate translation
+        let translateX = -((focusX - containerRect.width / 2) * (scale - 1));
+        let translateY = -((focusY - containerRect.height / 2) * (scale - 1));
 
-        // Ограничиваем смещение, чтобы изображение не выходило за границы
-        let translateX = -offsetX;
-        let translateY = -offsetY;
-
+        // Limit translation to prevent overflow
         translateX = Math.max(-maxTranslateX, Math.min(maxTranslateX, translateX));
         translateY = Math.max(-maxTranslateY, Math.min(maxTranslateY, translateY));
 
@@ -220,25 +237,17 @@ const zoomToFocusPoint = (coordinates) => {
     }
 };
 
-// Сброс зума
+// Reset zoom
 const resetZoom = () => {
     translate.value = { x: 0, y: 0 };
     scaleValue.value = 1;
     isZoomedIn.value = false;
 };
 
-// Обработка клика по изображению для сброса зума
+// Handle image click to reset zoom
 const handleImageClick = () => {
     resetZoom();
 };
-
-onMounted(() => {
-    startProgress();
-});
-
-onUnmounted(() => {
-    clearInterval(progressInterval);
-});
 </script>
 
 <style scoped>
@@ -246,19 +255,30 @@ onUnmounted(() => {
     position: relative;
     width: 100%;
     max-width: 800px;
-    height: auto;
+    margin: 0 auto;
+}
+
+.image-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    /* Aspect ratio (height / width * 100%) */
     overflow: hidden;
 }
 
 .focus-image__img {
-    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+    /* Use 'contain' if you prefer */
     cursor: pointer;
     will-change: transform;
 }
 
-/* Фокус-точка */
+/* Focus Point */
 .focus-point {
     position: absolute;
     width: 15px;
@@ -268,11 +288,9 @@ onUnmounted(() => {
     border-radius: 50%;
     border: 1px solid white;
     cursor: pointer;
-    transform: translate(-50%, -50%);
     transition: all 0.3s ease;
 }
 
-/* Активное состояние фокус-точки */
 .focus-point--active {
     width: 300px;
     height: 300px;
@@ -281,6 +299,7 @@ onUnmounted(() => {
     backdrop-filter: blur(0px);
 }
 
+/* Description */
 .focus-image__description {
     position: absolute;
     background: rgba(255, 255, 255, 0.2);
@@ -290,10 +309,10 @@ onUnmounted(() => {
     border-radius: 8px;
     max-width: 250px;
     text-align: left;
-    /* Позиционирование задается динамически */
+    /* Positioning handled dynamically */
 }
 
-/* Прогресс-бар и иконки управления */
+/* Progress Bar and Controls */
 .progress-container {
     position: absolute;
     bottom: 10px;
@@ -329,7 +348,6 @@ onUnmounted(() => {
     transition: width 0.1s linear;
 }
 
-/* Иконки управления */
 .controls {
     display: flex;
     gap: 10px;
@@ -343,8 +361,40 @@ onUnmounted(() => {
     transition: transform 0.2s ease;
 }
 
-/* Поворот только для иконки перезапуска */
 .restart-icon:hover {
     transform: rotate(90deg);
+}
+
+/* --- Responsive Styles for Mobile Devices --- */
+@media screen and (max-width: 768px) {
+    .focus-image__description {
+        position: static;
+        margin-top: 10px;
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: none;
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .progress-container {
+        position: static;
+        margin-top: 10px;
+        transform: none;
+        width: 100%;
+    }
+
+    .controls {
+        justify-content: center;
+    }
+
+    .image-container {
+        padding-top: 56.25%;
+        /* Maintain aspect ratio on mobile */
+    }
 }
 </style>
