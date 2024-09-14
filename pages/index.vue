@@ -72,6 +72,7 @@ const getWidgetComponent = (type) => {
     justify-content: center;
     flex-direction: row;
     /* Горизонтальное выравнивание */
+    border-radius: var(--border-radius);
     width: 70%;
     /* Виджет будет растянут на всю ширину */
     padding: 20px;
