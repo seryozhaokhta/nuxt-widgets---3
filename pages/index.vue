@@ -2,13 +2,19 @@
 
 <template>
     <div class="widget-container">
-        <!-- Верхний контейнер для квадратных виджетов -->
+        <!-- Upper container for square widgets -->
         <div class="upper-container">
             <component :is="getWidgetComponent(widget.type)" v-for="(widget, index) in upperWidgets" :key="index"
                 :data="widget" />
         </div>
 
-        <!-- Нижний контейнер для "Sleeping Venus" -->
+        <!-- Middle container for the focus-image widget -->
+        <div class="middle-container">
+            <component :is="getWidgetComponent(widget.type)" v-for="(widget, index) in middleWidgets" :key="index"
+                :data="widget" />
+        </div>
+
+        <!-- Lower container for the map widget -->
         <div class="lower-container">
             <component :is="getWidgetComponent(widget.type)" v-for="(widget, index) in lowerWidgets" :key="index"
                 :data="widget" />
@@ -19,18 +25,16 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import WidgetView from '~/components/WidgetView.vue';
-import FocusImageView from '~/components/FocusImageView.vue';  // компонент для "Sleeping Venus"
+import FocusImageView from '~/components/FocusImageView.vue';
+import MapWidget from '~/components/MapWidget.vue';
 
 const widgets = ref([]);
 
-// Разделение на верхние и нижние виджеты
-const upperWidgets = computed(() => {
-    return widgets.value.filter(widget => widget.type === 'image');
-});
+const upperWidgets = computed(() => widgets.value.filter((widget) => widget.type === 'image'));
 
-const lowerWidgets = computed(() => {
-    return widgets.value.filter(widget => widget.type === 'focus-image');
-});
+const middleWidgets = computed(() => widgets.value.filter((widget) => widget.type === 'focus-image'));
+
+const lowerWidgets = computed(() => widgets.value.filter((widget) => widget.type === 'map'));
 
 onMounted(async () => {
     try {
@@ -44,39 +48,46 @@ onMounted(async () => {
     }
 });
 
-// Функция для выбора компонента в зависимости от типа виджета
 const getWidgetComponent = (type) => {
     if (type === 'image') return WidgetView;
     if (type === 'focus-image') return FocusImageView;
-    return WidgetView;  // по умолчанию
+    if (type === 'map') return MapWidget;
+    return WidgetView; // default
 };
 </script>
 
 <style scoped>
 @import '../css/main.css';
 
-/* Верхний контейнер для квадратных виджетов */
+/* Upper container for square widgets */
 .upper-container {
     display: flex;
     justify-content: center;
     gap: 20px;
     flex-direction: row;
-    /* Виджеты располагаются в ряд */
     margin-bottom: 20px;
-    /* Отступ вниз */
 }
 
-/* Нижний контейнер для "Sleeping Venus" */
+/* Middle container for focus-image widget */
+.middle-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    border-radius: var(--border-radius);
+    width: 70%;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    margin-bottom: 20px;
+}
+
+/* Lower container for the map widget */
 .lower-container {
     display: flex;
     justify-content: center;
     flex-direction: row;
-    /* Горизонтальное выравнивание */
     border-radius: var(--border-radius);
-    width: 70%;
-    /* Виджет будет растянут на всю ширину */
+    width: 100%;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.8);
-    /* Для контраста */
 }
 </style>

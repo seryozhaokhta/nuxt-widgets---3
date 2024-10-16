@@ -36,15 +36,181 @@
     "focusPoints": [
       {
         "coordinates": { "x": 33.25, "y": 25 },
-        "description": "This point highlights the figure of Venus. The harmony between her relaxed pose and the surrounding landscape emphasizes the peacefulness and unity of the human form with nature."
+        "description": "This point highlights the figure of Venus..."
       },
       {
         "coordinates": { "x": 66.5, "y": 41.67 },
-        "description": "The tree in the background adds depth to the composition and separates the soft foreground from the distant horizon, providing perspective and balance."
+        "description": "The tree in the background adds depth..."
       },
       {
         "coordinates": { "x": 87.5, "y": 25 },
-        "description": "This point directs attention to the rural scenery in the background. The contrast between the idyllic countryside and the idealized beauty of Venus enhances the overall harmony of the scene."
+        "description": "This point directs attention to the rural scenery..."
+      }
+    ]
+  },
+  {
+    "type": "map",
+    "title": "Ancient Civilizations Map",
+    "mapPoints": [
+      {
+        "id": 1,
+        "name": "Sumer",
+        "description": "The Sumerian civilization is considered one of the most ancient in the world, known for its ziggurats and cuneiform writing.",
+        "x": 60,
+        "y": 30,
+        "founded": "c. 4500 BCE",
+        "year": -4500,
+        "periods": [
+          {
+            "title": "Ubaid Period",
+            "yearRange": "c. 6500–3800 BCE",
+            "description": "Early settlement and development of agriculture."
+          },
+          {
+            "title": "Uruk Period",
+            "yearRange": "c. 4000–3100 BCE",
+            "description": "Formation of urban centers and writing."
+          },
+          {
+            "title": "Early Dynastic Period",
+            "yearRange": "c. 2900–2334 BCE",
+            "description": "Rise of city-states and kingship."
+          },
+          {
+            "title": "Akkadian Period",
+            "yearRange": "c. 2334–2154 BCE",
+            "description": "First Semitic empire under Sargon of Akkad."
+          },
+          {
+            "title": "Ur III Period",
+            "yearRange": "c. 2112–2004 BCE",
+            "description": "Sumerian renaissance and legal reforms."
+          },
+          {
+            "title": "Old Babylonian Period",
+            "yearRange": "c. 2000–1600 BCE",
+            "description": "Decline of Sumer and rise of Babylon."
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "Ancient Egypt",
+        "description": "The ancient Egyptian civilization is known for its pyramids, pharaohs, and hieroglyphs.",
+        "x": 55.6,
+        "y": 32,
+        "founded": "c. 3100 BCE",
+        "year": -3100,
+        "periods": [
+          {
+            "title": "Early Dynastic Period",
+            "yearRange": "c. 3100–2686 BCE",
+            "description": "Unification of Upper and Lower Egypt."
+          },
+          {
+            "title": "Old Kingdom",
+            "yearRange": "c. 2686–2181 BCE",
+            "description": "Age of the Pyramids."
+          },
+          {
+            "title": "First Intermediate Period",
+            "yearRange": "c. 2181–2055 BCE",
+            "description": "Political fragmentation and chaos."
+          },
+          {
+            "title": "Middle Kingdom",
+            "yearRange": "c. 2055–1650 BCE",
+            "description": "Reunification and cultural renaissance."
+          },
+          {
+            "title": "Second Intermediate Period",
+            "yearRange": "c. 1650–1550 BCE",
+            "description": "Hyksos invasion and foreign rule."
+          },
+          {
+            "title": "New Kingdom",
+            "yearRange": "c. 1550–1077 BCE",
+            "description": "Egypt's imperial age and greatest territorial extent."
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name": "Indus Valley",
+        "description": "The Indus Valley Civilization had advanced urban planning and sanitation systems.",
+        "x": 67,
+        "y": 36,
+        "founded": "c. 3300 BCE",
+        "year": -3300,
+        "periods": [
+          {
+            "title": "Early Harappan Phase",
+            "yearRange": "c. 3300–2600 BCE",
+            "description": "Formation of agricultural communities."
+          },
+          {
+            "title": "Mature Harappan Phase",
+            "yearRange": "c. 2600–1900 BCE",
+            "description": "Urbanization and peak of civilization."
+          },
+          {
+            "title": "Late Harappan Phase",
+            "yearRange": "c. 1900–1300 BCE",
+            "description": "Decline and de-urbanization."
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name": "Ancient China",
+        "description": "Ancient Chinese civilization is known for its continuous history and many inventions.",
+        "x": 79,
+        "y": 33,
+        "founded": "c. 2100 BCE",
+        "year": -2100,
+        "periods": [
+          {
+            "title": "Xia Dynasty",
+            "yearRange": "c. 2070–1600 BCE",
+            "description": "Earliest traditional dynasty."
+          },
+          {
+            "title": "Shang Dynasty",
+            "yearRange": "c. 1600–1046 BCE",
+            "description": "First recorded Chinese dynasty."
+          },
+          {
+            "title": "Zhou Dynasty",
+            "yearRange": "c. 1046–256 BCE",
+            "description": "Longest-lasting Chinese dynasty."
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "Minoan Civilization",
+        "description": "The Minoan civilization of Crete is famous for its palace at Knossos and the myth of the Minotaur.",
+        "x": 53.5,
+        "y": 27,
+        "founded": "c. 3500 BCE",
+        "year": -3500,
+        "periods": [
+          {
+            "title": "Early Minoan",
+            "yearRange": "c. 3500–2100 BCE",
+            "description": "Formation of complex societies."
+          },
+          {
+            "title": "Middle Minoan",
+            "yearRange": "c. 2100–1600 BCE",
+            "description": "Construction of palaces and peak of prosperity."
+          },
+          {
+            "title": "Late Minoan",
+            "yearRange": "c. 1600–1100 BCE",
+            "description": "Decline due to natural disasters and invasions."
+          }
+        ]
       }
     ]
   }
