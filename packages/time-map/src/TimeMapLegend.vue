@@ -18,7 +18,12 @@
                 <span class="legend__line legend__line--borders" />{{ t('legendBorders') }}
             </li>
         </ul>
-        <p v-if="credits" class="legend__credits">{{ credits }}</p>
+        <p v-if="credits || sources?.length" class="legend__credits">
+            {{ credits }}
+            <template v-for="source in sources" :key="source.url">
+                <a class="legend__source" :href="source.url" target="_blank" rel="noopener noreferrer">{{ source.name }}</a>
+            </template>
+        </p>
     </div>
 </template>
 
@@ -31,6 +36,7 @@ defineProps<{
     showCoast: boolean
     showBorders?: boolean
     credits?: string
+    sources?: { name: string; url: string }[]
 }>()
 
 const { t } = useI18n()
@@ -96,6 +102,18 @@ const { t } = useI18n()
 
 .legend__credits {
     margin: 0;
-    max-width: 60ch;
+    max-width: 64ch;
+}
+
+.legend__source {
+    margin-left: 0.6em;
+    color: var(--aw-color-text-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--aw-color-line-strong);
+    text-underline-offset: 2px;
+}
+
+.legend__source:hover {
+    color: var(--aw-color-gold-bright);
 }
 </style>

@@ -15,7 +15,8 @@
         <div class="time-map__stage">
             <div ref="viewportRef" class="time-map__viewport" v-on="panZoomHandlers">
                 <div class="time-map__content" :style="panZoomStyle">
-                    <TimeMapGeography :geography="data.geography" :features="features" :projection="projection"
+                    <TimeMapGeography :geography="data.geography" :features="features" :polities="polities"
+                        :projection="projection"
                         :land-url="epochs[epochIndex]?.land" :year="currentYear" :zoom="scale"
                         :label="l(data.title) || t('worldMap')" />
                     <span v-for="label in labels" :key="label.id"
@@ -45,7 +46,7 @@
         <YearSlider v-model="currentYear" class="time-map__slider" :min="minYear" :max="maxYear" :step="yearStep"
             :scale="data.timeScale" :ticks="data.ticks" :marks="points.map((point) => point.founded)" />
         <TimeMapLegend class="time-map__legend" :kinds="featureKinds" :show-coast="!!data.geography.modernCoast"
-            :show-borders="!!data.geography.borders" :credits="l(data.credits)" />
+            :show-borders="!!data.geography.borders" :credits="l(data.credits)" :sources="data.sources" />
     </div>
 </template>
 
@@ -57,6 +58,7 @@ import gsap from 'gsap'
 import { provideI18n, usePanZoom, type Locale, type Year } from '@art-widgets/core'
 import { IconButton } from '@art-widgets/ui'
 import TimeMapGeography from './TimeMapGeography.vue'
+import { usePolities } from './usePolities'
 import TimeMapLegend from './TimeMapLegend.vue'
 import TimeMapMarker from './TimeMapMarker.vue'
 import TimeMapPanel from './TimeMapPanel.vue'
@@ -81,7 +83,10 @@ function toPercent(at: LonLat): { x: number; y: number } | null {
 
 const points = computed(() => [...props.data.points].sort((a, b) => a.founded - b.founded))
 const features = computed(() => props.data.features ?? [])
-const featureKinds = computed(() => new Set(features.value.map((feature) => feature.kind)))
+const featureKinds = computed(() => new Set([
+    ...features.value.map((feature) => feature.kind),
+    ...(props.data.geography.polities ? (['state'] as const) : []),
+]))
 const epochs = computed(() => [...props.data.geography.epochs].sort((a, b) => a.from - b.from))
 const yearStep = computed(() => props.data.yearStep ?? 50)
 
@@ -113,6 +118,8 @@ const seaLevelText = computed(() => {
     if (level === undefined) return ''
     return level >= 0 ? t('seaLevelToday') : t('seaLevel', { value: '−' + Math.abs(level) })
 })
+
+const { polities } = usePolities(() => props.data.geography.polities, currentYear)
 
 const viewportRef = ref<HTMLElement | null>(null)
 const {
@@ -148,6 +155,8 @@ const markers = computed(() => points.value.flatMap((point) => {
 // Names of areas show once the map is zoomed in enough to tell them apart;
 // names of places (land bridges, lakes) show at any zoom.
 const AREA_LABEL_ZOOM = 1.6
+/** States this large (km²) are named even on the whole-world view. */
+const BIG_STATE = 1_500_000
 const LABEL_PRIORITY: Record<string, number> = { state: 0, culture: 1, water: 1, river: 1, ice: 1, place: 2 }
 
 const { width: mapWidth } = useElementSize(viewportRef)
@@ -169,7 +178,21 @@ function onScreen(position: { x: number; y: number }) {
 }
 
 const labels = computed(() => {
-    const candidates = features.value.flatMap((feature) => {
+    const stateLabels = polities.value
+        .filter((polity) => !polity.realm)
+        .sort((a, b) => b.area - a.area)
+        .flatMap((polity) => {
+            const position = toPercent(polity.label)
+            if (!position) return []
+            return [{
+                id: polity.key,
+                kind: 'state' as const,
+                text: l(polity.name),
+                position,
+                wanted: scale.value >= AREA_LABEL_ZOOM || polity.area >= BIG_STATE,
+            }]
+        })
+    const featureLabels = features.value.flatMap((feature) => {
         if (!feature.name || feature.hideLabel) return []
         const geometry = featureGeometry(feature)
         const at = feature.label ?? (geometry ? (geoCentroid(geometry) as LonLat) : null)
@@ -184,6 +207,7 @@ const labels = computed(() => {
             wanted: active && (feature.kind === 'place' || scale.value >= AREA_LABEL_ZOOM),
         }]
     })
+    const candidates = [...stateLabels, ...featureLabels]
 
     // Greedy placement: visible points (dot and name) come first, then areas
     // by importance; a name that would overlap one already placed waits for
@@ -195,28 +219,42 @@ const labels = computed(() => {
             const name = l(marker.point.name)
             return [{ x, y, width: 22, height: 22 }, { x, y: y - 19, width: name.length * 6.8 + 8, height: 16 }]
         })
-    const shown = new Set<string>()
+    // A name that collides tries a few nearby spots before giving up.
+    const shown = new Map<string, { x: number; y: number }>()
     const order = candidates
         .filter((label) => label.wanted)
         .sort((a, b) => (LABEL_PRIORITY[a.kind] ?? 9) - (LABEL_PRIORITY[b.kind] ?? 9))
     for (const label of order) {
-        const box = { ...onScreen(label.position), width: label.text.length * 6.2 + 8, height: 15 }
-        if (placed.some((other) => overlaps(box, other))) continue
-        placed.push(box)
-        shown.add(label.id)
+        const width = label.text.length * 6.2 + 8
+        const center = onScreen(label.position)
+        const nudges = [[0, 0], [0, 16], [0, -16], [width / 2 + 8, 0], [-width / 2 - 8, 0]] as const
+        for (const [dx, dy] of nudges) {
+            const box = { x: center.x + dx, y: center.y + dy, width, height: 15 }
+            if (placed.some((other) => overlaps(box, other))) continue
+            placed.push(box)
+            shown.set(label.id, { x: dx, y: dy })
+            break
+        }
     }
 
-    return candidates.map((label) => ({
-        id: label.id,
-        kind: label.kind,
-        text: label.text,
-        visible: shown.has(label.id),
-        style: {
-            left: label.position.x + '%',
-            top: label.position.y + '%',
-            transform: 'translate(-50%, -50%) scale(' + 1 / scale.value + ')',
-        },
-    }))
+    // Nudges are in screen pixels; positions are in percent of the zoomed map.
+    const zoomedWidth = Math.max(1, mapWidth.value * scale.value)
+    const zoomedHeight = zoomedWidth * (MAP_HEIGHT / MAP_WIDTH)
+
+    return candidates.map((label) => {
+        const nudge = shown.get(label.id) ?? { x: 0, y: 0 }
+        return {
+            id: label.id,
+            kind: label.kind,
+            text: label.text,
+            visible: shown.has(label.id),
+            style: {
+                left: label.position.x + (nudge.x / zoomedWidth) * 100 + '%',
+                top: label.position.y + (nudge.y / zoomedHeight) * 100 + '%',
+                transform: 'translate(-50%, -50%) scale(' + 1 / scale.value + ')',
+            },
+        }
+    })
 })
 
 // Panel of the selected point. Selecting another point while the panel is

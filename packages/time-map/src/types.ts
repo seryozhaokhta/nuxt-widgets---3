@@ -66,6 +66,8 @@ export interface TimeMapGeography {
   modernCoast?: string
   /** Today's borders between countries, shown from `from` on. */
   borders?: { from: Year; url: string }
+  /** URL of a states layer index built by tools/geo/polities.mjs. */
+  polities?: string
 }
 
 export interface TimeMapData {
@@ -88,4 +90,6 @@ export interface TimeMapData {
   view?: { center: LonLat; zoom: number }
   /** Data credits shown under the map. */
   credits?: Localized
+  /** Linked sources shown after the credits. */
+  sources?: { name: string; url: string }[]
 }

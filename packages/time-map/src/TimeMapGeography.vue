@@ -30,6 +30,8 @@
                 :d="shape.d" />
             <path v-for="shape in shapes.state" :key="shape.id" :class="classes(shape, 'geo__state')"
                 :d="shape.d" />
+            <path v-for="shape in polityShapes" :key="shape.key" :class="shape.realm ? 'geo__realm' : 'geo__state'"
+                :d="shape.d" />
         </g>
 
         <path v-if="bordersPath" :class="['geo__borders', 'geo__feature', { 'geo__feature--visible': showBorders }]"
@@ -44,6 +46,7 @@ import type { GeoProjection } from 'd3-geo'
 import type { FeatureCollection } from 'geojson'
 import { createPath, featureGeometry, graticule, MAP_HEIGHT, MAP_WIDTH, type GeoJson } from './geo'
 import { useGeoJson } from './useGeoJson'
+import type { Polity } from './usePolities'
 import type { TimeMapFeature, TimeMapFeatureKind, TimeMapGeography } from './types'
 
 const props = defineProps<{
@@ -55,6 +58,7 @@ const props = defineProps<{
     year: number
     zoom: number
     label: string
+    polities?: Polity[]
 }>()
 
 const clipId = 'time-map-land-' + useId()
@@ -89,6 +93,18 @@ const riversPath = computed(() => {
     })
     return { major: pick(true), minor: pick(false) }
 })
+
+// A state keeps its outline for a span of years; its path is drawn once.
+const polityCache = new Map<string, string>()
+const polityShapes = computed(() => (props.polities ?? []).map((polity) => {
+    let d = polityCache.get(polity.key)
+    if (d === undefined) {
+        if (polityCache.size > 4000) polityCache.clear()
+        d = draw(polity.geometry)
+        polityCache.set(polity.key, d)
+    }
+    return { key: polity.key, d, realm: polity.realm }
+}))
 
 interface Shape {
     id: string
@@ -180,6 +196,14 @@ function classes(shape: Shape, base: string) {
     stroke: var(--aw-map-border);
     stroke-width: calc(0.6px / var(--zoom));
     stroke-linejoin: round;
+}
+
+.geo__realm {
+    fill: none;
+    stroke: var(--aw-map-state-edge);
+    stroke-width: calc(0.8px / var(--zoom));
+    stroke-dasharray: calc(4px / var(--zoom)) calc(3px / var(--zoom));
+    opacity: 0.7;
 }
 
 .geo__coast {
