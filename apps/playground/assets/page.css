@@ -1,0 +1,15 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--aw-color-bg);
+  color: var(--aw-color-text);
+  font-family: var(--aw-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--aw-color-gold);
+  color: var(--aw-color-ink);
+}

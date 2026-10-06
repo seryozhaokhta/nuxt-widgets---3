@@ -1,0 +1,62 @@
+[
+  {
+    "image": "/assets/guillaume_bude_1467_1540.png",
+    "alt": {
+      "en": "Portrait of Guillaume Budé",
+      "ru": "Портрет Гийома Бюде"
+    },
+    "title": {
+      "en": "Guillaume Budé",
+      "ru": "Гийом Бюде"
+    },
+    "author": {
+      "en": "Jean Clouet",
+      "ru": "Жан Клуэ"
+    },
+    "date": {
+      "en": "c. 1536",
+      "ru": "ок. 1536"
+    },
+    "description": {
+      "en": "Clouet’s portrait of the librarian to the king of France...",
+      "ru": "Портрет библиотекаря французского короля работы Клуэ..."
+    },
+    "tag": {
+      "en": "Portrait",
+      "ru": "Портрет"
+    },
+    "source": {
+      "url": "https://example.com/guillaume_bude_source"
+    }
+  },
+  {
+    "image": "/assets/self_portrait_with_death_playing_fiddle.jpg",
+    "alt": {
+      "en": "Self-Portrait with Death Playing the Fiddle",
+      "ru": "Автопортрет со смертью, играющей на скрипке"
+    },
+    "title": {
+      "en": "Self-Portrait with Death Playing the Fiddle",
+      "ru": "Автопортрет со смертью, играющей на скрипке"
+    },
+    "author": {
+      "en": "Arnold Böcklin",
+      "ru": "Арнольд Бёклин"
+    },
+    "date": {
+      "en": "1872",
+      "ru": "1872"
+    },
+    "description": {
+      "en": "We will never know for certain whether or not the personification of death...",
+      "ru": "Мы никогда не узнаем наверняка, была ли персонификация смерти..."
+    },
+    "tag": {
+      "en": "Portrait",
+      "ru": "Портрет"
+    },
+    "source": {
+      "url": "https://example.com/self_portrait_source"
+    }
+  }
+]

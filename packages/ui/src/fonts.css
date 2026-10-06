@@ -1,0 +1,3 @@
+/* Optional: self-hosted fonts referenced by tokens.css (Latin and Cyrillic). */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/cormorant-garamond";

@@ -1,75 +1,68 @@
-# Nuxt 3 Minimal Starter
+# Art Widgets
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Интерактивные механики для рассказа об истории искусства. Каждая механика — самостоятельный
+Vue-компонент: получает данные через props, ничего не знает о странице и может жить где угодно.
 
-## Setup
+## Структура
 
-Make sure to install the dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+```
+packages/
+  core/        типы, i18n (ru/en), даты, общие composables (usePanZoom, useStepTimer)
+  ui/          дизайн-токены (tokens.css), шрифты (fonts.css), иконки, Icon, IconButton, SegmentedProgress
+  node-card/   карточка-нода: лицо, оборот, свёрнутый кружок
+  story/       сторис-тур по картине с точками и зумом
+  time-map/    карта с ползунком времени и периодами
+apps/
+  playground/  Nuxt-витрина, где механики собраны на одной странице
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Команды
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm run dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+npm install         # один раз, в корне
+npm run dev         # витрина на http://localhost:3000 (?lang=ru — русская версия)
+npm run typecheck   # типы пакетов и витрины, включая JSON-данные
+npm run build       # продакшн-сборка витрины (см. «Ограничения»)
 ```
 
-## Production
+## Контракт механики
 
-Build the application for production:
+- **Данные — только через props:** `data` и необязательный `locale`. Схема данных — TypeScript-тип
+  в `types.ts` пакета; витрина проверяет JSON по этим типам.
+- **Ничего глобального:** никаких слушателей на `window` и поиска по селекторам — только template refs
+  и события на своём корне. На странице может быть несколько экземпляров.
+- **Внешний вид — через токены:** цвета (чёрное и золото), шрифты, радиусы и длительности берутся из
+  CSS-переменных `--aw-*` в `packages/ui/src/tokens.css`. Шрифты — Cormorant Garamond для заголовков и
+  Inter для текста, оба с кириллицей; `fonts.css` подключает их локально.
+- **Раскладка — по ширине виджета:** сторис и карта перестраиваются через container queries, то есть
+  по собственной ширине, а не по ширине окна. Это важно для встраивания.
+- **Тексты:** строки интерфейса — `t('key')` из `useI18n()`, контент — `l(value)`, где `value` —
+  строка или `{ ru, en }`.
+- **Даты — числа:** отрицательные — до н. э. Строки вида «c. 6500–3800 BCE» / «ок. 6500–3800 до н. э.»
+  собираются при выводе (`year`, `yearRange`).
 
-```bash
-# npm
-npm run build
+## Новая механика
 
-# pnpm
-pnpm run build
+1. Создать `packages/<имя>/src/index.ts` и `package.json` по образцу соседних пакетов.
+2. Добавить алиас в `aliases.ts` (пути в `tsconfig.json` подхватятся сами).
+3. Вызвать `provideI18n(() => props.locale)` в корневом компоненте.
 
-# yarn
-yarn build
+## Почему алиасы, а не npm workspaces
 
-# bun
-bun run build
-```
+Репозиторий лежит на диске exFAT, а exFAT не поддерживает симлинки, на которых держатся
+workspaces (npm и pnpm). Поэтому пакеты связаны алиасами путей (`aliases.ts` + `paths` в
+`tsconfig.json`), а зависимости ставятся один раз в корне. У каждого пакета всё равно есть свой
+`package.json` — он понадобится, когда механики начнут собираться отдельно.
 
-Locally preview production build:
+## Ограничения
 
-```bash
-# npm
-npm run preview
+- **`npm run build` падает на exFAT:** сборщик Nitro ожидает от `readlink` ошибку `EINVAL`, а на
+  exFAT Node возвращает `EISDIR`. Dev-сервер работает. Сборка проходит, если проект лежит на NTFS.
+- **Ссылки на источники** в `apps/playground/data/portraits.json` — заглушки `example.com`.
 
-# pnpm
-pnpm run preview
+## Дальше
 
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- Сборка механик в Web Components (Vite library mode + `defineCustomElement`) для встраивания на любые сайты.
+- Редизайн: золото на чёрном, антиква в заголовках — через `tokens.css`.
+- Граф влияний («созвездия») поверх карточек-нод.
+- Карта на долготе/широте с береговыми линиями и реками по эпохам.

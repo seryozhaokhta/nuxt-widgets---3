@@ -1,0 +1,61 @@
+{
+  "image": "/assets/sleeping_venus.jpg",
+  "size": {
+    "width": 3017,
+    "height": 1882
+  },
+  "title": {
+    "en": "Sleeping Venus",
+    "ru": "Спящая Венера"
+  },
+  "author": {
+    "en": "Giorgione",
+    "ru": "Джорджоне"
+  },
+  "dated": {
+    "start": 1508,
+    "end": 1510
+  },
+  "description": {
+    "en": "This painting is one of the most famous works...",
+    "ru": "Эта картина — одно из самых известных произведений..."
+  },
+  "points": [
+    {
+      "x": 19.5,
+      "y": 38,
+      "title": {
+        "en": "The goddess",
+        "ru": "Богиня"
+      },
+      "text": {
+        "en": "This point highlights the figure of Venus...",
+        "ru": "Эта точка выделяет фигуру Венеры..."
+      }
+    },
+    {
+      "x": 42.8,
+      "y": 32,
+      "title": {
+        "en": "The lone tree",
+        "ru": "Одинокое дерево"
+      },
+      "text": {
+        "en": "The tree in the background adds depth...",
+        "ru": "Дерево на заднем плане добавляет глубины..."
+      }
+    },
+    {
+      "x": 80,
+      "y": 29,
+      "title": {
+        "en": "The village",
+        "ru": "Деревня"
+      },
+      "text": {
+        "en": "This point directs attention to the rural scenery...",
+        "ru": "Эта точка обращает внимание на сельский пейзаж..."
+      }
+    }
+  ]
+}

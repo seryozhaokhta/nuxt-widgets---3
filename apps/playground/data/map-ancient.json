@@ -1,0 +1,182 @@
+{
+  "title": { "en": "Ancient Civilizations Map", "ru": "Карта древних цивилизаций" },
+  "basemap": "/assets/map/World_map_blank_without_borders.svg",
+  "basemapAlt": { "en": "World map", "ru": "Карта мира" },
+  "points": [
+    {
+      "id": 1,
+      "name": { "en": "Sumer", "ru": "Шумер" },
+      "description": {
+        "en": "The Sumerian civilization is considered one of the most ancient in the world, known for its ziggurats and cuneiform writing.",
+        "ru": "Шумерская цивилизация считается одной из древнейших в мире; она известна зиккуратами и клинописью."
+      },
+      "x": 60,
+      "y": 30,
+      "founded": -4500,
+      "approx": true,
+      "periods": [
+        {
+          "title": { "en": "Ubaid Period", "ru": "Убейдский период" },
+          "start": -6500, "end": -3800, "approx": true,
+          "description": { "en": "Early settlement and development of agriculture.", "ru": "Ранние поселения и развитие земледелия." }
+        },
+        {
+          "title": { "en": "Uruk Period", "ru": "Урукский период" },
+          "start": -4000, "end": -3100, "approx": true,
+          "description": { "en": "Formation of urban centers and writing.", "ru": "Появление городов и письменности." }
+        },
+        {
+          "title": { "en": "Early Dynastic Period", "ru": "Раннединастический период" },
+          "start": -2900, "end": -2334, "approx": true,
+          "description": { "en": "Rise of city-states and kingship.", "ru": "Расцвет городов-государств и царской власти." }
+        },
+        {
+          "title": { "en": "Akkadian Period", "ru": "Аккадский период" },
+          "start": -2334, "end": -2154, "approx": true,
+          "description": { "en": "First Semitic empire under Sargon of Akkad.", "ru": "Первая семитская империя при Саргоне Аккадском." }
+        },
+        {
+          "title": { "en": "Ur III Period", "ru": "Период III династии Ура" },
+          "start": -2112, "end": -2004, "approx": true,
+          "description": { "en": "Sumerian renaissance and legal reforms.", "ru": "Шумерское возрождение и правовые реформы." }
+        },
+        {
+          "title": { "en": "Old Babylonian Period", "ru": "Старовавилонский период" },
+          "start": -2000, "end": -1600, "approx": true,
+          "description": { "en": "Decline of Sumer and rise of Babylon.", "ru": "Упадок Шумера и возвышение Вавилона." }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": { "en": "Ancient Egypt", "ru": "Древний Египет" },
+      "description": {
+        "en": "The ancient Egyptian civilization is known for its pyramids, pharaohs, and hieroglyphs.",
+        "ru": "Древнеегипетская цивилизация известна пирамидами, фараонами и иероглифами."
+      },
+      "x": 55.6,
+      "y": 32,
+      "founded": -3100,
+      "approx": true,
+      "periods": [
+        {
+          "title": { "en": "Early Dynastic Period", "ru": "Раннее царство" },
+          "start": -3100, "end": -2686, "approx": true,
+          "description": { "en": "Unification of Upper and Lower Egypt.", "ru": "Объединение Верхнего и Нижнего Египта." }
+        },
+        {
+          "title": { "en": "Old Kingdom", "ru": "Древнее царство" },
+          "start": -2686, "end": -2181, "approx": true,
+          "description": { "en": "Age of the Pyramids.", "ru": "Эпоха пирамид." }
+        },
+        {
+          "title": { "en": "First Intermediate Period", "ru": "Первый переходный период" },
+          "start": -2181, "end": -2055, "approx": true,
+          "description": { "en": "Political fragmentation and chaos.", "ru": "Политическая раздробленность и смута." }
+        },
+        {
+          "title": { "en": "Middle Kingdom", "ru": "Среднее царство" },
+          "start": -2055, "end": -1650, "approx": true,
+          "description": { "en": "Reunification and cultural renaissance.", "ru": "Новое объединение и культурный расцвет." }
+        },
+        {
+          "title": { "en": "Second Intermediate Period", "ru": "Второй переходный период" },
+          "start": -1650, "end": -1550, "approx": true,
+          "description": { "en": "Hyksos invasion and foreign rule.", "ru": "Вторжение гиксосов и иноземное правление." }
+        },
+        {
+          "title": { "en": "New Kingdom", "ru": "Новое царство" },
+          "start": -1550, "end": -1077, "approx": true,
+          "description": { "en": "Egypt's imperial age and greatest territorial extent.", "ru": "Имперская эпоха Египта и его наибольшие границы." }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": { "en": "Indus Valley", "ru": "Долина Инда" },
+      "description": {
+        "en": "The Indus Valley Civilization had advanced urban planning and sanitation systems.",
+        "ru": "Цивилизация долины Инда отличалась продуманной планировкой городов и системами водоотвода."
+      },
+      "x": 67,
+      "y": 36,
+      "founded": -3300,
+      "approx": true,
+      "periods": [
+        {
+          "title": { "en": "Early Harappan Phase", "ru": "Раннехараппский период" },
+          "start": -3300, "end": -2600, "approx": true,
+          "description": { "en": "Formation of agricultural communities.", "ru": "Складывание земледельческих общин." }
+        },
+        {
+          "title": { "en": "Mature Harappan Phase", "ru": "Зрелый хараппский период" },
+          "start": -2600, "end": -1900, "approx": true,
+          "description": { "en": "Urbanization and peak of civilization.", "ru": "Рост городов и расцвет цивилизации." }
+        },
+        {
+          "title": { "en": "Late Harappan Phase", "ru": "Позднехараппский период" },
+          "start": -1900, "end": -1300, "approx": true,
+          "description": { "en": "Decline and de-urbanization.", "ru": "Упадок и запустение городов." }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": { "en": "Ancient China", "ru": "Древний Китай" },
+      "description": {
+        "en": "Ancient Chinese civilization is known for its continuous history and many inventions.",
+        "ru": "Древнекитайская цивилизация известна непрерывной историей и множеством изобретений."
+      },
+      "x": 79,
+      "y": 33,
+      "founded": -2100,
+      "approx": true,
+      "periods": [
+        {
+          "title": { "en": "Xia Dynasty", "ru": "Династия Ся" },
+          "start": -2070, "end": -1600, "approx": true,
+          "description": { "en": "Earliest traditional dynasty.", "ru": "Первая династия по традиционной историографии." }
+        },
+        {
+          "title": { "en": "Shang Dynasty", "ru": "Династия Шан" },
+          "start": -1600, "end": -1046, "approx": true,
+          "description": { "en": "First recorded Chinese dynasty.", "ru": "Первая династия, известная по письменным источникам." }
+        },
+        {
+          "title": { "en": "Zhou Dynasty", "ru": "Династия Чжоу" },
+          "start": -1046, "end": -256, "approx": true,
+          "description": { "en": "Longest-lasting Chinese dynasty.", "ru": "Самая продолжительная династия в истории Китая." }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": { "en": "Minoan Civilization", "ru": "Минойская цивилизация" },
+      "description": {
+        "en": "The Minoan civilization of Crete is famous for its palace at Knossos and the myth of the Minotaur.",
+        "ru": "Минойская цивилизация Крита знаменита Кносским дворцом и мифом о Минотавре."
+      },
+      "x": 53.5,
+      "y": 27,
+      "founded": -3500,
+      "approx": true,
+      "periods": [
+        {
+          "title": { "en": "Early Minoan", "ru": "Раннеминойский период" },
+          "start": -3500, "end": -2100, "approx": true,
+          "description": { "en": "Formation of complex societies.", "ru": "Становление сложных обществ." }
+        },
+        {
+          "title": { "en": "Middle Minoan", "ru": "Среднеминойский период" },
+          "start": -2100, "end": -1600, "approx": true,
+          "description": { "en": "Construction of palaces and peak of prosperity.", "ru": "Строительство дворцов и расцвет." }
+        },
+        {
+          "title": { "en": "Late Minoan", "ru": "Позднеминойский период" },
+          "start": -1600, "end": -1100, "approx": true,
+          "description": { "en": "Decline due to natural disasters and invasions.", "ru": "Упадок из-за природных катастроф и вторжений." }
+        }
+      ]
+    }
+  ]
+}
