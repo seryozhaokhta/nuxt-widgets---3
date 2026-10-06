@@ -16,13 +16,13 @@
             <div ref="viewportRef" class="time-map__viewport" v-on="panZoomHandlers">
                 <div class="time-map__content" :style="panZoomStyle">
                     <TimeMapGeography :geography="data.geography" :features="features" :projection="projection"
-                        :epoch-index="epochIndex" :year="currentYear" :zoom="scale"
+                        :land-url="epochs[epochIndex]?.land" :year="currentYear" :zoom="scale"
                         :label="l(data.title) || t('worldMap')" />
                     <span v-for="label in labels" :key="label.id"
                         :class="['time-map__label', 'time-map__label--' + label.kind, { 'time-map__label--visible': label.visible }]"
                         :style="label.style" aria-hidden="true">{{ label.text }}</span>
                     <TimeMapMarker v-for="marker in markers" :key="marker.point.id" :point="marker.point" :x="marker.x"
-                        :y="marker.y" :visible="marker.point.founded <= currentYear"
+                        :y="marker.y" :visible="isOnMap(marker.point)"
                         :active="marker.point.id === selected?.id" :zoom="scale" @select="selectPoint(marker.point)" />
                 </div>
 
@@ -43,9 +43,9 @@
         </div>
 
         <YearSlider v-model="currentYear" class="time-map__slider" :min="minYear" :max="maxYear" :step="yearStep"
-            :marks="points.map((point) => point.founded)" />
+            :scale="data.timeScale" :ticks="data.ticks" :marks="points.map((point) => point.founded)" />
         <TimeMapLegend class="time-map__legend" :kinds="featureKinds" :show-coast="!!data.geography.modernCoast"
-            :credits="l(data.credits)" />
+            :show-borders="!!data.geography.borders" :credits="l(data.credits)" />
     </div>
 </template>
 
@@ -133,6 +133,13 @@ onMounted(() => {
     if (view && center) centerOn(center.x / 100, center.y / 100, view.zoom)
 })
 
+/** A point shows from its founding until `until` or the end of its last period. */
+function isOnMap(point: TimeMapPoint): boolean {
+    const ends = (point.periods ?? []).map((period) => period.end)
+    const until = point.until ?? (ends.length ? Math.max(...ends) : Infinity)
+    return point.founded <= currentYear.value && currentYear.value <= until
+}
+
 const markers = computed(() => points.value.flatMap((point) => {
     const position = toPercent(point.at)
     return position ? [{ point, ...position }] : []
@@ -182,7 +189,7 @@ const labels = computed(() => {
     // by importance; a name that would overlap one already placed waits for
     // more zoom. Sizes are estimates for 11–12 px text.
     const placed: Box[] = markers.value
-        .filter((marker) => marker.point.founded <= currentYear.value)
+        .filter((marker) => isOnMap(marker.point))
         .flatMap((marker) => {
             const { x, y } = onScreen(marker)
             const name = l(marker.point.name)

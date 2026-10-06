@@ -19,6 +19,8 @@ export interface TimeMapPoint {
   at: LonLat
   /** The point appears on the map from this year on. */
   founded: Year
+  /** The point leaves the map after this year. Default: the end of its last period. */
+  until?: Year
   approx?: boolean
   periods?: TimeMapPeriod[]
 }
@@ -62,6 +64,8 @@ export interface TimeMapGeography {
   lakes?: string
   /** Today's coastline, drawn faintly for comparison. */
   modernCoast?: string
+  /** Today's borders between countries, shown from `from` on. */
+  borders?: { from: Year; url: string }
 }
 
 export interface TimeMapData {
@@ -71,8 +75,15 @@ export interface TimeMapData {
   points: TimeMapPoint[]
   /** Slider range. Default: earliest founding year to the latest date in the data. */
   range?: { start?: Year; end?: Year }
-  /** Slider step in years. Default: 50. */
+  /** Slider step in years (linear scale). Default: 50. */
   yearStep?: number
+  /**
+   * "sqrt" gives recent centuries more room than deep prehistory: the slider
+   * position follows the square root of the time left until the range end.
+   */
+  timeScale?: 'linear' | 'sqrt'
+  /** Years labelled under the slider. */
+  ticks?: Year[]
   /** Opening view; the map starts showing the whole world. */
   view?: { center: LonLat; zoom: number }
   /** Data credits shown under the map. */

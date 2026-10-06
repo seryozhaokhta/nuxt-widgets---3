@@ -14,6 +14,9 @@
             <li v-if="showCoast" class="legend__item">
                 <span class="legend__line" />{{ t('legendCoast') }}
             </li>
+            <li v-if="showBorders" class="legend__item">
+                <span class="legend__line legend__line--borders" />{{ t('legendBorders') }}
+            </li>
         </ul>
         <p v-if="credits" class="legend__credits">{{ credits }}</p>
     </div>
@@ -26,6 +29,7 @@ import type { TimeMapFeatureKind } from './types'
 defineProps<{
     kinds: Set<TimeMapFeatureKind>
     showCoast: boolean
+    showBorders?: boolean
     credits?: string
 }>()
 
@@ -84,6 +88,10 @@ const { t } = useI18n()
 .legend__line {
     width: 16px;
     border-top: 1px dashed var(--aw-map-coast);
+}
+
+.legend__line--borders {
+    border-top: 1px solid var(--aw-map-border);
 }
 
 .legend__credits {

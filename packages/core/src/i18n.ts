@@ -34,6 +34,7 @@ const en = {
   legendCulture: 'Culture',
   legendIce: 'Ice sheet',
   legendCoast: 'Today’s coastline',
+  legendBorders: 'Today’s borders',
 }
 
 export type MessageKey = keyof typeof en
@@ -70,6 +71,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     legendCulture: 'Культура',
     legendIce: 'Ледник',
     legendCoast: 'Нынешний берег',
+    legendBorders: 'Нынешние границы',
   },
 }
 

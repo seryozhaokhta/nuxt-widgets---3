@@ -47,6 +47,7 @@
   --aw-map-state-edge: rgba(201, 164, 106, 0.75);
   --aw-map-grid: rgba(242, 238, 230, 0.05);
   --aw-map-coast: rgba(242, 238, 230, 0.3);
+  --aw-map-border: rgba(242, 238, 230, 0.45);
 
   /* Dark glass for controls placed over images */
   --aw-color-scrim: rgba(10, 10, 10, 0.5);

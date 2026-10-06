@@ -3,10 +3,11 @@
 //   rivers.json        major rivers
 //   lakes.json         large lakes
 //   coast-modern.json  today's coastline, for comparison
+//   borders-modern.json today's borders between countries
 //
 // Sources (public domain), downloaded into the OS temp folder on first run:
 //   ETOPO1 elevation grid (NOAA NGDC) via ERDDAP, subsampled to 1/6 degree
-//   Natural Earth 1:50m rivers and lakes, 1:110m coastline
+//   Natural Earth 1:50m rivers, lakes and borders, 1:110m coastline
 //
 // Run: npm run geo:build
 
@@ -32,6 +33,10 @@ const SOURCES = {
   rivers: { file: 'ne_50m_rivers_lake_centerlines.geojson', url: NE + 'ne_50m_rivers_lake_centerlines.geojson' },
   lakes: { file: 'ne_50m_lakes.geojson', url: NE + 'ne_50m_lakes.geojson' },
   coast: { file: 'ne_110m_coastline.geojson', url: NE + 'ne_110m_coastline.geojson' },
+  borders: {
+    file: 'ne_50m_admin_0_boundary_lines_land.geojson',
+    url: NE + 'ne_50m_admin_0_boundary_lines_land.geojson',
+  },
 }
 
 async function exists(path) {
@@ -251,6 +256,11 @@ async function main() {
       properties: { name: feature.properties.name },
       geometry: simplifyPolygons(feature.geometry, 0.03),
     }))
+    .filter((feature) => feature.geometry)))
+
+  const borders = JSON.parse(await source('borders'))
+  await write('borders-modern.json', featureCollection(borders.features
+    .map((feature) => ({ type: 'Feature', properties: {}, geometry: simplifyLines(feature.geometry, 0.04) }))
     .filter((feature) => feature.geometry)))
 
   const coast = JSON.parse(await source('coast'))

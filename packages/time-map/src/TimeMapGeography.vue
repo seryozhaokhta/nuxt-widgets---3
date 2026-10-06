@@ -2,30 +2,44 @@
 <template>
     <svg class="geo" :viewBox="'0 0 ' + MAP_WIDTH + ' ' + MAP_HEIGHT" :style="{ '--zoom': zoom }" role="img"
         :aria-label="label">
+        <defs>
+            <clipPath :id="clipId">
+                <path :d="landPath" />
+            </clipPath>
+        </defs>
+
         <path class="geo__sea" :d="spherePath" />
         <path class="geo__grid" :d="gridPath" />
 
         <Transition name="geo-fade">
-            <path v-if="landPath" :key="epochIndex" class="geo__land" :d="landPath" />
+            <path v-if="landPath" :key="landUrl" class="geo__land" :d="landPath" />
         </Transition>
         <path v-if="lakesPath" class="geo__sea" :d="lakesPath" />
 
-        <path v-for="shape in shapes.water" :key="shape.id" :class="classes(shape, 'geo__sea')" :d="shape.d" />
+        <!-- Areas are clipped to the land of the epoch, so they can be drawn loosely along coasts. -->
+        <g :clip-path="'url(#' + clipId + ')'">
+            <path v-for="shape in shapes.water" :key="shape.id" :class="classes(shape, 'geo__sea')" :d="shape.d" />
+        </g>
         <path v-if="riversPath.major" class="geo__river" :d="riversPath.major" />
         <path v-if="riversPath.minor" class="geo__river geo__river--minor" :d="riversPath.minor" />
         <path v-for="shape in shapes.river" :key="shape.id" :class="classes(shape, 'geo__river geo__river--old')"
             :d="shape.d" />
         <path v-for="shape in shapes.ice" :key="shape.id" :class="classes(shape, 'geo__ice')" :d="shape.d" />
-        <path v-for="shape in shapes.culture" :key="shape.id" :class="classes(shape, 'geo__culture')"
-            :d="shape.d" />
-        <path v-for="shape in shapes.state" :key="shape.id" :class="classes(shape, 'geo__state')" :d="shape.d" />
+        <g :clip-path="'url(#' + clipId + ')'">
+            <path v-for="shape in shapes.culture" :key="shape.id" :class="classes(shape, 'geo__culture')"
+                :d="shape.d" />
+            <path v-for="shape in shapes.state" :key="shape.id" :class="classes(shape, 'geo__state')"
+                :d="shape.d" />
+        </g>
 
+        <path v-if="bordersPath" :class="['geo__borders', 'geo__feature', { 'geo__feature--visible': showBorders }]"
+            :d="bordersPath" />
         <path v-if="coastPath" class="geo__coast" :d="coastPath" />
     </svg>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import type { GeoProjection } from 'd3-geo'
 import type { FeatureCollection } from 'geojson'
 import { createPath, featureGeometry, graticule, MAP_HEIGHT, MAP_WIDTH, type GeoJson } from './geo'
@@ -36,12 +50,14 @@ const props = defineProps<{
     geography: TimeMapGeography
     features: TimeMapFeature[]
     projection: GeoProjection
-    /** Index of the epoch to show. */
-    epochIndex: number
+    /** URL of the land outline to show. */
+    landUrl?: string
     year: number
     zoom: number
     label: string
 }>()
+
+const clipId = 'time-map-land-' + useId()
 
 const path = computed(() => createPath(props.projection))
 const draw = (layer: GeoJson | null | undefined) => (layer ? path.value(layer) ?? '' : '')
@@ -49,13 +65,17 @@ const draw = (layer: GeoJson | null | undefined) => (layer ? path.value(layer) ?
 const spherePath = computed(() => draw({ type: 'Sphere' } as unknown as GeoJson))
 const gridPath = computed(() => draw(graticule))
 
-// Every epoch's land is loaded up front so moving the slider is instant.
-const lands = props.geography.epochs.map((epoch) => useGeoJson(() => epoch.land))
-const landPath = computed(() => draw(lands[props.epochIndex]?.value))
+// Every epoch's land is loaded up front (once per file) so moving the slider is instant.
+const lands = new Map([...new Set(props.geography.epochs.map((epoch) => epoch.land))]
+    .map((url) => [url, useGeoJson(() => url)]))
+const landPath = computed(() => draw(props.landUrl ? lands.get(props.landUrl)?.value : null))
 
 const lakes = useGeoJson(() => props.geography.lakes)
 const rivers = useGeoJson(() => props.geography.rivers)
 const coast = useGeoJson(() => props.geography.modernCoast)
+const borders = useGeoJson(() => props.geography.borders?.url)
+const bordersPath = computed(() => draw(borders.value))
+const showBorders = computed(() => props.year >= (props.geography.borders?.from ?? Infinity))
 const lakesPath = computed(() => draw(lakes.value))
 const coastPath = computed(() => draw(coast.value))
 
@@ -153,6 +173,13 @@ function classes(shape: Shape, base: string) {
     fill: var(--aw-map-state);
     stroke: var(--aw-map-state-edge);
     stroke-width: calc(0.9px / var(--zoom));
+}
+
+.geo__borders {
+    fill: none;
+    stroke: var(--aw-map-border);
+    stroke-width: calc(0.6px / var(--zoom));
+    stroke-linejoin: round;
 }
 
 .geo__coast {
