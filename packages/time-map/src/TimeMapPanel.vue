@@ -114,18 +114,18 @@ defineExpose({ open, close })
 .time-map-panel__eyebrow,
 .time-map-panel__period-years {
     margin: 0;
-    color: var(--aw-color-gold);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    color: var(--aw-color-text-subtle);
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+    font-weight: 400;
 }
 
 .time-map-panel__title {
     margin: 8px 0 0;
-    font-family: var(--aw-font-serif);
-    font-size: 30px;
-    font-weight: 500;
+    font-family: var(--aw-font-display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: var(--aw-tracking-heading);
     line-height: 1.05;
 }
 
@@ -141,9 +141,10 @@ defineExpose({ open, close })
 
 .time-map-panel__period-title {
     margin: 6px 0 0;
-    font-family: var(--aw-font-serif);
-    font-size: 21px;
-    font-weight: 500;
+    font-family: var(--aw-font-display);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: var(--aw-tracking-title);
     line-height: 1.15;
 }
 

@@ -1,19 +1,27 @@
 /*
- * Design tokens shared by all mechanics: black and gold, serif headings.
- * Mechanics use only these variables, so a theme is a change to this file.
+ * Design tokens shared by all mechanics: black, a little gold, a tight
+ * grotesk for headings, mono for labels and an italic serif for titles of
+ * artworks. Mechanics use only these variables, so a theme is a change to
+ * this file.
  */
 :root {
   /* Typography */
   --aw-font-sans: "Inter Variable", Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --aw-font-serif: "Cormorant Garamond Variable", "Cormorant Garamond", Georgia, "Times New Roman", serif;
-  --aw-text-xs: 11px;
+  --aw-font-display: "Inter Tight Variable", "Inter Tight", var(--aw-font-sans);
+  --aw-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  /* Titles of artworks, set in italics as in art-historical writing. */
+  --aw-font-artwork: "Source Serif 4 Variable", "Source Serif 4", Georgia, "Times New Roman", serif;
   --aw-text-sm: 13px;
   --aw-text-md: 15px;
   --aw-text-lg: 20px;
   --aw-text-xl: 28px;
   --aw-text-2xl: 40px;
-  /* Small caps labels: tags, dates, step counters */
-  --aw-label-tracking: 0.12em;
+  /* Headings get tighter as they grow. */
+  --aw-tracking-display: -0.04em;
+  --aw-tracking-heading: -0.025em;
+  --aw-tracking-title: -0.015em;
+  /* Labels: tags, dates, counters, metadata */
+  --aw-label-size: 12px;
 
   /* Colors */
   --aw-color-bg: #0a0a0a;
@@ -27,14 +35,28 @@
   --aw-color-gold: #c9a46a;
   --aw-color-gold-bright: #e4c792;
   --aw-color-gold-soft: rgba(201, 164, 106, 0.3);
+  /* Maps */
+  --aw-map-sea: #0b0d0f;
+  --aw-map-land: #27241f;
+  --aw-map-river: #56707f;
+  --aw-map-ice: rgba(226, 234, 240, 0.2);
+  --aw-map-ice-edge: rgba(226, 234, 240, 0.4);
+  --aw-map-culture: rgba(242, 238, 230, 0.07);
+  --aw-map-culture-edge: rgba(242, 238, 230, 0.4);
+  --aw-map-state: rgba(201, 164, 106, 0.16);
+  --aw-map-state-edge: rgba(201, 164, 106, 0.75);
+  --aw-map-grid: rgba(242, 238, 230, 0.05);
+  --aw-map-coast: rgba(242, 238, 230, 0.3);
+
   /* Dark glass for controls placed over images */
   --aw-color-scrim: rgba(10, 10, 10, 0.5);
   --aw-blur: 14px;
 
   /* Shape */
-  --aw-radius-sm: 8px;
+  --aw-radius-xs: 6px;
+  --aw-radius-sm: 10px;
   --aw-radius-md: 14px;
-  --aw-radius-lg: 24px;
+  --aw-radius-lg: 18px;
   --aw-radius-pill: 999px;
 
   /* Motion */

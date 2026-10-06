@@ -47,18 +47,19 @@ const { t, l } = useI18n()
 .node-card-front__tag {
     display: block;
     margin-bottom: 8px;
-    color: var(--aw-color-gold);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    color: var(--aw-color-text-muted);
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+    font-weight: 400;
 }
 
 .node-card-front__title {
     margin: 0;
-    font-family: var(--aw-font-serif);
-    font-size: 26px;
-    font-weight: 500;
+    font-family: var(--aw-font-artwork);
+    font-size: 28px;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: var(--aw-tracking-title);
     line-height: 1.05;
     text-wrap: balance;
 }

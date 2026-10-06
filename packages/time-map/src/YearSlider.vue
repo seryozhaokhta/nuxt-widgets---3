@@ -90,7 +90,7 @@ function onInput(event: Event) {
     width: 16px;
     height: 16px;
     margin-top: -7px;
-    border: 3px solid var(--aw-color-surface);
+    border: 3px solid var(--aw-color-bg);
     border-radius: 50%;
     background: var(--aw-color-gold);
     box-shadow: 0 0 0 1px var(--aw-color-gold-soft);
@@ -101,7 +101,7 @@ function onInput(event: Event) {
     box-sizing: border-box;
     width: 16px;
     height: 16px;
-    border: 3px solid var(--aw-color-surface);
+    border: 3px solid var(--aw-color-bg);
     border-radius: 50%;
     background: var(--aw-color-gold);
     box-shadow: 0 0 0 1px var(--aw-color-gold-soft);
@@ -148,9 +148,8 @@ function onInput(event: Event) {
     justify-content: space-between;
     margin-top: 2px;
     color: var(--aw-color-text-subtle);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+    font-weight: 400;
 }
 </style>

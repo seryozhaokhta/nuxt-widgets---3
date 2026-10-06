@@ -1,9 +1,12 @@
 <!-- A point on the map that pops in and out as it becomes visible. -->
 <template>
-    <button v-if="rendered" ref="el" type="button" :class="['time-map-marker', { 'time-map-marker--active': active }]"
+    <!-- The button carries position and zoom compensation; the body inside is what animates. -->
+    <button v-if="rendered" type="button" :class="['time-map-marker', { 'time-map-marker--active': active }]"
         :style="style" :data-id="point.id" @click="emit('select')" @mousedown.stop @touchstart.stop>
-        <span class="time-map-marker__dot" />
-        <span class="time-map-marker__label">{{ l(point.name) }}</span>
+        <span ref="el" class="time-map-marker__body">
+            <span class="time-map-marker__dot" />
+            <span class="time-map-marker__label">{{ l(point.name) }}</span>
+        </span>
     </button>
 </template>
 
@@ -15,6 +18,9 @@ import type { TimeMapPoint } from './types'
 
 const props = defineProps<{
     point: TimeMapPoint
+    /** Position in percent of the map. */
+    x: number
+    y: number
     visible: boolean
     /** Its panel is open. */
     active: boolean
@@ -30,8 +36,8 @@ const el = ref<HTMLElement | null>(null)
 const rendered = ref(false)
 
 const style = computed(() => ({
-    left: props.point.x + '%',
-    top: props.point.y + '%',
+    left: props.x + '%',
+    top: props.y + '%',
     transform: 'translate(-50%, -50%) scale(' + 1 / props.zoom + ')',
 }))
 
@@ -83,6 +89,11 @@ watch(() => props.visible, (now, before) => {
     font: inherit;
     cursor: pointer;
     transform-origin: center;
+}
+
+.time-map-marker__body {
+    position: absolute;
+    inset: 0;
 }
 
 .time-map-marker__dot {

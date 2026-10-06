@@ -34,14 +34,15 @@
 import type { Locale } from '@art-widgets/core'
 import { NodeCard, type NodeCardData } from '@art-widgets/node-card'
 import { ArtStory, type StoryData } from '@art-widgets/story'
-import { TimeMap, type TimeMapData } from '@art-widgets/time-map'
+import { asTimeMapData, TimeMap } from '@art-widgets/time-map'
 import portraitsJson from '~/data/portraits.json'
 import venusJson from '~/data/story-venus.json'
 import ancientMapJson from '~/data/map-ancient.json'
 
 const portraits: NodeCardData[] = portraitsJson
 const venus: StoryData = venusJson
-const ancientMap: TimeMapData = ancientMapJson
+// JSON imports lose literal types (kinds, [lon, lat] pairs); this checks them at runtime.
+const ancientMap = asTimeMapData(ancientMapJson)
 
 const languages: Locale[] = ['en', 'ru']
 
@@ -88,35 +89,36 @@ useHead({ htmlAttrs: { lang: locale } })
     align-items: flex-start;
     justify-content: space-between;
     gap: 24px;
-    padding-bottom: 40px;
-    border-bottom: 1px solid var(--aw-color-line);
 }
 
 .page__brand,
 .page__index {
     margin: 0;
-    color: var(--aw-color-gold);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    color: var(--aw-color-text-subtle);
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+}
+
+.page__brand {
+    color: var(--aw-color-text-muted);
 }
 
 .page__title {
-    max-width: 16ch;
-    margin: 16px 0 0;
-    font-family: var(--aw-font-serif);
-    font-size: clamp(38px, 6vw, 64px);
-    font-weight: 500;
-    line-height: 1;
+    max-width: 13ch;
+    margin: 20px 0 0;
+    font-family: var(--aw-font-display);
+    font-size: clamp(44px, 7.5vw, 92px);
+    font-weight: 600;
+    line-height: 0.95;
+    letter-spacing: var(--aw-tracking-display);
     text-wrap: balance;
 }
 
 .page__lead {
-    max-width: 56ch;
-    margin: 20px 0 0;
+    max-width: 52ch;
+    margin: 28px 0 0;
     color: var(--aw-color-text-muted);
-    font-size: 17px;
+    font-size: 18px;
     line-height: 1.6;
 }
 
@@ -132,9 +134,8 @@ useHead({ htmlAttrs: { lang: locale } })
     padding: 6px 12px;
     border-radius: var(--aw-radius-pill);
     color: var(--aw-color-text-subtle);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
     text-decoration: none;
     text-transform: uppercase;
     transition: color var(--aw-duration-fast) var(--aw-ease), background-color var(--aw-duration-fast) var(--aw-ease);
@@ -159,7 +160,9 @@ useHead({ htmlAttrs: { lang: locale } })
 }
 
 .page__section {
-    margin-top: 72px;
+    margin-top: 96px;
+    padding-top: 20px;
+    border-top: 1px solid var(--aw-color-line);
 }
 
 .page__section-head {
@@ -167,15 +170,16 @@ useHead({ htmlAttrs: { lang: locale } })
     grid-template-columns: 48px minmax(0, 1fr);
     column-gap: 16px;
     align-items: baseline;
-    margin-bottom: 28px;
+    margin-bottom: 40px;
 }
 
 .page__section-title {
     margin: 0;
-    font-family: var(--aw-font-serif);
-    font-size: 34px;
-    font-weight: 500;
-    line-height: 1.1;
+    font-family: var(--aw-font-display);
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: var(--aw-tracking-heading);
 }
 
 .page__section-text {
@@ -203,11 +207,10 @@ useHead({ htmlAttrs: { lang: locale } })
 
     .page__header {
         flex-direction: column-reverse;
-        padding-bottom: 28px;
     }
 
     .page__section {
-        margin-top: 56px;
+        margin-top: 72px;
     }
 
     .page__section-head {
@@ -221,7 +224,7 @@ useHead({ htmlAttrs: { lang: locale } })
 
     .page__section-title {
         margin-top: 8px;
-        font-size: 28px;
+        font-size: 32px;
     }
 
     .page__nodes {

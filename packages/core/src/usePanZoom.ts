@@ -70,6 +70,21 @@ export function usePanZoom(container: Ref<HTMLElement | null>, options: PanZoomO
     position.value = { x: 0, y: 0 }
   }
 
+  /** Centres a point of the content, given as fractions of its size, at a zoom. */
+  function centerOn(fractionX: number, fractionY: number, zoom: number) {
+    const el = container.value
+    if (!el) return
+    const next = Math.min(Math.max(zoom, minZoom), maxZoom)
+    scale.value = next
+    position.value = clamp(
+      {
+        x: el.clientWidth / 2 - fractionX * el.clientWidth * next,
+        y: el.clientHeight / 2 - fractionY * el.clientHeight * next,
+      },
+      next,
+    )
+  }
+
   function flashWheelHint() {
     showWheelHint.value = true
     clearTimeout(hintTimer)
@@ -141,5 +156,6 @@ export function usePanZoom(container: Ref<HTMLElement | null>, options: PanZoomO
     zoomIn: () => zoomBy(step),
     zoomOut: () => zoomBy(-step),
     reset,
+    centerOn,
   }
 }

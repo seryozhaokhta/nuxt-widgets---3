@@ -141,31 +141,27 @@ function onKeydown(event: KeyboardEvent) {
 .story {
     container-type: inline-size;
     width: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    border-radius: var(--aw-radius-lg);
-    background-color: var(--aw-color-surface);
-    box-shadow: 0 0 0 1px var(--aw-color-line);
     color: var(--aw-color-text);
     font-family: var(--aw-font-sans);
 }
 
 .story__layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: 28px;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 40px;
     align-items: center;
 }
 
 .story:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 1px var(--aw-color-gold-soft);
+    outline: 1px solid var(--aw-color-gold-soft);
+    outline-offset: 12px;
+    border-radius: var(--aw-radius-sm);
 }
 
 .story__frame {
     position: relative;
     overflow: hidden;
-    border-radius: var(--aw-radius-sm);
+    border-radius: var(--aw-radius-xs);
     background-color: var(--aw-color-ink);
 }
 
@@ -193,17 +189,18 @@ function onKeydown(event: KeyboardEvent) {
 .story__counter {
     margin: 0;
     color: var(--aw-color-text-subtle);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+    font-weight: 400;
 }
 
 .story__title {
-    margin: 8px 0 0;
-    font-family: var(--aw-font-serif);
-    font-size: 34px;
-    font-weight: 500;
+    margin: 10px 0 0;
+    font-family: var(--aw-font-artwork);
+    font-size: 42px;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: var(--aw-tracking-title);
     line-height: 1.05;
     text-wrap: balance;
 }
@@ -221,9 +218,10 @@ function onKeydown(event: KeyboardEvent) {
 
 .story__step-title {
     margin: 12px 0 0;
-    font-family: var(--aw-font-serif);
-    font-size: 22px;
-    font-weight: 500;
+    font-family: var(--aw-font-display);
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: var(--aw-tracking-heading);
     line-height: 1.15;
 }
 
@@ -249,7 +247,7 @@ function onKeydown(event: KeyboardEvent) {
     }
 
     .story__title {
-        font-size: 28px;
+        font-size: 34px;
     }
 
     .story__step {

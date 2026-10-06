@@ -28,6 +28,12 @@ const en = {
   resetView: 'Show the whole map',
   year: 'Year',
   wheelHint: 'Hold Ctrl or ⌘ and scroll to zoom the map',
+  seaLevel: 'Sea level {value} m',
+  seaLevelToday: 'Sea level as today',
+  legendState: 'State',
+  legendCulture: 'Culture',
+  legendIce: 'Ice sheet',
+  legendCoast: 'Today’s coastline',
 }
 
 export type MessageKey = keyof typeof en
@@ -58,6 +64,12 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     resetView: 'Показать всю карту',
     year: 'Год',
     wheelHint: 'Чтобы приблизить карту, прокрутите колесо с зажатым Ctrl или ⌘',
+    seaLevel: 'Уровень моря {value} м',
+    seaLevelToday: 'Уровень моря как сегодня',
+    legendState: 'Государство',
+    legendCulture: 'Культура',
+    legendIce: 'Ледник',
+    legendCoast: 'Нынешний берег',
   },
 }
 

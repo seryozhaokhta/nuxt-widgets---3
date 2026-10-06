@@ -57,18 +57,19 @@ const { t, l } = useI18n()
 
 .node-card-back__label {
     margin-bottom: 12px;
-    color: var(--aw-color-gold);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    color: var(--aw-color-text-subtle);
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+    font-weight: 400;
 }
 
 .node-card-back__title {
     margin: 0 40px 0 0;
-    font-family: var(--aw-font-serif);
-    font-size: 26px;
-    font-weight: 500;
+    font-family: var(--aw-font-artwork);
+    font-size: 28px;
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: var(--aw-tracking-title);
     line-height: 1.05;
     text-wrap: balance;
     overflow-wrap: break-word;
@@ -98,11 +99,10 @@ const { t, l } = useI18n()
     align-items: center;
     gap: 4px;
     margin-top: 16px;
-    color: var(--aw-color-gold);
-    font-size: var(--aw-text-xs);
-    font-weight: 500;
-    letter-spacing: var(--aw-label-tracking);
-    text-transform: uppercase;
+    color: var(--aw-color-text);
+    font-family: var(--aw-font-mono);
+    font-size: var(--aw-label-size);
+    font-weight: 400;
     text-decoration: none;
     --icon-size: 14px;
 }

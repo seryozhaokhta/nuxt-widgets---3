@@ -1,3 +1,6 @@
 /* Optional: self-hosted fonts referenced by tokens.css (Latin and Cyrillic). */
 @import "@fontsource-variable/inter";
-@import "@fontsource-variable/cormorant-garamond";
+@import "@fontsource-variable/inter-tight";
+@import "@fontsource-variable/jetbrains-mono";
+/* Only the italic is used: it sets titles of artworks. */
+@import "@fontsource-variable/source-serif-4/standard-italic.css";
