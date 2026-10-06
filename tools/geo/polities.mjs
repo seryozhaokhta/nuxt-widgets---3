@@ -4,7 +4,7 @@
 //
 // Output, in OUT_DIR/polities/:
 //   index.json        names (English; Russian via Wikidata/Wikipedia) and time chunks
-//   <from>_<to>.json  records alive in that span, with rings stored once
+//   <from>-<to>.json  records alive in that span, rings stored once ("3400bce-203bce.json")
 //
 // Rings are kept as integer hundredths of a degree, delta-encoded:
 // [x0, y0, dx1, dy1, ...]. Each record: [entity, fromYear, toYear,
@@ -351,7 +351,10 @@ async function main() {
   const chunks = []
   let total = 0
   for (const span of chunkSpans(records)) {
-    const file = `${span[0]}_${span[1]}.json`
+    // Nuxt leaves out public files whose names start with "-" (ignorePrefix), so
+    // years before the era are written as "3400bce".
+    const year = (value) => (value < 0 ? -value + 'bce' : String(value))
+    const file = `${year(span[0])}-${year(span[1])}.json`
     const text = JSON.stringify(chunkFile(span, records))
     await writeFile(join(out, file), text)
     chunks.push({ from: span[0], to: span[1], file })

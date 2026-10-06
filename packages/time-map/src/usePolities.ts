@@ -53,6 +53,8 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
   const index = shallowRef<PolityIndex | null>(null)
   const loaded = shallowRef(new Map<string, Polity[]>())
   const pending = new Map<string, Promise<void>>()
+  // A chunk that failed once isn't requested again in this session.
+  const failed = new Set<string>()
 
   async function loadIndex(url: string | undefined) {
     index.value = null
@@ -68,7 +70,7 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
 
   function loadChunk(file: string) {
     const url = indexUrl()
-    if (!url || loaded.value.has(file) || pending.has(file)) return
+    if (!url || loaded.value.has(file) || pending.has(file) || failed.has(file)) return
     const entities = index.value?.entities ?? []
     const task = fetch(new URL(file, new URL(url, location.href)))
       .then((response) => {
@@ -89,7 +91,10 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
         }))
         loaded.value = new Map(loaded.value).set(file, polities)
       })
-      .catch((error) => console.warn('[time-map] states not loaded:', error))
+      .catch((error) => {
+        failed.add(file)
+        console.warn('[time-map] states not loaded:', error)
+      })
       .finally(() => pending.delete(file))
     pending.set(file, task)
   }
