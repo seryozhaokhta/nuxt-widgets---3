@@ -25,3 +25,6 @@ logs
 
 # Vercel build output
 .vercel
+
+# Rendered reels
+out

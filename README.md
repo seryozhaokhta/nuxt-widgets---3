@@ -90,6 +90,28 @@ npm run geo:polities
 приблизительно. Границы Cliopatria — тоже реконструкция: у древних государств они часто неизменны веками
 просто потому, что источников мало.
 
+## Промо-ролики
+
+`apps/reel` — вертикальные ролики 1080×1920 с живыми механиками (не запись экрана: каждый кадр
+вычисляется). Три варианта: **Timeline** (один дубль через 12 000 лет), **Kinetic** (быстрый монтаж
+слов на сетке 120 bpm), **Wall label** (медленный, с музейными этикетками).
+
+```bash
+npm run reel:dev                         # http://localhost:3100 — просмотр с ползунком (?safe — зоны интерфейса Reels)
+npm run reel:render -- timeline          # → out/reels/timeline.silent.mp4 (нужен запущенный reel:dev)
+npm run reel:render -- timeline --fps 60 --stills 1.5,8.4   # отдельные кадры в PNG
+python3 tools/reel/soundtrack.py timeline                 # временный звук → out/reels/timeline.mp4
+```
+
+- Каждый вариант — `apps/reel/variants/<Имя>.vue` и `<имя>.ts` с таймингами и звуковыми метками. Всё на экране —
+  функция времени `reelTime`; виджеты управляются кликами и перетаскиванием по сценарию (`useTouch`).
+- Рендер (`tools/reel/render.mjs`) открывает страницу в Playwright, подменяет часы (`tools/reel/clock.js`:
+  таймеры, `requestAnimationFrame`, CSS-анимации) и снимает кадр за кадром в ffmpeg. Нужны Playwright
+  с Chromium и ffmpeg.
+- Звук (`tools/reel/soundtrack.py`, numpy + scipy) — синтезированная заглушка под монтаж; перед публикацией
+  заменить лицензионным треком. Итоговый файл ужат до ~26 МБ, рядом лежит почти без потерь `*.silent.mp4`.
+- Тексты роликов — `apps/reel/reel/content.ts` (сверены с Википедией и страницами музеев).
+
 ## Новая механика
 
 1. Создать `packages/<имя>/src/index.ts` и `package.json` по образцу соседних пакетов.

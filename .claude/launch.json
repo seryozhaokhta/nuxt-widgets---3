@@ -9,6 +9,15 @@
         "dev"
       ],
       "port": 3000
+    },
+    {
+      "name": "reel",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "reel:dev"
+      ],
+      "port": 3100
     }
   ]
 }
