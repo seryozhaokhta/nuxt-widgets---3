@@ -249,7 +249,8 @@ const placedArcs = computed(() => props.arcs.flatMap((arc) => {
     const dy = b.y - a.y
     const bow = 0.3
     const cx = mx + dy * bow
-    const cy = my - Math.abs(dx) * bow - Math.abs(dy) * 0.1
+    // Long flights bow less, so the arc stays on screen.
+    const cy = my - Math.min(70, Math.abs(dx) * bow) - Math.abs(dy) * 0.1
     return [{ d: `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`, progress: arc.progress }]
 }))
 

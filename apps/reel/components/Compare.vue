@@ -7,12 +7,13 @@
         <div v-for="(panel, i) in panels" :key="i" class="compare__panel" :style="panel.style">
             <img :src="panel.src" alt="" class="compare__image" :style="panel.image" />
             <div class="compare__shade" :class="'compare__shade--' + (i ? 'bottom' : 'top')" />
-            <p :class="['compare__label', { 'compare__label--right': panel.align === 'right' }]"
-                :style="{ top: panel.labelTop + 'px', opacity: reveal }">
-                <span class="compare__meta">{{ panel.meta }}</span>
-                <span class="compare__title">{{ panel.title }}</span>
-            </p>
         </div>
+        <!-- Names sit in the band between the pictures, never over the outlines. -->
+        <p v-for="(panel, i) in panels" :key="'label' + i" :class="['compare__label', 'compare__label--' + (i ? 'bottom' : 'top')]"
+            :style="{ opacity: reveal }">
+            <span class="compare__meta">{{ panel.meta }}</span>
+            <span class="compare__title">{{ panel.title }}</span>
+        </p>
         <svg class="compare__lines" :viewBox="`0 0 ${STAGE.width} ${STAGE.height}`" aria-hidden="true">
             <rect v-for="(box, i) in boxes" :key="'b' + i" :x="box.x" :y="box.y" :width="box.w" :height="box.h" rx="3"
                 pathLength="1" class="compare__box" :style="{ strokeDashoffset: 1 - outline }" />
@@ -48,8 +49,6 @@ export interface Panel {
     /** 1: the image just covers the panel. */
     zoom: number
     boxes: Box[]
-    /** Side of the panel the caption sits on; keep it off the outlines. */
-    align?: 'left' | 'right'
 }
 
 const props = defineProps<{
@@ -85,7 +84,8 @@ function place(panel: Panel, index: number) {
     const height = base.height * (props.drift ?? 1)
     const width = height * aspect
     const left = Math.min(0, Math.max(STAGE.width - width, STAGE.width / 2 - (panel.focus.x / 100) * width))
-    const top = Math.min(0, Math.max(frame.height - height, frame.focusY - (panel.focus.y / 100) * height))
+    // Vertically the detail wins: a detail near a picture's edge may leave dark above or below it.
+    const top = frame.focusY - (panel.focus.y / 100) * height
     return { frame, base, width, height, left, top }
 }
 
@@ -97,8 +97,6 @@ const panels = computed(() => [props.top, props.bottom].map((panel, i) => {
         src: panel.src,
         meta: panel.meta,
         title: panel.title,
-        align: panel.align ?? 'left',
-        labelTop: i === 0 ? frame.height - 70 : 146,
         style: {
             top: frame.top + 'px',
             height: frame.height + 'px',
@@ -108,15 +106,19 @@ const panels = computed(() => [props.top, props.bottom].map((panel, i) => {
     }
 }))
 
-/** Outlines in stage pixels, top panel first. */
+/** Outlines in stage pixels, top panel first, cut to their own panel. */
 const placedBoxes = computed(() => [props.top, props.bottom].map((panel, i) => {
     const { frame, width, height, left, top } = place(panel, i)
-    return panel.boxes.map((box) => ({
-        x: left + (box.x / 100) * width,
-        y: frame.top + top + (box.y / 100) * height,
-        w: (box.w / 100) * width,
-        h: (box.h / 100) * height,
-    }))
+    const inset = 4
+    return panel.boxes.map((box) => {
+        const x = left + (box.x / 100) * width
+        const y = frame.top + top + (box.y / 100) * height
+        const x1 = Math.max(inset, x)
+        const y1 = Math.max(frame.top + inset, y)
+        const x2 = Math.min(STAGE.width - inset, x + (box.w / 100) * width)
+        const y2 = Math.min(frame.top + frame.height - inset, y + (box.h / 100) * height)
+        return { x: x1, y: y1, w: Math.max(0, x2 - x1), h: Math.max(0, y2 - y1) }
+    })
 }))
 
 const boxes = computed(() => placedBoxes.value.flat())
@@ -168,45 +170,54 @@ const opacity = computed(() => props.opacity ?? 1)
 .compare__shade--top {
     background:
         linear-gradient(to bottom, rgba(5, 5, 5, 0.75), transparent 34%),
-        linear-gradient(to top, rgba(5, 5, 5, 0.8), transparent 30%);
+        linear-gradient(to top, rgba(5, 5, 5, 0.85), transparent 22%);
 }
 
 .compare__shade--bottom {
     background:
-        linear-gradient(to top, rgba(5, 5, 5, 0.85), transparent 58%);
+        linear-gradient(to bottom, rgba(5, 5, 5, 0.85), transparent 22%),
+        linear-gradient(to top, rgba(5, 5, 5, 0.8), transparent 40%);
 }
 
 .compare__label {
     position: absolute;
+    z-index: 2;
     left: 24px;
-    right: 60px;
-    display: grid;
-    gap: 4px;
+    right: 24px;
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    justify-content: center;
     margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
     text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
 }
 
-.compare__label--right {
-    left: auto;
-    right: 60px;
-    width: 220px;
-    justify-items: end;
-    text-align: right;
+.compare__label--top {
+    top: 343px;
+}
+
+.compare__label--bottom {
+    top: 408px;
 }
 
 .compare__meta {
+    flex: none;
     color: var(--aw-color-gold-bright);
     font-family: var(--aw-font-mono);
-    font-size: 10px;
+    font-size: 9.5px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
 .compare__title {
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-family: var(--aw-font-artwork);
-    font-size: 20px;
+    font-size: 15px;
     font-style: italic;
-    line-height: 1.1;
+    line-height: 1.2;
 }
 
 .compare__lines {

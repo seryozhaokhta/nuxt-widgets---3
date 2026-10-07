@@ -211,7 +211,7 @@ const registerOpacity = computed(() => fade(t.value, T.flightParis[0] + 0.3, T.f
 const menPanel = (focus: { x: number; y: number }, zoom: number, boxes: Panel['boxes']): Panel => ({
     src: works.meninas.image,
     size: works.meninas.size,
-    meta: '1656 · Velázquez · Madrid',
+    meta: '1656 · Velázquez',
     title: 'Las Meninas',
     focus,
     zoom,
@@ -224,7 +224,7 @@ const SCENES = [
         note: 'A mirror shows who stands where we stand',
         top: {
             src: works.arnolfini.image, size: works.arnolfini.size,
-            meta: '1434 · Jan van Eyck · Bruges', title: 'The Arnolfini Portrait',
+            meta: '1434 · Van Eyck', title: 'The Arnolfini Portrait',
             focus: { x: 50.2, y: 29.6 }, zoom: 2.1,
             boxes: [{ x: 42.4, y: 23.8, w: 15.6, h: 11.6 }],
         },
@@ -233,14 +233,14 @@ const SCENES = [
     {
         kind: 'Quotation',
         note: 'The painter at work, his canvas from behind',
-        top: { ...menPanel({ x: 16, y: 44.5 }, 1.21, [
+        top: menPanel({ x: 16, y: 44.5 }, 1.21, [
             { x: 0.6, y: 20, w: 16, h: 42 },
             { x: 17.5, y: 49, w: 11.5, h: 17 },
-        ]), align: 'right' as const },
+        ]),
         bottom: {
             src: works.goya.image, size: works.goya.size,
-            meta: '1800 · Francisco Goya · Madrid', title: 'The Family of Charles IV',
-            focus: { x: 10, y: 38 }, zoom: 1.25, align: 'right' as const,
+            meta: '1800 · Goya', title: 'The Family of Charles IV',
+            focus: { x: 10, y: 38 }, zoom: 1.25,
             boxes: [
                 { x: 0.3, y: 20, w: 7.6, h: 35 },
                 { x: 10.5, y: 27, w: 9.5, h: 15 },
@@ -253,8 +253,8 @@ const SCENES = [
         top: menPanel({ x: 47, y: 70 }, 1.35, [{ x: 39, y: 58, w: 18, h: 24 }]),
         bottom: {
             src: works.boit.image, size: works.boit.size,
-            meta: '1882 · John Singer Sargent · Paris', title: 'The Daughters of Edward Darley Boit',
-            focus: { x: 13, y: 42 }, zoom: 1.6, align: 'right' as const,
+            meta: '1882 · Sargent', title: 'The Daughters of Edward Darley Boit',
+            focus: { x: 13, y: 42 }, zoom: 1.6,
             boxes: [{ x: 4, y: 35, w: 18, h: 33 }],
         },
     },
@@ -551,7 +551,7 @@ const { touch } = useTouch(root, [
     z-index: 3;
     left: 24px;
     right: 24px;
-    top: 404px;
+    top: 568px;
     margin: 0;
     color: var(--aw-color-text-muted);
     font-family: var(--aw-font-mono);

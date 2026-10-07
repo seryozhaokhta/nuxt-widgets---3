@@ -111,6 +111,11 @@ python3 tools/reel/soundtrack.py timeline                 # временный �
 - Звук (`tools/reel/soundtrack.py`, numpy + scipy) — синтезированная заглушка под монтаж; перед публикацией
   заменить лицензионным треком. Итоговый файл ужат до ~26 МБ, рядом лежит почти без потерь `*.silent.mp4`.
 - Тексты роликов — `apps/reel/reel/content.ts` (сверены с Википедией и страницами музеев).
+- **Серия «Threads»** (нити влияния) — один шаблон `apps/reel/variants/thread/ThreadReel.vue`, а каждый ролик —
+  только данные в `variants/thread/series.ts`: сцены (картина, сторис, перелёт по карте, сравнение двух картин
+  с обведёнными деталями, граф, финал), координаты деталей в процентах картины и тексты. Факты и источники —
+  `apps/reel/research/series.md`, картинки и лицензии — `apps/playground/public/assets/reel/SOURCES.md`.
+  Рендер: `npm run reel:render -- threads-japan` (а также `threads-supper`, `threads-mona-lisa`).
 
 ## Новая механика
 

@@ -1,10 +1,28 @@
+import { defineComponent, h } from 'vue'
 import type { ReelVariant } from '~/reel/time'
+import { series } from './thread/series'
+import { duration, sounds, type ThreadConfig } from './thread/types'
 import * as timeline from './timeline'
 import * as kinetic from './kinetic'
 import * as wall from './wall'
 import * as meninasReel from './meninas'
 
+const thread = (config: ThreadConfig): ReelVariant => ({
+    id: config.id,
+    title: config.title,
+    description: config.description,
+    duration: duration(config),
+    bpm: config.bpm,
+    mood: 'pulse',
+    sounds: sounds(config),
+    component: async () => {
+        const { default: ThreadReel } = await import('./thread/ThreadReel.vue')
+        return defineComponent(() => () => h(ThreadReel, { config }))
+    },
+})
+
 export const variants: ReelVariant[] = [
+    ...series.map(thread),
     {
         id: 'maptest',
         title: 'Map styles (sketch)',
