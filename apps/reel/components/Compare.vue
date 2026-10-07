@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { STAGE } from '~/reel/time'
+import { rectStyle } from '~/reel/motion'
 
 export interface Box {
     /** Percent of the image. */
@@ -64,6 +65,8 @@ const props = defineProps<{
     note: string
     chipOpacity: number
     opacity?: number
+    /** Slow push-in on both pictures, as a factor of their zoom. */
+    drift?: number
 }>()
 
 /** Panel rectangles on the stage, and where in each the borrowed detail should sit. */
@@ -78,15 +81,16 @@ function place(panel: Panel, index: number) {
     const frame = LAYOUT[index]!
     const aspect = panel.size.width / panel.size.height
     const coverHeight = Math.max(frame.height, STAGE.width / aspect)
-    const height = coverHeight * panel.zoom
+    const base = { width: coverHeight * panel.zoom * aspect, height: coverHeight * panel.zoom }
+    const height = base.height * (props.drift ?? 1)
     const width = height * aspect
     const left = Math.min(0, Math.max(STAGE.width - width, STAGE.width / 2 - (panel.focus.x / 100) * width))
     const top = Math.min(0, Math.max(frame.height - height, frame.focusY - (panel.focus.y / 100) * height))
-    return { frame, width, height, left, top }
+    return { frame, base, width, height, left, top }
 }
 
 const panels = computed(() => [props.top, props.bottom].map((panel, i) => {
-    const { frame, width, height, left, top } = place(panel, i)
+    const { frame, base, width, height, left, top } = place(panel, i)
     // Top wipes in from the left, bottom from the right.
     const hidden = (1 - props.reveal) * 100
     return {
@@ -100,7 +104,7 @@ const panels = computed(() => [props.top, props.bottom].map((panel, i) => {
             height: frame.height + 'px',
             clipPath: i === 0 ? `inset(0 ${hidden}% 0 0)` : `inset(0 0 0 ${hidden}%)`,
         },
-        image: { left: left + 'px', top: top + 'px', width: width + 'px', height: height + 'px' },
+        image: rectStyle({ left, top, width, height }, base),
     }
 }))
 

@@ -75,7 +75,7 @@ import TouchDot from '~/components/TouchDot.vue'
 import Grain from '~/components/Grain.vue'
 import WallLabel, { type Label } from '~/components/WallLabel.vue'
 import { bocklin, bude, places, venus } from '~/reel/content'
-import { ease, fade, keys, lerp, span, tween } from '~/reel/motion'
+import { ease, fade, keys, lerp, rectStyle, span, tween } from '~/reel/motion'
 import { holdFirstFrame, reelTime, STAGE } from '~/reel/time'
 import { useTouch } from '~/reel/touch'
 import { era, yearBetween, yearDigits } from '~/reel/years'
@@ -175,11 +175,14 @@ const venusStyle = computed(() => {
     const height = STAGE.height * zoom
     const px = lerp(0.2, 0.46, p)
     const py = lerp(0.42, 0.5, p)
+    const rect = {
+        width,
+        height,
+        left: Math.min(0, Math.max(STAGE.width - width, STAGE.width / 2 - px * width)),
+        top: Math.min(0, Math.max(STAGE.height - height, STAGE.height / 2 - py * height)),
+    }
     return {
-        width: width + 'px',
-        height: height + 'px',
-        left: Math.min(0, Math.max(STAGE.width - width, STAGE.width / 2 - px * width)) + 'px',
-        top: Math.min(0, Math.max(STAGE.height - height, STAGE.height / 2 - py * height)) + 'px',
+        ...rectStyle(rect, { width: STAGE.height * VENUS_ASPECT, height: STAGE.height }),
         opacity: crossfade(T.toVenus, [12.2, 13.0]),
     }
 })
@@ -197,11 +200,9 @@ const bocklinStyle = computed(() => {
     const zoom = lerp(1.18, 1.0, p)
     const height = STAGE.height * zoom
     const width = height * BOCKLIN_ASPECT
+    const rect = { width, height, left: (STAGE.width - width) / 2 + lerp(40, 0, p), top: (STAGE.height - height) * 0.3 }
     return {
-        width: width + 'px',
-        height: height + 'px',
-        left: (STAGE.width - width) / 2 + lerp(40, 0, p) + 'px',
-        top: (STAGE.height - height) * 0.3 + 'px',
+        ...rectStyle(rect, { width: STAGE.height * BOCKLIN_ASPECT, height: STAGE.height }),
         opacity: crossfade(T.toBocklin, T.toCard),
     }
 })

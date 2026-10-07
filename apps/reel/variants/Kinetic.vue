@@ -102,7 +102,7 @@ import TouchDot from '~/components/TouchDot.vue'
 import Grain from '~/components/Grain.vue'
 import YearCounter from '~/components/YearCounter.vue'
 import { bocklin, bude, venus } from '~/reel/content'
-import { ease, lerp, span, tween } from '~/reel/motion'
+import { ease, lerp, rectStyle, span, tween } from '~/reel/motion'
 import { holdFirstFrame, reelTime, STAGE } from '~/reel/time'
 import { useTouch } from '~/reel/touch'
 import { yearBetween } from '~/reel/years'
@@ -180,12 +180,10 @@ const crop = computed(() => {
     const height = STAGE.height * zoom
     return {
         ...c,
-        style: {
-            width: width + 'px',
-            height: height + 'px',
-            left: STAGE.width / 2 - (c.x / 100) * width + 'px',
-            top: STAGE.height / 2 - (c.y / 100) * height + 'px',
-        },
+        style: rectStyle(
+            { width, height, left: STAGE.width / 2 - (c.x / 100) * width, top: STAGE.height / 2 - (c.y / 100) * height },
+            { width: STAGE.height * ASPECT * 3, height: STAGE.height * 3 },
+        ),
     }
 })
 
@@ -234,13 +232,16 @@ const bandPainting = computed(() => {
     const p = ease.inOut(span(t.value, 16.5, 18.5))
     const height = 360
     const width = height * ASPECT
-    return { height: height + 'px', width: width + 'px', left: lerp(0, STAGE.width - width, p) + 'px', top: BAND_CENTER - height * 0.45 + 'px' }
+    return rectStyle({ height, width, left: lerp(0, STAGE.width - width, p), top: BAND_CENTER - height * 0.45 }, { width, height })
 })
 const bandPortrait = computed(() => {
     const zoom = lerp(1, 1.08, span(t.value, 16.5, 18.5))
     const width = STAGE.width * zoom
     const height = width * (4389 / 3543)
-    return { width: width + 'px', height: height + 'px', left: (STAGE.width - width) / 2 + 'px', top: BAND_CENTER - height * 0.3 + 'px' }
+    return rectStyle(
+        { width, height, left: (STAGE.width - width) / 2, top: BAND_CENTER - height * 0.3 },
+        { width: STAGE.width, height: STAGE.width * (4389 / 3543) },
+    )
 })
 
 // ── End ──

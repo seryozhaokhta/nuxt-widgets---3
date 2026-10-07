@@ -102,3 +102,26 @@ export function fade(time: number, start: number, end: number, fadeIn = 0.3, fad
     if (time < start || time > end) return 0
     return Math.min(fadeIn ? span(time, start, start + fadeIn) : 1, fadeOut ? 1 - span(time, end - fadeOut, end) : 1)
 }
+
+export interface Rect {
+    left: number
+    top: number
+    width: number
+    height: number
+}
+
+/**
+ * Places a box of a fixed base size over `rect` with a transform. Layout
+ * properties snap to whole device pixels, so a slow pan or zoom done with
+ * them shakes; a transform moves by fractions of a pixel.
+ */
+export function rectStyle(rect: Rect, base: { width: number; height: number }) {
+    return {
+        left: '0px',
+        top: '0px',
+        width: base.width + 'px',
+        height: base.height + 'px',
+        transform: `translate(${rect.left}px, ${rect.top}px) scale(${rect.width / base.width}, ${rect.height / base.height})`,
+        transformOrigin: '0 0',
+    }
+}

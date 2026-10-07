@@ -19,18 +19,24 @@ const props = withDefaults(defineProps<{
     out?: number
     stagger?: number
     duration?: number
-}>(), { stagger: 0.07, duration: 0.75 })
+    /** Seconds the exit takes; keep `out` + this before the next text in the same place starts. */
+    outDuration?: number
+}>(), { stagger: 0.07, duration: 0.75, outDuration: 0.32 })
 
 function lineStyle(i: number) {
     const t = reelTime.value
     const start = props.at + i * props.stagger
     const enter = tween(t, start, start + props.duration, ease.expoOut)
     let y = (1 - enter) * 105
+    let opacity = 1
     if (props.out !== undefined) {
-        const leave = tween(t, props.out + i * props.stagger * 0.6, props.out + i * props.stagger * 0.6 + props.duration * 0.7, ease.expoIn)
-        y -= leave * 105
+        // All lines leave together, fast, fading as they go, so they're gone before anything replaces them.
+        const leave = tween(t, props.out, props.out + props.outDuration, ease.in)
+        y -= leave * 60
+        opacity = 1 - leave
     }
-    return { transform: `translateY(${y}%)`, visibility: enter > 0 && y > -104 ? ('visible' as const) : ('hidden' as const) }
+    const visible = enter > 0 && opacity > 0
+    return { transform: `translateY(${y}%)`, opacity, visibility: visible ? ('visible' as const) : ('hidden' as const) }
 }
 </script>
 

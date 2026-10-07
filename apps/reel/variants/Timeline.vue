@@ -57,8 +57,8 @@
         </p>
 
         <!-- Captions -->
-        <RevealText class="tl__caption" :lines="['12,000 years', 'on one slider.']" :at="0.25" :out="2.55" />
-        <RevealText class="tl__caption" :lines="['Coastlines follow', 'the sea level.']" :at="2.9" :out="5.1" />
+        <RevealText class="tl__caption" :lines="['12,000 years', 'on one slider.']" :at="0.25" :out="2.5" />
+        <RevealText class="tl__caption" :lines="['Coastlines follow', 'the sea level.']" :at="2.9" :out="5.0" />
         <RevealText class="tl__caption" :lines="['1,600 states,', 'real borders.']" :at="5.4" :out="7.45" />
         <p class="tl__source" :style="{ opacity: fade(t, 5.7, 7.5, 0.3, 0.2) }">Data: Cliopatria / Seshat · CC BY 4.0</p>
         <RevealText class="tl__caption" :lines="['Read a painting', 'detail by detail.']" :at="8.75" :out="11.0" />
@@ -93,7 +93,7 @@ import Grain from '~/components/Grain.vue'
 import YearCounter from '~/components/YearCounter.vue'
 import YearSlider from '@art-widgets/time-map/YearSlider.vue'
 import { bocklin, bude, places, venus } from '~/reel/content'
-import { ease, fade, keys, lerp, span, tween } from '~/reel/motion'
+import { ease, fade, keys, lerp, rectStyle, span, tween } from '~/reel/motion'
 import { holdFirstFrame, reelTime, STAGE } from '~/reel/time'
 import { useTouch } from '~/reel/touch'
 import { yearBetween } from '~/reel/years'
@@ -194,11 +194,8 @@ function measureStory() {
 const paintingStyle = computed(() => {
     const rect = paintingRect.value
     return {
-        left: rect.left + 'px',
-        top: rect.top + 'px',
-        width: rect.width + 'px',
-        height: rect.height + 'px',
-        borderRadius: rect.radius + 'px',
+        ...rectStyle(rect, { width: COVER_W, height: STAGE.height }),
+        borderRadius: (rect.radius * COVER_W) / rect.width + 'px',
         opacity: 1 - span(t.value, T.shrinkEnd, T.shrinkEnd + 0.15),
     }
 })

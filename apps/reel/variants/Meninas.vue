@@ -53,8 +53,8 @@
         </p>
 
         <!-- Captions -->
-        <RevealText class="mn__caption" :lines="['She’s looking at you.']" :at="0.25" :out="1.35" />
-        <RevealText class="mn__caption" :lines="['So is the painter.']" :at="1.45" :out="2.65" />
+        <RevealText class="mn__caption" :lines="['She’s looking at you.']" :at="0.2" :out="1.2" />
+        <RevealText class="mn__caption" :lines="['So is the painter.']" :at="1.6" :out="2.6" />
         <RevealText class="mn__caption" :lines="['Where did the', 'mirror come from?']" :at="9.1" :out="10.15" />
         <RevealText v-for="line in nodeLines" :key="line.id" class="mn__caption mn__caption--top" :lines="line.lines"
             :at="line.at" :out="line.out" :duration="0.45" />
@@ -87,7 +87,7 @@ import TouchDot from '~/components/TouchDot.vue'
 import Grain from '~/components/Grain.vue'
 import YearCounter from '~/components/YearCounter.vue'
 import { meninas, works } from '~/reel/content'
-import { ease, fade, keys, lerp, span, tween } from '~/reel/motion'
+import { ease, fade, keys, lerp, rectStyle, span, tween } from '~/reel/motion'
 import { holdFirstFrame, reelTime, STAGE } from '~/reel/time'
 import { useTouch } from '~/reel/touch'
 import { COMPARES, NODE_TIMES, STEP, T } from './meninas'
@@ -155,11 +155,8 @@ const paintingStyle = computed(() => {
         }
     }
     return {
-        left: rect.left + 'px',
-        top: rect.top + 'px',
-        width: rect.width + 'px',
-        height: rect.height + 'px',
-        borderRadius: 6 * shrink + 'px',
+        ...rectStyle(rect, { width: COVER_W, height: STAGE.height }),
+        borderRadius: (6 * shrink * COVER_W) / rect.width + 'px',
         opacity: 1 - span(time, T.shrink[1], T.shrink[1] + 0.15),
     }
 })
@@ -266,14 +263,13 @@ const SCENES = [
 const compares = computed(() => SCENES.map((scene, i) => {
     const { at, until } = COMPARES[i]!
     const local = t.value - at
-    const zoomDrift = 1 + 0.05 * span(t.value, at, until)
-    const drift = (panel: Panel) => ({ ...panel, zoom: panel.zoom * zoomDrift })
     return {
         kind: scene.kind,
         visible: t.value >= at && t.value < until,
         props: {
-            top: drift(scene.top as Panel),
-            bottom: drift(scene.bottom as Panel),
+            top: scene.top as Panel,
+            bottom: scene.bottom as Panel,
+            drift: 1 + 0.05 * ease.inOut(span(t.value, at, until)),
             reveal: ease.quartOut(span(local, ...STEP.reveal)),
             outline: ease.inOut(span(local, ...STEP.outline)),
             threadProgress: ease.inOut(span(local, ...STEP.thread)),
