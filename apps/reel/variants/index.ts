@@ -6,6 +6,16 @@ import * as meninasReel from './meninas'
 
 export const variants: ReelVariant[] = [
     {
+        id: 'maptest',
+        title: 'Map styles (sketch)',
+        description: 'Four stills comparing map styles.',
+        duration: 4,
+        bpm: 100,
+        mood: 'pulse',
+        sounds: [],
+        component: () => import('./MapTest.vue'),
+    },
+    {
         id: 'meninas',
         title: 'E · Meninas',
         description: 'Threads of influence around Las Meninas: each borrowing shown side by side, then a growing graph.',

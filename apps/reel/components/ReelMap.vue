@@ -4,30 +4,35 @@
   don't collide, and pins.
 -->
 <template>
-    <div class="reel-map" :style="{ opacity }">
+    <div :class="['reel-map', 'reel-map--' + mode]" :style="{ opacity }">
         <div class="reel-map__world" :style="worldStyle">
             <TimeMapGeography :geography="map.geography" :features="map.features ?? []" :polities="polities"
                 :projection="projection" :land-url="landUrl" :year="year" :zoom="camera.zoom * strokeZoom"
                 label="World map" />
+            <svg v-if="highlighted.length" class="reel-map__highlight" :viewBox="`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`"
+                :style="{ '--zoom': camera.zoom * strokeZoom }" aria-hidden="true">
+                <path v-for="shape in highlighted" :key="shape.key" :d="shape.d" :style="{ opacity: shape.opacity }" />
+            </svg>
         </div>
-        <span v-for="label in labels" :key="label.key" class="reel-map__label" :style="label.style">{{ label.text }}</span>
+        <span v-for="label in labels" :key="label.key" :class="['reel-map__label', { 'reel-map__label--strong': label.strong }]"
+            :style="label.style">{{ label.text }}</span>
         <svg v-if="placedArcs.length" class="reel-map__arcs" :viewBox="`0 0 ${STAGE.width} ${STAGE.height}`" aria-hidden="true">
             <path v-for="(arc, i) in placedArcs" :key="i" :d="arc.d" pathLength="1"
                 :style="{ strokeDashoffset: 1 - arc.progress }" />
         </svg>
         <div v-for="pin in placedPins" :key="pin.id" class="reel-map__pin" :style="pin.style">
             <span class="reel-map__pin-dot" />
-            <span v-if="pin.label" class="reel-map__pin-label">{{ pin.label }}</span>
+            <span v-if="pin.label" :class="['reel-map__pin-label', { 'reel-map__pin-label--left': pin.flip }]">{{ pin.label }}</span>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, shallowRef } from 'vue'
-import { geoCentroid } from 'd3-geo'
+import { geoCentroid, geoContains } from 'd3-geo'
 import { asTimeMapData, type LonLat } from '@art-widgets/time-map'
 import TimeMapGeography from '@art-widgets/time-map/TimeMapGeography.vue'
-import { createProjection, featureGeometry, MAP_HEIGHT, MAP_WIDTH } from '@art-widgets/time-map/geo'
+import { createPath, createProjection, featureGeometry, MAP_HEIGHT, MAP_WIDTH } from '@art-widgets/time-map/geo'
 import type { Polity } from '@art-widgets/time-map/usePolities'
 import mapJson from '~data/map-ancient.json'
 import { loadPolities, politiesAt } from '~/reel/polities'
@@ -67,10 +72,19 @@ const props = withDefaults(defineProps<{
     opacity?: number
     /** Stroke weight relative to the widget. */
     strokeZoom?: number
+    /**
+     * "full": the widget's look. "quiet": hairline borders, no fills or
+     * names except for highlighted states, so the route and places read first.
+     */
+    mode?: 'full' | 'quiet'
+    /** Places whose state is filled in gold and named; `opacity` fades each one. */
+    highlight?: { at: LonLat; opacity?: number }[]
     /** Stage areas kept free of names (captions, UI). */
     avoid?: { x: number; y: number; w: number; h: number }[]
 }>(), {
     avoid: () => [],
+    mode: 'full',
+    highlight: () => [],
     pins: () => [],
     arcs: () => [],
     labelArea: 400_000,
@@ -99,6 +113,38 @@ onMounted(() => {
 })
 
 const polities = computed<Polity[]>(() => politiesAt(chunks.value, props.year))
+
+const path = createPath(projection)
+const pathCache = new Map<string, string>()
+
+/** The state each highlighted place lies in (realms are skipped: they cover their vassals). */
+/** Borders are simplified to 0.1°, so a coastal city can fall just outside its state; look around it too. */
+const NEAR = [[0, 0], [0.15, 0], [-0.15, 0], [0, 0.15], [0, -0.15], [0.3, 0.3], [-0.3, 0.3], [0.3, -0.3], [-0.3, -0.3]]
+
+const highlightedPolities = computed(() => {
+    const found = new Map<string, { polity: Polity; opacity: number }>()
+    for (const place of props.highlight) {
+        for (const [dx, dy] of NEAR) {
+            const at: LonLat = [place.at[0] + dx!, place.at[1] + dy!]
+            const polity = polities.value.find((item) => !item.realm && geoContains(item.geometry, at))
+            if (!polity) continue
+            // Two places in one state light it once.
+            const opacity = Math.max(found.get(polity.key)?.opacity ?? 0, place.opacity ?? 1)
+            found.set(polity.key, { polity, opacity })
+            break
+        }
+    }
+    return [...found.values()]
+})
+
+const highlighted = computed(() => highlightedPolities.value.map(({ polity, opacity }) => {
+    let d = pathCache.get(polity.key)
+    if (d === undefined) {
+        d = path(polity.geometry) ?? ''
+        pathCache.set(polity.key, d)
+    }
+    return { key: polity.key, d, opacity }
+}))
 
 const epochs = [...map.geography.epochs].sort((a, b) => a.from - b.from)
 const landUrl = computed(() => epochs.reduce((found, epoch) => (epoch.from <= props.year ? epoch.land : found), epochs[0]?.land))
@@ -135,14 +181,31 @@ const overlaps = (a: Box, b: Box) => Math.abs(a.x - b.x) * 2 < a.w + b.w && Math
 const labels = computed(() => {
     // Avoid areas are given by their top-left corner; boxes here are centred.
     const placed: Box[] = props.avoid.map((a) => ({ x: a.x + a.w / 2, y: a.y + a.h / 2, w: a.w, h: a.h }))
-    const out: { key: string; text: string; style: Record<string, string> }[] = []
+    const out: { key: string; text: string; style: Record<string, string>; strong?: boolean }[] = []
     const inside = (p: { x: number; y: number }) => p.x > 20 && p.x < STAGE.width - 20 && p.y > 20 && p.y < STAGE.height - 20
 
     for (const pin of props.pins) {
         const p = toStage(pin.at)
-        if (p) placed.push({ x: p.x, y: p.y, w: 24, h: 24 }, { x: p.x + 50, y: p.y, w: 100, h: 18 })
+        const width = (pin.label?.length ?? 0) * 7.2 + 16
+        const flip = p && p.x + 16 + width > STAGE.width - 8
+        if (p) placed.push({ x: p.x, y: p.y, w: 28, h: 28 }, { x: flip ? p.x - 14 - width / 2 : p.x + 14 + width / 2, y: p.y, w: width, h: 20 })
     }
-    if (props.labelArea > 0) {
+    for (const { polity, opacity } of highlightedPolities.value) {
+        const p = toStage(polity.label)
+        const text = typeof polity.name === 'string' ? polity.name : polity.name.en
+        if (!p || !text) continue
+        // Next to the city's pin, the state's name moves to the first free spot around its centre.
+        const w = text.length * 8 + 12
+        for (const [dx, dy] of [[0, 0], [0, 26], [0, -26], [0, 48], [0, -48], [w / 2 + 20, 0], [-w / 2 - 20, 0]]) {
+            const x = clamp(p.x + dx!, 10 + w / 2, STAGE.width - 10 - w / 2)
+            const box = { x, y: p.y + dy!, w, h: 20 }
+            if (placed.some((other) => overlaps(box, other))) continue
+            placed.push(box)
+            out.push({ key: 'hl:' + polity.key, text, style: { transform: centredAt(box), opacity: String(opacity) }, strong: true })
+            break
+        }
+    }
+    if (props.labelArea > 0 && props.mode === 'full') {
         const states = polities.value.filter((polity) => !polity.realm && polity.area >= props.labelArea)
             .sort((a, b) => b.area - a.area)
         for (const polity of states) {
@@ -157,7 +220,7 @@ const labels = computed(() => {
             out.push({ key: polity.key, text, style: { transform: centredAt(p), opacity: String(age) } })
         }
     }
-    if (props.featureLabels) {
+    if (props.featureLabels && props.mode === 'full') {
         for (const feature of map.features ?? []) {
             if (!feature.name || feature.hideLabel || feature.kind === 'state') continue
             if (props.year < feature.from || props.year > feature.to) continue
@@ -193,7 +256,8 @@ const placedArcs = computed(() => props.arcs.flatMap((arc) => {
 const placedPins = computed(() => props.pins.flatMap((pin) => {
     const p = toStage(pin.at)
     if (!p) return []
-    return [{ ...pin, style: { transform: `translate(${p.x}px, ${p.y}px)`, opacity: String(pin.opacity ?? 1) } }]
+    const flip = p.x + 16 + (pin.label?.length ?? 0) * 7.2 > STAGE.width - 8
+    return [{ ...pin, flip, style: { transform: `translate(${p.x}px, ${p.y}px)`, opacity: String(pin.opacity ?? 1) } }]
 }))
 </script>
 
@@ -228,6 +292,53 @@ const placedPins = computed(() => props.pins.flatMap((pin) => {
     white-space: nowrap;
     text-shadow: 0 1px 2px #000, 0 0 8px #000;
     pointer-events: none;
+}
+
+.reel-map__highlight {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.reel-map__highlight path {
+    fill: rgba(201, 164, 106, 0.26);
+    stroke: var(--aw-color-gold-bright);
+    stroke-width: calc(1.1px / var(--zoom));
+    stroke-linejoin: round;
+}
+
+/* Quiet: the land and the route first; borders are hairlines, no fills. */
+.reel-map--quiet .reel-map__world :deep(.geo__state) {
+    fill: none;
+    stroke: rgba(201, 164, 106, 0.3);
+}
+
+.reel-map--quiet .reel-map__world :deep(.geo__realm) {
+    display: none;
+}
+
+.reel-map--quiet .reel-map__world :deep(.geo__river) {
+    opacity: 0.55;
+}
+
+.reel-map--quiet .reel-map__world :deep(.geo__culture),
+.reel-map--quiet .reel-map__world :deep(.geo__ice) {
+    display: none;
+}
+
+.reel-map__label--strong {
+    color: var(--aw-color-gold-bright);
+    font-family: var(--aw-font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.reel-map__pin-label--left {
+    right: 14px;
+    left: auto;
 }
 
 .reel-map__arcs {
@@ -271,7 +382,7 @@ const placedPins = computed(() => props.pins.flatMap((pin) => {
     top: -8px;
     color: var(--aw-color-text);
     font-family: var(--aw-font-mono);
-    font-size: 11px;
+    font-size: 11.5px;
     letter-spacing: 0.04em;
     white-space: nowrap;
     text-shadow: 0 1px 2px #000, 0 0 8px #000;
