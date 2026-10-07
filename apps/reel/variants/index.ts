@@ -2,8 +2,19 @@ import type { ReelVariant } from '~/reel/time'
 import * as timeline from './timeline'
 import * as kinetic from './kinetic'
 import * as wall from './wall'
+import * as meninasReel from './meninas'
 
 export const variants: ReelVariant[] = [
+    {
+        id: 'meninas',
+        title: 'E · Meninas',
+        description: 'Threads of influence around Las Meninas: each borrowing shown side by side, then a growing graph.',
+        duration: meninasReel.DURATION,
+        bpm: meninasReel.BPM,
+        mood: 'pulse',
+        sounds: meninasReel.SOUNDS,
+        component: () => import('./Meninas.vue'),
+    },
     {
         id: 'timeline',
         title: 'A · Timeline',

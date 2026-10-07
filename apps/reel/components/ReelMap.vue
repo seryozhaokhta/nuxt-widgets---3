@@ -11,6 +11,10 @@
                 label="World map" />
         </div>
         <span v-for="label in labels" :key="label.key" class="reel-map__label" :style="label.style">{{ label.text }}</span>
+        <svg v-if="placedArcs.length" class="reel-map__arcs" :viewBox="`0 0 ${STAGE.width} ${STAGE.height}`" aria-hidden="true">
+            <path v-for="(arc, i) in placedArcs" :key="i" :d="arc.d" pathLength="1"
+                :style="{ strokeDashoffset: 1 - arc.progress }" />
+        </svg>
         <div v-for="pin in placedPins" :key="pin.id" class="reel-map__pin" :style="pin.style">
             <span class="reel-map__pin-dot" />
             <span v-if="pin.label" class="reel-map__pin-label">{{ pin.label }}</span>
@@ -37,6 +41,13 @@ export interface MapCamera {
     zoom: number
 }
 
+export interface MapArc {
+    from: LonLat
+    to: LonLat
+    /** 0–1: how much of the arc is drawn, from `from`. */
+    progress: number
+}
+
 export interface MapPin {
     id: string
     at: LonLat
@@ -48,6 +59,7 @@ const props = withDefaults(defineProps<{
     year: number
     camera: MapCamera
     pins?: MapPin[]
+    arcs?: MapArc[]
     /** Name states larger than this (km²); 0 hides state names. */
     labelArea?: number
     /** Name cultures, ice sheets and lost lands. */
@@ -60,6 +72,7 @@ const props = withDefaults(defineProps<{
 }>(), {
     avoid: () => [],
     pins: () => [],
+    arcs: () => [],
     labelArea: 400_000,
     featureLabels: true,
     opacity: 1,
@@ -159,6 +172,21 @@ const labels = computed(() => {
     return out.map((label) => ({ ...label, style: { ...label.style } }))
 })
 
+/** Arcs bow to one side of the straight line, like flight paths. */
+const placedArcs = computed(() => props.arcs.flatMap((arc) => {
+    const a = toStage(arc.from)
+    const b = toStage(arc.to)
+    if (!a || !b) return []
+    const mx = (a.x + b.x) / 2
+    const my = (a.y + b.y) / 2
+    const dx = b.x - a.x
+    const dy = b.y - a.y
+    const bow = 0.3
+    const cx = mx + dy * bow
+    const cy = my - Math.abs(dx) * bow - Math.abs(dy) * 0.1
+    return [{ d: `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`, progress: arc.progress }]
+}))
+
 const placedPins = computed(() => props.pins.flatMap((pin) => {
     const p = toStage(pin.at)
     if (!p) return []
@@ -196,6 +224,22 @@ const placedPins = computed(() => props.pins.flatMap((pin) => {
     white-space: nowrap;
     text-shadow: 0 1px 2px #000, 0 0 8px #000;
     pointer-events: none;
+}
+
+.reel-map__arcs {
+    position: absolute;
+    inset: 0;
+    width: 432px;
+    height: 768px;
+    overflow: visible;
+}
+
+.reel-map__arcs path {
+    fill: none;
+    stroke: var(--aw-color-gold-bright);
+    stroke-width: 1.6;
+    stroke-dasharray: 1 1;
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9));
 }
 
 .reel-map__pin {

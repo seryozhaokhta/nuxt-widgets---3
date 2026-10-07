@@ -53,23 +53,23 @@ The thread starts in Bruges and keeps coming back to Madrid — to the Prado, wh
 - Meninas Madrid Gallery: [Madrid city council](https://diario.madrid.es/?p=29533),
   [Le Petit Journal](https://lepetitjournal.com/madrid/meninas-velazquez-rues-madrid-323709)
 
-## Plan for the reel (about 36 s, 100 bpm, 1080×1920, English first)
+## The reel as made (variant E, 38 s, 100 bpm, 1080×1920, English)
 
-Influence is shown, not told: two pictures side by side, the borrowed part outlined in gold on both and
-joined by a thread. Each work then folds into a node on a growing graph; the map flies between places;
-the counter runs the years.
+Influence is shown, not told: two pictures one above the other, the borrowed part outlined in gold on
+both and joined by a thread, the kind of borrowing named between them. Then every work becomes a node
+on a growing graph. Timings live in `apps/reel/variants/meninas.ts`.
 
 | Time | Year · place | On screen |
 | --- | --- | --- |
-| 0–2.4 | 1656 · Madrid | Close on the infanta’s face, she looks at us. “She’s looking at you.” Pull back: the whole picture |
-| 2.4–7.2 | 1656 | The story widget walks the picture: the painter, the mirror with the king and queen, Nieto in the door, the red cross painted in later |
-| 7.2–11.4 | 1434 · Bruges | Map flight back in time. Arnolfini beside Meninas, both mirrors outlined and joined: **motif** |
-| 11.4–16.2 | 1800 · Madrid | Goya beside Velázquez: painter at the easel, canvas from the back, outlined in both: **quotation** |
-| 16.2–21.0 | 1879 Madrid → 1882 Paris | Sargent: the copyists’ register date; the Boit girls beside the infanta, the gaze outlined: **study** |
-| 21.0–25.8 | 1957 · 1966 · 1973 | Type only: “Picasso paints it 58 times.” · “Foucault opens a book with it.” · Hamilton: a thread from Velázquez **and** from Picasso — a reference to a reference |
-| 25.8–30.6 | 2005 · 2018 · Madrid | “Struth photographs people looking at it.” · “80 meninas walk out into the street.” |
-| 30.6–36.0 | today | The whole graph, all threads back to 1656. “Every picture answers another.” Art Widgets · Threads of influence |
+| 0–2.7 | 1656 · Madrid | Close on the infanta: “She’s looking at you.” — “So is the painter.” Pull back to the whole picture |
+| 2.7–9.0 | 1656 | The picture shrinks into the story widget; a finger steps through the painter, the mirror (zoom), the doorway |
+| 9.0–10.8 | 1656 → 1434 | “Where did the mirror come from?” The map flies Madrid → Bruges, the counter runs backwards |
+| 10.8–15.0 | 1434 → 1656 | Arnolfini over Meninas, both mirrors outlined: **Motif** |
+| 15.0–19.8 | 1656 → 1800 | Meninas over Goya: canvas from behind and painter outlined in both: **Quotation** |
+| 19.8–21.6 | 1879 → 1882 | Madrid → Paris; a card from the Prado copyists’ register |
+| 21.6–25.8 | 1882 | Meninas over the Boit daughters: the girl who looks at us: **Study** |
+| 25.8–33.1 | 1957–2018 | The graph: Picasso, Dalí, Foucault, Hamilton (a second thread from Picasso), Struth, the Madrid statues, one line each |
+| 33.1–38.4 | | “Every picture answers another.” Art Widgets · threads of influence |
 
-Works still in copyright (Picasso, Dalí, Hamilton, Struth, the Madrid statues) are set as type and never
-shown. Images needed, all public domain: *Las Meninas*, *The Arnolfini Portrait*, Goya’s *The Family of
-Charles IV*, Sargent’s *The Daughters of Edward Darley Boit*; optional: Goya’s etching after *Las Meninas*.
+Works still in copyright (Picasso, Dalí, Hamilton, Struth, the Madrid statues) appear only as named nodes.
+Images and their Commons files: `apps/playground/public/assets/reel/SOURCES.md`.
