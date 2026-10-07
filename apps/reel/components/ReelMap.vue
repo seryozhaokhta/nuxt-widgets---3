@@ -129,7 +129,7 @@ function toStage(at: LonLat) {
 interface Box { x: number; y: number; w: number; h: number }
 
 /** Names move with a transform, not left/top, so they glide instead of stepping a pixel at a time. */
-const at = (p: { x: number; y: number }) => `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`
+const centredAt = (p: { x: number; y: number }) => `translate(${p.x}px, ${p.y}px) translate(-50%, -50%)`
 const overlaps = (a: Box, b: Box) => Math.abs(a.x - b.x) * 2 < a.w + b.w && Math.abs(a.y - b.y) * 2 < a.h + b.h
 
 const labels = computed(() => {
@@ -154,7 +154,7 @@ const labels = computed(() => {
             placed.push(box)
             // States fade in over their first years, so names don't pop.
             const age = clamp((props.year - polity.from) / 40 + 0.35)
-            out.push({ key: polity.key, text, style: { transform: at(p), opacity: String(age) } })
+            out.push({ key: polity.key, text, style: { transform: centredAt(p), opacity: String(age) } })
         }
     }
     if (props.featureLabels) {
@@ -169,7 +169,7 @@ const labels = computed(() => {
             const box = { x: p.x, y: p.y, w: text.length * 6 + 10, h: 15 }
             if (placed.some((other) => overlaps(box, other))) continue
             placed.push(box)
-            out.push({ key: feature.id, text, style: { transform: at(p) } })
+            out.push({ key: feature.id, text, style: { transform: centredAt(p) } })
         }
     }
     return out.map((label) => ({ ...label, style: { ...label.style } }))
