@@ -61,8 +61,8 @@
     "zoom": 2.5
   },
   "credits": {
-    "en": "States: Cliopatria v0.2.1 (Seshat Global History Databank), CC BY 4.0; simplified, with name corrections listed in tools/geo/config.mjs. Relief: NOAA ETOPO1. Rivers and lakes: Natural Earth. Sea level after Lambeck et al. 2014. Cultures, ice sheets and lost lands are drawn by hand and approximate.",
-    "ru": "Государства: Cliopatria v0.2.1 (Seshat Global History Databank), CC BY 4.0; упрощено, с исправлениями названий из tools/geo/config.mjs. Рельеф: NOAA ETOPO1. Реки и озёра: Natural Earth. Уровень моря по Lambeck et al. 2014. Культуры, ледники и исчезнувшие земли нарисованы вручную и приблизительны."
+    "en": "States: Cliopatria v0.2.1 (Seshat Global History Databank), CC BY 4.0, modified: simplified, with corrections of names and borders listed in tools/geo/config.mjs; modern borders follow international law (UN resolutions), with disputed areas from Natural Earth. Relief: NOAA ETOPO1. Rivers and lakes: Natural Earth. Sea level after Lambeck et al. 2014. Cultures, ice sheets and lost lands are drawn by hand and approximate.",
+    "ru": "Государства: Cliopatria v0.2.1 (Seshat Global History Databank), CC BY 4.0, с изменениями: упрощено, исправлены названия и границы (список — в tools/geo/config.mjs); современные границы — по международному праву (резолюции ООН), спорные территории — по Natural Earth. Рельеф: NOAA ETOPO1. Реки и озёра: Natural Earth. Уровень моря по Lambeck et al. 2014. Культуры, ледники и исчезнувшие земли нарисованы вручную и приблизительны."
   },
   "sources": [
     {
@@ -1279,7 +1279,7 @@
         "ru": "Культура Негада"
       },
       "from": -4000,
-      "to": -3401,
+      "to": -3001,
       "shape": [
         [
           [
@@ -1492,7 +1492,7 @@
         "ru": "Скифы"
       },
       "from": -800,
-      "to": -200,
+      "to": -651,
       "shape": [
         [
           [
@@ -2055,12 +2055,12 @@
     {
       "id": 4,
       "name": {
-        "en": "Ancient China",
-        "ru": "Древний Китай"
+        "en": "China",
+        "ru": "Китай"
       },
       "description": {
-        "en": "Ancient Chinese civilization is known for its continuous history and many inventions.",
-        "ru": "Древнекитайская цивилизация известна непрерывной историей и множеством изобретений."
+        "en": "Chinese civilization is known for its continuous history and many inventions.",
+        "ru": "Китайская цивилизация известна непрерывной историей и множеством изобретений."
       },
       "at": [
         112.69,
@@ -2110,6 +2110,19 @@
         },
         {
           "title": {
+            "en": "Warring States",
+            "ru": "Сражающиеся царства"
+          },
+          "start": -475,
+          "end": -221,
+          "approx": true,
+          "description": {
+            "en": "Seven kingdoms fight for the whole of China; Confucius’s heirs, Laozi and Sunzi.",
+            "ru": "Семь царств борются за весь Китай; наследники Конфуция, Лао-цзы и Сунь-цзы."
+          }
+        },
+        {
+          "title": {
             "en": "Qin dynasty",
             "ru": "Династия Цинь"
           },
@@ -2136,6 +2149,32 @@
         },
         {
           "title": {
+            "en": "Six Dynasties",
+            "ru": "Шесть династий"
+          },
+          "start": 220,
+          "end": 589,
+          "approx": false,
+          "description": {
+            "en": "Three Kingdoms, then North and South apart; Buddhism spreads.",
+            "ru": "Троецарствие, затем раскол на Север и Юг; распространяется буддизм."
+          }
+        },
+        {
+          "title": {
+            "en": "Sui dynasty",
+            "ru": "Династия Суй"
+          },
+          "start": 581,
+          "end": 618,
+          "approx": false,
+          "description": {
+            "en": "China reunited; the Grand Canal.",
+            "ru": "Китай снова един; Великий канал."
+          }
+        },
+        {
+          "title": {
             "en": "Tang dynasty",
             "ru": "Династия Тан"
           },
@@ -2145,6 +2184,19 @@
           "description": {
             "en": "A golden age of poetry; cosmopolitan Chang’an.",
             "ru": "Золотой век поэзии; космополитичный Чанъань."
+          }
+        },
+        {
+          "title": {
+            "en": "Five Dynasties and Ten Kingdoms",
+            "ru": "Пять династий и десять царств"
+          },
+          "start": 907,
+          "end": 960,
+          "approx": false,
+          "description": {
+            "en": "Short-lived dynasties in the North, kingdoms in the South.",
+            "ru": "Недолгие династии на Севере, царства на Юге."
           }
         },
         {
@@ -2339,6 +2391,14 @@
           "description": {
             "en": "The Roman state goes on from Constantinople.",
             "ru": "Римское государство продолжается в Константинополе."
+          },
+          "at": [
+            28.98,
+            41.01
+          ],
+          "name": {
+            "en": "Byzantium",
+            "ru": "Византия"
           }
         }
       ]
@@ -2375,6 +2435,19 @@
         },
         {
           "title": {
+            "en": "Macedonians and Seleucids",
+            "ru": "Македоняне и Селевкиды"
+          },
+          "start": -330,
+          "end": -247,
+          "approx": true,
+          "description": {
+            "en": "Alexander’s conquest and the Hellenistic kingdom of the Seleucids.",
+            "ru": "Завоевание Александра и эллинистическое царство Селевкидов."
+          }
+        },
+        {
+          "title": {
             "en": "Parthians",
             "ru": "Парфяне"
           },
@@ -2401,6 +2474,19 @@
         },
         {
           "title": {
+            "en": "Caliphate and Iranian dynasties",
+            "ru": "Халифат и иранские династии"
+          },
+          "start": 651,
+          "end": 1501,
+          "approx": false,
+          "description": {
+            "en": "The Arab conquest, then Samanids, Buyids, Seljuks, Ilkhans and Timurids; Persian becomes a language of high culture.",
+            "ru": "Арабское завоевание, затем Саманиды, Буиды, Сельджуки, Хулагуиды и Тимуриды; персидский становится языком высокой культуры."
+          }
+        },
+        {
+          "title": {
             "en": "Safavids",
             "ru": "Сефевиды"
           },
@@ -2410,6 +2496,19 @@
           "description": {
             "en": "Shia Islam becomes the state faith; Isfahan flourishes.",
             "ru": "Шиизм становится государственной верой; расцвет Исфахана."
+          }
+        },
+        {
+          "title": {
+            "en": "Afsharids and Zands",
+            "ru": "Афшариды и Зенды"
+          },
+          "start": 1736,
+          "end": 1789,
+          "approx": false,
+          "description": {
+            "en": "Nader Shah’s campaigns, then Karim Khan Zand’s rule from Shiraz.",
+            "ru": "Походы Надир-шаха, затем правление Керим-хана Зенда из Шираза."
           }
         },
         {

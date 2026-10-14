@@ -22,12 +22,12 @@
                     <span v-for="label in labels" :key="label.id"
                         :class="['time-map__label', 'time-map__label--' + label.kind, { 'time-map__label--visible': label.visible }]"
                         :style="label.style" aria-hidden="true">{{ label.text }}</span>
-                    <TimeMapMarker v-for="marker in markers" :key="marker.point.id" :point="marker.point" :x="marker.x"
-                        :y="marker.y" :visible="isOnMap(marker.point)"
+                    <TimeMapMarker v-for="marker in markers" :key="marker.point.id" :point="marker.point"
+                        :name="marker.name" :x="marker.x" :y="marker.y" :visible="isOnMap(marker.point)"
                         :active="marker.point.id === selected?.id" :zoom="scale" @select="selectPoint(marker.point)" />
                 </div>
 
-                <div class="time-map__zoom" @mousedown.stop @touchstart.stop>
+                <div ref="zoomRef" class="time-map__zoom" @mousedown.stop @touchstart.stop>
                     <IconButton icon="plus" variant="glass" size="sm" :label="t('zoomIn')" @click="zoomIn" />
                     <IconButton icon="minus" variant="glass" size="sm" :label="t('zoomOut')" @click="zoomOut" />
                     <IconButton icon="fit" variant="glass" size="sm" :label="t('resetView')" :disabled="!isZoomed"
@@ -35,7 +35,7 @@
                 </div>
 
                 <Transition name="time-map-hint">
-                    <p v-if="showWheelHint" class="time-map__hint">{{ t('wheelHint') }}</p>
+                    <p v-if="showWheelHint" class="time-map__hint">{{ t(hintKind === 'touch' ? 'touchHint' : 'wheelHint') }}</p>
                 </Transition>
             </div>
 
@@ -75,10 +75,14 @@ const { t, l, year, locale } = provideI18n(() => props.locale)
 
 const projection = createProjection()
 
+// Rounded so that the server (Node) and the browser, whose trigonometry can
+// differ in the last digits, render the same styles and hydrate cleanly.
+const round = (value: number) => Math.round(value * 1e4) / 1e4
+
 /** Map position of a place, in percent of the map's width and height. */
 function toPercent(at: LonLat): { x: number; y: number } | null {
     const projected = projection(at)
-    return projected ? { x: (projected[0] / MAP_WIDTH) * 100, y: (projected[1] / MAP_HEIGHT) * 100 } : null
+    return projected ? { x: round((projected[0] / MAP_WIDTH) * 100), y: round((projected[1] / MAP_HEIGHT) * 100) } : null
 }
 
 const points = computed(() => [...props.data.points].sort((a, b) => a.founded - b.founded))
@@ -124,9 +128,11 @@ const { polities } = usePolities(() => props.data.geography.polities, currentYea
 const viewportRef = ref<HTMLElement | null>(null)
 const {
     scale,
+    offset,
     style: panZoomStyle,
     handlers: panZoomHandlers,
     showWheelHint,
+    hintKind,
     isZoomed,
     zoomIn,
     zoomOut,
@@ -147,9 +153,11 @@ function isOnMap(point: TimeMapPoint): boolean {
     return point.founded <= currentYear.value && currentYear.value <= until
 }
 
+// A period may move a point and rename it (Rome's empire goes on in Constantinople).
 const markers = computed(() => points.value.flatMap((point) => {
-    const position = toPercent(point.at)
-    return position ? [{ point, ...position }] : []
+    const period = point.periods?.[periodIndexAt(point, currentYear.value)]
+    const position = toPercent(period?.at ?? point.at)
+    return position ? [{ point, name: period?.name ?? point.name, ...position }] : []
 }))
 
 // Names of areas show once the map is zoomed in enough to tell them apart;
@@ -159,7 +167,13 @@ const AREA_LABEL_ZOOM = 1.6
 const BIG_STATE = 1_500_000
 const LABEL_PRIORITY: Record<string, number> = { state: 0, culture: 1, water: 1, river: 1, ice: 1, place: 2 }
 
-const { width: mapWidth } = useElementSize(viewportRef)
+const { width: mapWidth, height: mapHeight } = useElementSize(viewportRef)
+const zoomRef = ref<HTMLElement | null>(null)
+const { width: zoomWidth, height: zoomHeight } = useElementSize(zoomRef)
+// Names are placed for the part of the map in view, once a drag settles.
+const settledOffset = refDebounced(offset, 120)
+/** Names keep this far from the edges of the view, px. */
+const EDGE = 4
 
 interface Box {
     x: number
@@ -178,16 +192,22 @@ function onScreen(position: { x: number; y: number }) {
 }
 
 const labels = computed(() => {
+    // A state drawn in several records at once (a part joined from elsewhere)
+    // is named once, on its largest record.
+    const named = new Set<string>()
     const stateLabels = polities.value
         .filter((polity) => !polity.realm)
         .sort((a, b) => b.area - a.area)
         .flatMap((polity) => {
+            const text = l(polity.name)
+            if (named.has(text)) return []
+            named.add(text)
             const position = toPercent(polity.label)
             if (!position) return []
             return [{
                 id: polity.key,
                 kind: 'state' as const,
-                text: l(polity.name),
+                text,
                 position,
                 wanted: scale.value >= AREA_LABEL_ZOOM || polity.area >= BIG_STATE,
             }]
@@ -216,10 +236,23 @@ const labels = computed(() => {
         .filter((marker) => isOnMap(marker.point))
         .flatMap((marker) => {
             const { x, y } = onScreen(marker)
-            const name = l(marker.point.name)
+            const name = l(marker.name)
             return [{ x, y, width: 22, height: 22 }, { x, y: y - 19, width: name.length * 6.8 + 8, height: 16 }]
         })
-    // A name that collides tries a few nearby spots before giving up.
+    // The part of the zoomed map in view, in the same pixels as onScreen; the
+    // zoom buttons in its corner count as taken.
+    const left = -settledOffset.value.x
+    const top = -settledOffset.value.y
+    const view = { left: left + EDGE, top: top + EDGE, right: left + mapWidth.value - EDGE, bottom: top + mapHeight.value - EDGE }
+    placed.push({
+        x: left + 12 + zoomWidth.value / 2,
+        y: top + 12 + zoomHeight.value / 2,
+        width: zoomWidth.value + 8,
+        height: zoomHeight.value + 8,
+    })
+    const inView = (box: Box) => box.x - box.width / 2 >= view.left && box.x + box.width / 2 <= view.right
+        && box.y - box.height / 2 >= view.top && box.y + box.height / 2 <= view.bottom
+    // A name that collides or runs off the view tries a few nearby spots before giving up.
     const shown = new Map<string, { x: number; y: number }>()
     const order = candidates
         .filter((label) => label.wanted)
@@ -230,7 +263,7 @@ const labels = computed(() => {
         const nudges = [[0, 0], [0, 16], [0, -16], [width / 2 + 8, 0], [-width / 2 - 8, 0]] as const
         for (const [dx, dy] of nudges) {
             const box = { x: center.x + dx, y: center.y + dy, width, height: 15 }
-            if (placed.some((other) => overlaps(box, other))) continue
+            if (!inView(box) || placed.some((other) => overlaps(box, other))) continue
             placed.push(box)
             shown.set(label.id, { x: dx, y: dy })
             break
@@ -367,6 +400,8 @@ watch(currentYear, (now) => {
     background-color: var(--aw-color-bg);
     box-shadow: 0 0 0 1px var(--aw-color-line);
     cursor: grab;
+    /* One finger scrolls the page; the two-finger pinch is the map's (usePanZoom). */
+    touch-action: pan-x pan-y;
 }
 
 .time-map__viewport:active {

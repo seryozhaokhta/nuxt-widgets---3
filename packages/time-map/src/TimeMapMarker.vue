@@ -5,7 +5,7 @@
         :style="style" :data-id="point.id" @click="emit('select')" @mousedown.stop @touchstart.stop>
         <span ref="el" class="time-map-marker__body">
             <span class="time-map-marker__dot" />
-            <span class="time-map-marker__label">{{ l(point.name) }}</span>
+            <span class="time-map-marker__label">{{ l(name ?? point.name) }}</span>
         </span>
     </button>
 </template>
@@ -13,11 +13,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import gsap from 'gsap'
-import { useI18n } from '@art-widgets/core'
+import { useI18n, type Localized } from '@art-widgets/core'
 import type { TimeMapPoint } from './types'
 
 const props = defineProps<{
     point: TimeMapPoint
+    /** Name for the current period, when it differs from the point's. */
+    name?: Localized
     /** Position in percent of the map. */
     x: number
     y: number

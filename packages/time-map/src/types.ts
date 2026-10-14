@@ -9,6 +9,10 @@ export interface TimeMapPeriod {
   end: Year
   approx?: boolean
   description?: Localized
+  /** Where the point stands in this period, when it moves (a new capital). */
+  at?: LonLat
+  /** The point's name on the map in this period, when it changes. */
+  name?: Localized
 }
 
 /** A clickable place with its own story and periods. */

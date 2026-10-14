@@ -1,4 +1,4 @@
-import { computed, onMounted, shallowRef, watch, type Ref } from 'vue'
+import { computed, onMounted, shallowRef, watch, watchEffect, type Ref } from 'vue'
 import type { MultiPolygon } from 'geojson'
 import type { Localized } from '@art-widgets/core'
 import type { LonLat } from './types'
@@ -14,7 +14,10 @@ export interface Polity {
   label: LonLat
   /** km² */
   area: number
-  /** An umbrella over other states (a realm with vassals, an empire with colonies). */
+  /**
+   * An umbrella over other states (a realm with vassals, an empire with
+   * colonies, a union whose land its members hold): drawn as an outline.
+   */
   realm: boolean
 }
 
@@ -24,7 +27,15 @@ interface PolityIndex {
   chunks: { from: number; to: number; file: string }[]
 }
 
-type RawRecord = [entity: number, from: number, to: number, polygons: number[][], label: LonLat, area: number]
+type RawRecord = [
+  entity: number,
+  from: number,
+  to: number,
+  polygons: number[][],
+  label: LonLat,
+  area: number,
+  umbrella?: 1,
+]
 
 interface RawChunk {
   rings: number[][]
@@ -79,10 +90,11 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
       })
       .then((chunk) => {
         const rings = chunk.rings.map(decodeRing)
-        const polities = chunk.records.map(([entity, from, to, polygons, label, area], i): Polity => ({
-          key: file + ':' + i,
+        const polities = chunk.records.map(([entity, from, to, polygons, label, area, umbrella]): Polity => ({
+          // The same record sits in every chunk it spans; one key keeps its shape across them.
+          key: [entity, from, to, label].join(':'),
           name: entities[entity] ?? '',
-          realm: !!entities[entity]?.realm,
+          realm: !!entities[entity]?.realm || umbrella === 1,
           from,
           to,
           geometry: { type: 'MultiPolygon', coordinates: polygons.map((polygon) => polygon.map((ring) => rings[ring] ?? [])) },
@@ -115,10 +127,21 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
     }, { immediate: true })
   })
 
-  const polities = computed<Polity[]>(() => {
+  // Larger states first, so smaller ones inside them (vassals, enclaves) are drawn on top.
+  const polities = shallowRef<Polity[]>([])
+  watchEffect(() => {
     const chunk = index.value?.chunks[chunkIndex.value]
-    const records = chunk ? loaded.value.get(chunk.file) : undefined
-    return records?.filter((polity) => polity.from <= year.value && year.value <= polity.to) ?? []
+    if (!chunk) {
+      polities.value = []
+      return
+    }
+    const records = loaded.value.get(chunk.file)
+    // While the chunk for a new year loads, the last year's states stay up
+    // instead of the map going blank.
+    if (!records) return
+    polities.value = records
+      .filter((polity) => polity.from <= year.value && year.value <= polity.to)
+      .sort((a, b) => b.area - a.area)
   })
 
   return { polities, source: computed(() => index.value?.source ?? '') }

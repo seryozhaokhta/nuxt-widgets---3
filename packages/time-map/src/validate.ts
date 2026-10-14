@@ -20,6 +20,10 @@ export function asTimeMapData(input: unknown): TimeMapData {
   }
   for (const point of data.points) {
     if (!isLonLat(point.at)) throw new Error(`[time-map] point ${point.id}: "at" must be [lon, lat]`)
+    for (const period of point.periods ?? []) {
+      if (period.at && !isLonLat(period.at)) throw new Error(`[time-map] point ${point.id}: period "at" must be [lon, lat]`)
+      if (period.start > period.end) throw new Error(`[time-map] point ${point.id}: a period starts after it ends`)
+    }
   }
   for (const feature of data.features ?? []) {
     if (!KINDS.has(feature.kind)) throw new Error(`[time-map] feature ${feature.id}: unknown kind "${feature.kind}"`)

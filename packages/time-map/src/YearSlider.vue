@@ -12,9 +12,9 @@
             <input type="range" class="year-slider__input" min="0" :max="RESOLUTION" step="1"
                 :value="Math.round(toPosition(model) * RESOLUTION)"
                 :style="{ '--fill': 'calc(8px + (100% - 16px) * ' + toPosition(model) + ')' }" :aria-label="t('year')"
-                :aria-valuetext="year(model)" @input="onInput" />
+                :aria-valuetext="year(model)" @input="onInput" @keydown="onKeydown" />
         </div>
-        <div class="year-slider__scale" aria-hidden="true">
+        <div ref="scaleRef" class="year-slider__scale" aria-hidden="true">
             <span>{{ year(min) }}</span>
             <span v-for="tick in visibleTicks" :key="tick" class="year-slider__tick"
                 :style="{ '--at': toPosition(tick) }">{{ tickLabel(tick) }}</span>
@@ -24,7 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { useElementSize } from '@vueuse/core'
 import { useI18n } from '@art-widgets/core'
 
 const props = withDefaults(defineProps<{
@@ -66,10 +67,15 @@ function fromPosition(position: number): number {
         : props.min + position * span.value
 }
 
-/** Round to a step that suits the distance from the end: millennia ago, 50 years; recently, 1. */
-function snap(value: number): number {
+/** Step that suits the distance from the end: millennia ago, 50 years; recently, 1. */
+function stepAt(value: number): number {
+    if (props.scale === 'linear') return props.step
     const before = props.max - value
-    const step = props.scale === 'linear' ? props.step : before > 4000 ? 50 : before > 1000 ? 10 : before > 200 ? 5 : 1
+    return before > 4000 ? 50 : before > 1000 ? 10 : before > 200 ? 5 : 1
+}
+
+function snap(value: number): number {
+    const step = stepAt(value)
     let snapped = Math.round((value - props.min) / step) * step + props.min
     snapped = Math.min(props.max, Math.max(props.min, snapped))
     // There is no year 0: 1 BCE is followed by 1 CE.
@@ -80,7 +86,53 @@ function onInput(event: Event) {
     model.value = snap(fromPosition(Number((event.target as HTMLInputElement).value) / RESOLUTION))
 }
 
-const visibleTicks = computed(() => props.ticks.filter((tick) => tick > props.min && tick < props.max))
+// Keys move by whole steps of the scale: a step of the native range can be
+// less than a year near the end and so change nothing.
+const KEY_STEPS: Record<string, number> = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1, PageUp: 10, PageDown: -10 }
+
+function stepBy(steps: number) {
+    let value = model.value
+    for (let i = 0; i < Math.abs(steps); i++) {
+        let target = value + Math.sign(steps) * stepAt(value)
+        if (target === 0) target = Math.sign(steps)
+        const next = snap(target)
+        if (next === value) break
+        value = next
+    }
+    model.value = value
+}
+
+function onKeydown(event: KeyboardEvent) {
+    if (event.key === 'Home') model.value = props.min
+    else if (event.key === 'End') model.value = props.max
+    else if (KEY_STEPS[event.key]) stepBy(KEY_STEPS[event.key]!)
+    else return
+    event.preventDefault()
+}
+
+const scaleRef = ref<HTMLElement | null>(null)
+const { width } = useElementSize(scaleRef)
+/** Width of a character of the 12 px mono labels, px. */
+const CHAR = 7.4
+
+// Labels that would run into a neighbour or the end labels on a narrow screen
+// are left out; the marks on the track stay.
+const visibleTicks = computed(() => {
+    const inside = props.ticks.filter((tick) => tick > props.min && tick < props.max)
+    if (!width.value) return inside
+    const left = year(props.min).length * CHAR + 10
+    const right = width.value - year(props.max).length * CHAR - 10
+    const shown: number[] = []
+    let last = -Infinity
+    for (const tick of inside) {
+        const x = 8 + (width.value - 16) * toPosition(tick)
+        const half = (tickLabel(tick).length * CHAR) / 2
+        if (x - half < Math.max(left, last + 10) || x + half > right) continue
+        shown.push(tick)
+        last = x + half
+    }
+    return shown
+})
 
 /** Compact labels: "−5000", "1500". */
 function tickLabel(tick: number): string {
