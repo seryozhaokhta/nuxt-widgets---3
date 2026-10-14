@@ -32,6 +32,10 @@
                 :d="shape.d" />
             <path v-for="shape in polityShapes" :key="shape.key" :class="shape.realm ? 'geo__realm' : 'geo__state'"
                 :d="shape.d" />
+            <!-- On top of the rest, so neighbours don't hide its edge. Keyed by
+                 place in the list: a new span of years redraws the path in place
+                 instead of fading it in again. -->
+            <path v-for="(shape, i) in highlightShapes" :key="i" class="geo__highlight" :d="shape.d" />
         </g>
 
         <path v-if="bordersPath" :class="['geo__borders', 'geo__feature', { 'geo__feature--visible': showBorders }]"
@@ -59,6 +63,8 @@ const props = defineProps<{
     zoom: number
     label: string
     polities?: Polity[]
+    /** Keys of states drawn brighter: what the panel is about. */
+    highlight?: string[]
 }>()
 
 const clipId = 'time-map-land-' + useId()
@@ -105,6 +111,10 @@ const polityShapes = computed(() => (props.polities ?? []).map((polity) => {
     }
     return { key: polity.key, d, realm: polity.realm }
 }))
+const highlightShapes = computed(() => {
+    const keys = new Set(props.highlight)
+    return keys.size ? polityShapes.value.filter((shape) => keys.has(shape.key)) : []
+})
 
 interface Shape {
     id: string
@@ -189,6 +199,20 @@ function classes(shape: Shape, base: string) {
     fill: var(--aw-map-state);
     stroke: var(--aw-map-state-edge);
     stroke-width: calc(0.9px / var(--zoom));
+}
+
+.geo__highlight {
+    fill: var(--aw-color-gold-soft);
+    stroke: var(--aw-color-gold-bright);
+    stroke-width: calc(1.4px / var(--zoom));
+    stroke-linejoin: round;
+    animation: geo-highlight 0.4s var(--aw-ease);
+}
+
+@keyframes geo-highlight {
+    from {
+        opacity: 0;
+    }
 }
 
 .geo__borders {

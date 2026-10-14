@@ -8,7 +8,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { distanceToPolygon, pointInPolygon } from './geometry.mjs'
+import { bounds, distanceToPolygon, pointInPolygon } from './geometry.mjs'
 import { OUT_DIR } from './config.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
@@ -47,6 +47,12 @@ const PLACES = [
   [1980, [17.08, -22.56], 'South West Africa', ['South Africa']],
   [1990, [125.57, -8.56], 'East Timor', ['Republic of Indonesia']],
   [1970, [33.8, 29.5], 'United Arab Republic', ['State of Israel']],
+  [-325, [52.89, 29.93], 'Macedonian Empire', ['Ptolemaic Kingdom']],
+  [380, [118.78, 32.06], 'Eastern Jin', ['Western Jin']],
+  [1455, [28.6, 41.2], 'Ottoman Empire', ['Byzantine Empire', 'Despotate of the Morea']],
+  [1458, [22.4, 37.5], 'Despotate of the Morea'],
+  [1896, [51.39, 35.69], 'Qajar Dynasty', ['Dutch East Indies']],
+  [1896, [110.4, -7.3], 'Dutch East Indies', ['Qajar Dynasty']],
 ]
 
 /** Russian names that are a topic, not a state: the Wikipedia link went astray. */
@@ -72,15 +78,6 @@ async function main() {
   if (info.length !== index.entities.length) problems.push(`info: ${info.length} rows for ${index.entities.length} states`)
   for (const [i, [, , en, ru]] of info.entries()) {
     if (/\(disambiguation\)|\(значения\)/.test(en + ru)) problems.push(`info: "${index.entities[i].en}" links to a disambiguation page`)
-  }
-
-  // A civilization's chapters must name states that exist in the layer.
-  const map = JSON.parse(await readFile(join(ROOT, 'apps', 'playground', 'app', 'data', 'map-ancient.json'), 'utf8'))
-  const stateNames = new Set(index.entities.filter((entity) => !entity.realm).map((entity) => entity.en))
-  for (const point of map.points) {
-    for (const name of point.states ?? []) {
-      if (!stateNames.has(name)) problems.push(`civilization: "${point.name.en}" lists "${name}", which is not in the states layer`)
-    }
   }
 
   for (const [i, entity] of index.entities.entries()) {
@@ -130,12 +127,109 @@ async function main() {
     }
   }
 
+  const map = JSON.parse(await readFile(join(ROOT, 'apps', 'playground', 'app', 'data', 'map-ancient.json'), 'utf8'))
+  checkCivilizations(map.points, index, records, problems)
+
   if (problems.length) {
     console.error(problems.join('\n'))
     console.error(`\n${problems.length} problem(s)`)
     process.exit(1)
   }
   console.log(`ok: ${index.entities.length} states, ${records.length} records, ${PLACES.length} places`)
+}
+
+/** Cliopatria may start or end a state a few years off the history books. */
+const LAG = 30
+/** Shapes are simplified to 0.1°: a capital on the coast can fall just outside. */
+const NEAR = 0.25
+
+/**
+ * A civilization's periods are chapters: they follow one another from its
+ * founding, name states of the layer (`states`, its own; `under`, the rulers
+ * of its land), and no state is a chapter of two civilizations. Year by year,
+ * the point stands in its chapter's state when that state is on the map, and
+ * a state under the point is one of the civilization's or one the chapter was
+ * `under`; a run of years longer than LAG that breaks either rule is a problem.
+ */
+function checkCivilizations(points, index, records, problems) {
+  const names = new Set(index.entities.map((entity) => entity.en))
+  const stateNames = new Set(index.entities.filter((entity) => !entity.realm).map((entity) => entity.en))
+  const firstYear = Math.min(...records.map((record) => record.from))
+  const lastYear = Math.max(...records.map((record) => record.to))
+  const byCentury = new Map()
+  for (const record of records) {
+    if (record.outline) continue
+    record.box = bounds(record.polygons)
+    for (let century = Math.floor(record.from / 100); century <= Math.floor(record.to / 100); century++) {
+      if (!byCentury.has(century)) byCentury.set(century, [])
+      byCentury.get(century).push(record)
+    }
+  }
+  const shownAt = (year) => (byCentury.get(Math.floor(year / 100)) ?? []).filter((record) => record.from <= year && record.to >= year)
+  const near = (record, [x, y]) => {
+    const [west, south, east, north] = record.box
+    if (x < west - NEAR || x > east + NEAR || y < south - NEAR || y > north + NEAR) return false
+    return record.polygons.some((polygon) => distanceToPolygon([x, y], polygon) <= NEAR)
+  }
+  const nameOf = (record) => index.entities[record.entity].en
+
+  const owner = new Map()
+  for (const point of points) {
+    const civ = point.name.en
+    const periods = point.periods ?? []
+    // The state of the chapter before often stays on Cliopatria's map a while longer.
+    const chapters = new Set(periods.flatMap((period) => period.states ?? []))
+    if (periods[0]?.start !== point.founded) problems.push(`civilization: ${civ} is founded in ${point.founded}, its first chapter starts in ${periods[0]?.start}`)
+    for (const [i, period] of periods.entries()) {
+      const title = `${civ} "${period.title.en}"`
+      if (period.start >= period.end) problems.push(`civilization: ${title} ends before it starts`)
+      const next = periods[i + 1]
+      if (next && next.start !== period.end) problems.push(`civilization: ${title} ends in ${period.end}, the next chapter starts in ${next.start}`)
+      for (const name of period.states ?? []) {
+        if (!stateNames.has(name)) problems.push(`civilization: ${title} lists "${name}", which is not in the states layer`)
+        const other = owner.get(name)
+        if (other && other !== civ) problems.push(`civilization: "${name}" is a chapter of both ${other} and ${civ}`)
+        owner.set(name, civ)
+      }
+      for (const name of period.under ?? []) {
+        if (!names.has(name)) problems.push(`civilization: ${title} is under "${name}", which is not in the states layer`)
+      }
+
+      const own = new Set(period.states ?? [])
+      const known = new Set([...chapters, ...(period.under ?? [])])
+      const at = period.at ?? point.at
+      let seen = false
+      const runs = { outside: null, foreign: null }
+      const report = (kind, text) => {
+        const run = runs[kind]
+        if (run && run.to - run.from + 1 > LAG) problems.push(`civilization: ${title}: ${text(run)} in ${run.from}–${run.to}`)
+        runs[kind] = null
+      }
+      const last = next ? period.end - 1 : period.end
+      for (let year = Math.max(period.start, firstYear); year <= Math.min(last, lastYear); year++) {
+        const shown = shownAt(year)
+        const chapter = shown.filter((record) => own.has(nameOf(record)))
+        if (chapter.length) seen = true
+        if (chapter.length && !chapter.some((record) => near(record, at))) {
+          runs.outside ??= { from: year }
+          runs.outside.to = year
+        } else {
+          report('outside', () => `the point [${at}] is outside its states`)
+        }
+        const holders = shown.filter((record) => near(record, at))
+        if (holders.length && !holders.some((record) => known.has(nameOf(record)))) {
+          runs.foreign ??= { from: year, names: new Set() }
+          runs.foreign.to = year
+          for (const record of holders) runs.foreign.names.add(nameOf(record))
+        } else {
+          report('foreign', (run) => `the point stands in ${[...run.names].join(', ')}, neither its states nor "under"`)
+        }
+      }
+      report('outside', () => `the point [${at}] is outside its states`)
+      report('foreign', (run) => `the point stands in ${[...run.names].join(', ')}, neither its states nor "under"`)
+      if (own.size && !seen && period.end > firstYear) problems.push(`civilization: ${title}: none of its states is on the map`)
+    }
+  }
 }
 
 main().catch((error) => {

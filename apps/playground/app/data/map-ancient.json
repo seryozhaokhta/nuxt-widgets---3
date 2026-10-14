@@ -1837,7 +1837,7 @@
         45.64,
         31.32
       ],
-      "founded": -4500,
+      "founded": -6500,
       "approx": true,
       "periods": [
         {
@@ -1846,7 +1846,7 @@
             "ru": "Убейдский период"
           },
           "start": -6500,
-          "end": -3800,
+          "end": -4000,
           "approx": true,
           "description": {
             "en": "Early settlement and development of agriculture.",
@@ -1859,12 +1859,15 @@
             "ru": "Урукский период"
           },
           "start": -4000,
-          "end": -3100,
+          "end": -2900,
           "approx": true,
           "description": {
             "en": "Formation of urban centers and writing.",
             "ru": "Появление городов и письменности."
-          }
+          },
+          "states": [
+            "Sumerian City-States"
+          ]
         },
         {
           "title": {
@@ -1877,7 +1880,10 @@
           "description": {
             "en": "Rise of city-states and kingship.",
             "ru": "Расцвет городов-государств и царской власти."
-          }
+          },
+          "states": [
+            "Sumerian City-States"
+          ]
         },
         {
           "title": {
@@ -1885,12 +1891,18 @@
             "ru": "Аккадский период"
           },
           "start": -2334,
-          "end": -2154,
+          "end": -2112,
           "approx": true,
           "description": {
-            "en": "First Semitic empire under Sargon of Akkad.",
-            "ru": "Первая семитская империя при Саргоне Аккадском."
-          }
+            "en": "First Semitic empire under Sargon of Akkad; after it fell, the Gutian raids.",
+            "ru": "Первая семитская империя при Саргоне Аккадском; после её падения — набеги гутиев."
+          },
+          "states": [
+            "Akkadian Empire"
+          ],
+          "under": [
+            "Gutian Dynasty"
+          ]
         },
         {
           "title": {
@@ -1903,31 +1915,40 @@
           "description": {
             "en": "Sumerian renaissance and legal reforms.",
             "ru": "Шумерское возрождение и правовые реформы."
-          }
+          },
+          "at": [
+            46.1,
+            30.96
+          ],
+          "states": [
+            "Sumerian City-States"
+          ],
+          "under": [
+            "Gutian Dynasty"
+          ]
         },
         {
           "title": {
             "en": "Old Babylonian Period",
             "ru": "Старовавилонский период"
           },
-          "start": -2000,
+          "start": -2004,
           "end": -1600,
           "approx": true,
           "description": {
             "en": "Decline of Sumer and rise of Babylon.",
             "ru": "Упадок Шумера и возвышение Вавилона."
-          }
+          },
+          "states": [
+            "Sumerian City-States",
+            "Babylonia"
+          ]
         }
       ],
       "wiki": {
         "en": "Sumer",
         "ru": "Шумер"
-      },
-      "states": [
-        "Sumerian City-States",
-        "Akkadian Empire",
-        "Babylonia"
-      ]
+      }
     },
     {
       "id": 2,
@@ -1957,7 +1978,10 @@
           "description": {
             "en": "Unification of Upper and Lower Egypt.",
             "ru": "Объединение Верхнего и Нижнего Египта."
-          }
+          },
+          "states": [
+            "Early Dynastic Period of Egypt"
+          ]
         },
         {
           "title": {
@@ -1970,7 +1994,10 @@
           "description": {
             "en": "Age of the Pyramids.",
             "ru": "Эпоха пирамид."
-          }
+          },
+          "states": [
+            "Old Kingdom of Egypt"
+          ]
         },
         {
           "title": {
@@ -1983,7 +2010,11 @@
           "description": {
             "en": "Political fragmentation and chaos.",
             "ru": "Политическая раздробленность и смута."
-          }
+          },
+          "states": [
+            "Lower Egypt",
+            "Upper Egypt"
+          ]
         },
         {
           "title": {
@@ -1996,7 +2027,10 @@
           "description": {
             "en": "Reunification and cultural renaissance.",
             "ru": "Новое объединение и культурный расцвет."
-          }
+          },
+          "states": [
+            "Middle Kingdom of Egypt"
+          ]
         },
         {
           "title": {
@@ -2009,7 +2043,19 @@
           "description": {
             "en": "Hyksos invasion and foreign rule.",
             "ru": "Вторжение гиксосов и иноземное правление."
-          }
+          },
+          "at": [
+            32.64,
+            25.7
+          ],
+          "states": [
+            "Sixteenth Dynasty of Egypt",
+            "Seventeenth Dynasty of Egypt"
+          ],
+          "under": [
+            "Hyksos",
+            "Fifteenth Dynasty of Egypt"
+          ]
         },
         {
           "title": {
@@ -2022,7 +2068,14 @@
           "description": {
             "en": "Egypt's imperial age and greatest territorial extent.",
             "ru": "Имперская эпоха Египта и его наибольшие границы."
-          }
+          },
+          "at": [
+            32.64,
+            25.7
+          ],
+          "states": [
+            "New Kingdom of Egypt"
+          ]
         },
         {
           "title": {
@@ -2035,7 +2088,16 @@
           "description": {
             "en": "Libyan and Nubian kings.",
             "ru": "Ливийские и нубийские фараоны."
-          }
+          },
+          "states": [
+            "New Kingdom of Egypt",
+            "Twenty-second Dynasty of Egypt",
+            "Twenty-third Dynasty of Egypt"
+          ],
+          "under": [
+            "Kingdom of Kush",
+            "Neo-Assyrian Empire"
+          ]
         },
         {
           "title": {
@@ -2048,20 +2110,39 @@
           "description": {
             "en": "The last native dynasties and Persian rule.",
             "ru": "Последние местные династии и персидское владычество."
-          }
+          },
+          "states": [
+            "Twenty-sixth Dynasty of Egypt",
+            "Thirtieth Dynasty of Egypt"
+          ],
+          "under": [
+            "Achaemenid Empire",
+            "Neo-Assyrian Empire"
+          ]
         },
         {
           "title": {
-            "en": "Ptolemaic Egypt",
-            "ru": "Птолемеевский Египет"
+            "en": "Macedonians and Ptolemies",
+            "ru": "Македоняне и Птолемеи"
           },
-          "start": -305,
+          "start": -332,
           "end": -30,
           "approx": true,
           "description": {
-            "en": "Greek kings in Alexandria.",
-            "ru": "Греческие цари в Александрии."
-          }
+            "en": "Alexander founds Alexandria; for three centuries Greek kings rule Egypt.",
+            "ru": "Александр основывает Александрию; три века Египтом правят греческие цари."
+          },
+          "at": [
+            29.92,
+            31.2
+          ],
+          "states": [
+            "Ptolemaic Kingdom"
+          ],
+          "under": [
+            "Macedonian Empire",
+            "Seleucid Empire"
+          ]
         },
         {
           "title": {
@@ -2074,28 +2155,24 @@
           "description": {
             "en": "The granary of Rome.",
             "ru": "Житница Рима."
-          }
+          },
+          "at": [
+            29.92,
+            31.2
+          ],
+          "under": [
+            "Roman Empire",
+            "Palmyrene Empire",
+            "Eastern Roman Empire",
+            "Sasanian Empire",
+            "Byzantine Empire"
+          ]
         }
       ],
       "wiki": {
         "en": "Ancient Egypt",
         "ru": "Древний Египет"
-      },
-      "states": [
-        "Early Dynastic Period of Egypt",
-        "Old Kingdom of Egypt",
-        "Lower Egypt",
-        "Upper Egypt",
-        "Middle Kingdom of Egypt",
-        "Sixteenth Dynasty of Egypt",
-        "Seventeenth Dynasty of Egypt",
-        "New Kingdom of Egypt",
-        "Twenty-second Dynasty of Egypt",
-        "Twenty-third Dynasty of Egypt",
-        "Twenty-sixth Dynasty of Egypt",
-        "Thirtieth Dynasty of Egypt",
-        "Ptolemaic Kingdom"
-      ]
+      }
     },
     {
       "id": 3,
@@ -2138,7 +2215,10 @@
           "description": {
             "en": "Urbanization and peak of civilization.",
             "ru": "Рост городов и расцвет цивилизации."
-          }
+          },
+          "states": [
+            "Indus Valley Civilization"
+          ]
         },
         {
           "title": {
@@ -2157,10 +2237,7 @@
       "wiki": {
         "en": "Indus Valley Civilisation",
         "ru": "Хараппская цивилизация"
-      },
-      "states": [
-        "Indus Valley Civilization"
-      ]
+      }
     },
     {
       "id": 4,
@@ -2176,7 +2253,7 @@
         112.69,
         34.7
       ],
-      "founded": -2100,
+      "founded": -2070,
       "approx": true,
       "periods": [
         {
@@ -2203,20 +2280,62 @@
           "description": {
             "en": "First recorded Chinese dynasty.",
             "ru": "Первая династия, известная по письменным источникам."
-          }
+          },
+          "at": [
+            114.3,
+            36.1
+          ],
+          "states": [
+            "Shang Dynasty"
+          ]
         },
         {
           "title": {
-            "en": "Zhou Dynasty",
-            "ru": "Династия Чжоу"
+            "en": "Western Zhou",
+            "ru": "Западная Чжоу"
           },
           "start": -1046,
-          "end": -256,
+          "end": -771,
           "approx": true,
           "description": {
-            "en": "Longest-lasting Chinese dynasty.",
-            "ru": "Самая продолжительная династия в истории Китая."
-          }
+            "en": "Ritual bronzes and the idea of the Mandate of Heaven.",
+            "ru": "Ритуальные бронзы и идея Небесного мандата."
+          },
+          "at": [
+            112.45,
+            34.62
+          ],
+          "states": [
+            "Zhou Dynasty"
+          ]
+        },
+        {
+          "title": {
+            "en": "Spring and Autumn",
+            "ru": "Вёсны и Осени"
+          },
+          "start": -771,
+          "end": -475,
+          "approx": true,
+          "description": {
+            "en": "The Zhou kings keep the rites, the great lords hold the power. Confucius lives at its end.",
+            "ru": "Цари Чжоу хранят обряды, власть у великих князей. В конце эпохи живёт Конфуций."
+          },
+          "at": [
+            112.45,
+            34.62
+          ],
+          "states": [
+            "Eastern Zhou",
+            "Zhou Dynasty",
+            "Jin",
+            "Qi",
+            "Chu",
+            "Qin",
+            "Yan",
+            "Wu",
+            "Yue"
+          ]
         },
         {
           "title": {
@@ -2229,7 +2348,23 @@
           "description": {
             "en": "Seven kingdoms fight for the whole of China; Confucius’s heirs, Laozi and Sunzi.",
             "ru": "Семь царств борются за весь Китай; наследники Конфуция, Лао-цзы и Сунь-цзы."
-          }
+          },
+          "at": [
+            112.45,
+            34.62
+          ],
+          "states": [
+            "Eastern Zhou",
+            "Qin",
+            "Chu",
+            "Han",
+            "Zhao",
+            "Wei",
+            "Yan",
+            "Qi",
+            "Jin",
+            "Yue"
+          ]
         },
         {
           "title": {
@@ -2242,20 +2377,48 @@
           "description": {
             "en": "The first unified empire.",
             "ru": "Первая единая империя."
-          }
+          },
+          "at": [
+            108.71,
+            34.33
+          ],
+          "states": [
+            "Qin Dynasty",
+            "Qin"
+          ]
         },
         {
           "title": {
             "en": "Han dynasty",
             "ru": "Династия Хань"
           },
-          "start": -202,
+          "start": -206,
           "end": 220,
           "approx": true,
           "description": {
             "en": "The Silk Road and the Confucian state.",
             "ru": "Шёлковый путь и конфуцианское государство."
-          }
+          },
+          "at": [
+            108.9,
+            34.3
+          ],
+          "states": [
+            "Han Dynasty",
+            "Han",
+            "Hán",
+            "Western Chu",
+            "Yong",
+            "Zhai",
+            "Dai",
+            "Jibei",
+            "Linjiang",
+            "Jiujiang",
+            "Liaodong",
+            "Jiaodong",
+            "Xin Dynasty",
+            "Cao Cao"
+          ]
         },
         {
           "title": {
@@ -2263,12 +2426,47 @@
             "ru": "Шесть династий"
           },
           "start": 220,
-          "end": 589,
-          "approx": false,
+          "end": 581,
           "description": {
             "en": "Three Kingdoms, then North and South apart; Buddhism spreads.",
             "ru": "Троецарствие, затем раскол на Север и Юг; распространяется буддизм."
-          }
+          },
+          "at": [
+            118.78,
+            32.06
+          ],
+          "states": [
+            "Cao Wei",
+            "Shu Han",
+            "Eastern Wu",
+            "Western Jin",
+            "Eastern Jin",
+            "Former Zhao",
+            "Cheng Han",
+            "Former Liang",
+            "Later Zhao",
+            "Former Yan",
+            "Former Qin",
+            "Later Yan",
+            "Later Liang",
+            "Western Yan",
+            "Western Qin",
+            "Later Qin",
+            "Southern Yan",
+            "Southern Liang",
+            "Xia",
+            "Northern Yan",
+            "Northern Wei",
+            "Liu Song Dynasty",
+            "Southern Qi",
+            "Liang Dynasty",
+            "Eastern Wei",
+            "Western Wei",
+            "Northern Qi",
+            "Chen Dynasty",
+            "Northern Zhou",
+            "Later Western Liang"
+          ]
         },
         {
           "title": {
@@ -2277,11 +2475,17 @@
           },
           "start": 581,
           "end": 618,
-          "approx": false,
           "description": {
             "en": "China reunited; the Grand Canal.",
             "ru": "Китай снова един; Великий канал."
-          }
+          },
+          "at": [
+            108.9,
+            34.3
+          ],
+          "states": [
+            "Sui Dynasty"
+          ]
         },
         {
           "title": {
@@ -2290,11 +2494,17 @@
           },
           "start": 618,
           "end": 907,
-          "approx": false,
           "description": {
             "en": "A golden age of poetry; cosmopolitan Chang’an.",
             "ru": "Золотой век поэзии; космополитичный Чанъань."
-          }
+          },
+          "at": [
+            108.9,
+            34.3
+          ],
+          "states": [
+            "Tang Dynasty"
+          ]
         },
         {
           "title": {
@@ -2303,37 +2513,93 @@
           },
           "start": 907,
           "end": 960,
-          "approx": false,
           "description": {
             "en": "Short-lived dynasties in the North, kingdoms in the South.",
             "ru": "Недолгие династии на Севере, царства на Юге."
-          }
+          },
+          "at": [
+            114.35,
+            34.8
+          ],
+          "states": [
+            "Later Liang Dynasty",
+            "Later Tang",
+            "Later Jin",
+            "Later Han",
+            "Later Zhou",
+            "Former Shu",
+            "Later Shu",
+            "Southern Chu",
+            "Southern Wu",
+            "Southern Tang",
+            "Southern Han",
+            "Wuyue",
+            "Min",
+            "Jingnan",
+            "Qi Kingdom",
+            "Yan Kingdom",
+            "Former Jin"
+          ]
         },
         {
           "title": {
-            "en": "Song dynasty",
-            "ru": "Династия Сун"
+            "en": "Northern Song",
+            "ru": "Северная Сун"
           },
           "start": 960,
-          "end": 1279,
-          "approx": false,
+          "end": 1127,
           "description": {
-            "en": "Printing, paper money, landscape painting.",
-            "ru": "Книгопечатание, бумажные деньги, пейзажная живопись."
-          }
+            "en": "Printing, paper money and landscape painting; the capital is Kaifeng.",
+            "ru": "Книгопечатание, бумажные деньги, пейзажная живопись; столица — Кайфэн."
+          },
+          "at": [
+            114.35,
+            34.8
+          ],
+          "states": [
+            "Northern Song"
+          ]
+        },
+        {
+          "title": {
+            "en": "Southern Song",
+            "ru": "Южная Сун"
+          },
+          "start": 1127,
+          "end": 1279,
+          "description": {
+            "en": "The court moves to Hangzhou; the north is held by the Jurchen Jin.",
+            "ru": "Двор переезжает в Ханчжоу; север под властью чжурчжэньской Цзинь."
+          },
+          "at": [
+            120.16,
+            30.25
+          ],
+          "states": [
+            "Southern Song"
+          ]
         },
         {
           "title": {
             "en": "Yuan dynasty",
             "ru": "Династия Юань"
           },
-          "start": 1271,
+          "start": 1279,
           "end": 1368,
-          "approx": false,
           "description": {
             "en": "China under Mongol rule.",
             "ru": "Китай под властью монголов."
-          }
+          },
+          "at": [
+            116.4,
+            39.9
+          ],
+          "states": [
+            "Yuan Dynasty"
+          ],
+          "under": [
+            "Mongol Empire"
+          ]
         },
         {
           "title": {
@@ -2342,11 +2608,18 @@
           },
           "start": 1368,
           "end": 1644,
-          "approx": false,
           "description": {
             "en": "The Forbidden City and the fleets of Zheng He.",
             "ru": "Запретный город и флоты Чжэн Хэ."
-          }
+          },
+          "at": [
+            116.4,
+            39.9
+          ],
+          "states": [
+            "Ming Dynasty",
+            "Li Zicheng"
+          ]
         },
         {
           "title": {
@@ -2355,33 +2628,25 @@
           },
           "start": 1644,
           "end": 1912,
-          "approx": false,
           "description": {
             "en": "The last dynasty.",
             "ru": "Последняя династия."
-          }
+          },
+          "at": [
+            116.4,
+            39.9
+          ],
+          "states": [
+            "Qing Dynasty",
+            "Later Jin Dynasty",
+            "Southern Ming"
+          ]
         }
       ],
       "wiki": {
         "en": "History of China",
         "ru": "История Китая"
-      },
-      "states": [
-        "Shang Dynasty",
-        "Zhou Dynasty",
-        "Eastern Zhou",
-        "Qin Dynasty",
-        "Han Dynasty",
-        "Xin Dynasty",
-        "Western Jin",
-        "Sui Dynasty",
-        "Tang Dynasty",
-        "Northern Song",
-        "Southern Song",
-        "Yuan Dynasty",
-        "Ming Dynasty",
-        "Qing Dynasty"
-      ]
+      }
     },
     {
       "id": 5,
@@ -2437,16 +2702,19 @@
           "description": {
             "en": "Decline due to natural disasters and invasions.",
             "ru": "Упадок из-за природных катастроф и вторжений."
-          }
+          },
+          "states": [
+            "Minoan civilization"
+          ],
+          "under": [
+            "Mycenaean Greece"
+          ]
         }
       ],
       "wiki": {
         "en": "Minoan civilization",
         "ru": "Минойская цивилизация"
-      },
-      "states": [
-        "Minoan civilization"
-      ]
+      }
     },
     {
       "id": 6,
@@ -2476,7 +2744,10 @@
           "description": {
             "en": "Rome ruled by kings, by tradition seven.",
             "ru": "Рим под властью царей — по преданию, семи."
-          }
+          },
+          "states": [
+            "Roman Kingdom"
+          ]
         },
         {
           "title": {
@@ -2489,7 +2760,10 @@
           "description": {
             "en": "Elected magistrates, the Senate and the conquest of the Mediterranean.",
             "ru": "Выборные магистраты, сенат и завоевание Средиземноморья."
-          }
+          },
+          "states": [
+            "Roman Republic"
+          ]
         },
         {
           "title": {
@@ -2502,7 +2776,10 @@
           "description": {
             "en": "Emperors rule behind republican forms; the Pax Romana.",
             "ru": "Императоры правят под республиканской вывеской; Pax Romana."
-          }
+          },
+          "states": [
+            "Roman Empire"
+          ]
         },
         {
           "title": {
@@ -2511,11 +2788,15 @@
           },
           "start": 284,
           "end": 476,
-          "approx": false,
           "description": {
             "en": "Open autocracy; the empire splits into West and East.",
             "ru": "Открытое самодержавие; империя делится на Запад и Восток."
-          }
+          },
+          "states": [
+            "Roman Empire",
+            "Western Roman Empire",
+            "Eastern Roman Empire"
+          ]
         },
         {
           "title": {
@@ -2523,8 +2804,7 @@
             "ru": "Восточная империя"
           },
           "start": 476,
-          "end": 1453,
-          "approx": false,
+          "end": 1204,
           "description": {
             "en": "The Roman state goes on from Constantinople.",
             "ru": "Римское государство продолжается в Константинополе."
@@ -2536,21 +2816,66 @@
           "name": {
             "en": "Byzantium",
             "ru": "Византия"
-          }
+          },
+          "states": [
+            "Eastern Roman Empire",
+            "Byzantine Empire"
+          ]
+        },
+        {
+          "title": {
+            "en": "Empire of Nicaea",
+            "ru": "Никейская империя"
+          },
+          "start": 1204,
+          "end": 1261,
+          "description": {
+            "en": "Crusaders take Constantinople; the empire lives on in Nicaea and wins the city back in 1261.",
+            "ru": "Крестоносцы захватывают Константинополь; империя продолжается в Никее и в 1261 году возвращает город."
+          },
+          "at": [
+            29.72,
+            40.43
+          ],
+          "name": {
+            "en": "Byzantium",
+            "ru": "Византия"
+          },
+          "states": [
+            "Nicaean Empire"
+          ],
+          "under": [
+            "Latin Empire"
+          ]
+        },
+        {
+          "title": {
+            "en": "The Palaiologoi",
+            "ru": "Палеологи"
+          },
+          "start": 1261,
+          "end": 1453,
+          "description": {
+            "en": "The restored empire shrinks to its capital and falls to the Ottomans in 1453.",
+            "ru": "Возрождённая империя сжимается до столицы и в 1453 году падает под ударом османов."
+          },
+          "at": [
+            28.98,
+            41.01
+          ],
+          "name": {
+            "en": "Byzantium",
+            "ru": "Византия"
+          },
+          "states": [
+            "Byzantine Empire"
+          ]
         }
       ],
       "wiki": {
         "en": "Ancient Rome",
         "ru": "Древний Рим"
-      },
-      "states": [
-        "Roman Kingdom",
-        "Roman Republic",
-        "Roman Empire",
-        "Western Roman Empire",
-        "Eastern Roman Empire",
-        "Byzantine Empire"
-      ]
+      }
     },
     {
       "id": 7,
@@ -2580,7 +2905,10 @@
           "description": {
             "en": "From Cyrus to Darius III: the first world empire.",
             "ru": "От Кира до Дария III — первая мировая держава."
-          }
+          },
+          "states": [
+            "Achaemenid Empire"
+          ]
         },
         {
           "title": {
@@ -2593,7 +2921,11 @@
           "description": {
             "en": "Alexander’s conquest and the Hellenistic kingdom of the Seleucids.",
             "ru": "Завоевание Александра и эллинистическое царство Селевкидов."
-          }
+          },
+          "under": [
+            "Macedonian Empire",
+            "Seleucid Empire"
+          ]
         },
         {
           "title": {
@@ -2606,7 +2938,14 @@
           "description": {
             "en": "Horse archers who held Rome at the Euphrates.",
             "ru": "Конные лучники, остановившие Рим на Евфрате."
-          }
+          },
+          "at": [
+            58.2,
+            37.97
+          ],
+          "states": [
+            "Parthian Empire"
+          ]
         },
         {
           "title": {
@@ -2615,24 +2954,136 @@
           },
           "start": 224,
           "end": 651,
-          "approx": false,
           "description": {
             "en": "Zoroastrian empire, rival of Rome and Byzantium.",
             "ru": "Зороастрийская держава, соперник Рима и Византии."
-          }
+          },
+          "at": [
+            44.58,
+            33.09
+          ],
+          "states": [
+            "Sasanian Empire"
+          ]
         },
         {
           "title": {
-            "en": "Caliphate and Iranian dynasties",
-            "ru": "Халифат и иранские династии"
+            "en": "Arab Caliphate",
+            "ru": "Арабский халифат"
           },
           "start": 651,
-          "end": 1501,
-          "approx": false,
+          "end": 861,
           "description": {
-            "en": "The Arab conquest, then Samanids, Buyids, Seljuks, Ilkhans and Timurids; Persian becomes a language of high culture.",
-            "ru": "Арабское завоевание, затем Саманиды, Буиды, Сельджуки, Хулагуиды и Тимуриды; персидский становится языком высокой культуры."
-          }
+            "en": "The Arab conquest: Iran turns to Islam but keeps its language.",
+            "ru": "Арабское завоевание: Иран принимает ислам, но сохраняет свой язык."
+          },
+          "at": [
+            51.67,
+            32.65
+          ],
+          "under": [
+            "Rashidun Caliphate",
+            "Umayyad Caliphate",
+            "Abbasid Caliphate"
+          ]
+        },
+        {
+          "title": {
+            "en": "Iranian dynasties",
+            "ru": "Иранские династии"
+          },
+          "start": 861,
+          "end": 1040,
+          "description": {
+            "en": "Saffarids, Samanids and Buyids; Persian poetry is reborn with Ferdowsi.",
+            "ru": "Саффариды, Саманиды и Буиды; персидская поэзия возрождается — «Шахнаме» Фирдоуси."
+          },
+          "at": [
+            51.67,
+            32.65
+          ],
+          "states": [
+            "Saffarid Dynasty",
+            "Samanid Empire",
+            "Buyid Dynasty",
+            "Abbasid Caliphate/Buyid Dynasty"
+          ],
+          "under": [
+            "Abbasid Caliphate",
+            "Ghaznavid Empire"
+          ]
+        },
+        {
+          "title": {
+            "en": "Seljuks and Khwarazmshahs",
+            "ru": "Сельджуки и хорезмшахи"
+          },
+          "start": 1040,
+          "end": 1220,
+          "description": {
+            "en": "Turkic sultans rule from Isfahan; Persian stays the language of the court. Omar Khayyam.",
+            "ru": "Тюркские султаны правят из Исфахана; языком двора остаётся персидский. Омар Хайям."
+          },
+          "at": [
+            51.67,
+            32.65
+          ],
+          "under": [
+            "Seljuk Dynasty",
+            "Great Seljuk Empire",
+            "Khwarezmid Dynasty",
+            "Khwarezmid Empire"
+          ]
+        },
+        {
+          "title": {
+            "en": "Mongols and Ilkhans",
+            "ru": "Монголы и Хулагуиды"
+          },
+          "start": 1220,
+          "end": 1335,
+          "description": {
+            "en": "The Mongol conquest, then the Ilkhans in Tabriz; Rashid al-Din writes a history of the world.",
+            "ru": "Монгольское завоевание, затем Хулагуиды в Тебризе; Рашид ад-Дин пишет историю мира."
+          },
+          "at": [
+            51.67,
+            32.65
+          ],
+          "states": [
+            "Ilkhanate"
+          ],
+          "under": [
+            "Mongol Empire",
+            "Khwarezmid Empire"
+          ]
+        },
+        {
+          "title": {
+            "en": "Timurids and Turkmens",
+            "ru": "Тимуриды и туркмены"
+          },
+          "start": 1335,
+          "end": 1501,
+          "description": {
+            "en": "Local dynasties, the campaigns of Timur, then the Turkmen Qara Qoyunlu and Aq Qoyunlu; Hafez writes in Shiraz.",
+            "ru": "Местные династии, походы Тимура, затем туркменские Кара-Коюнлу и Ак-Коюнлу; в Ширазе пишет Хафиз."
+          },
+          "at": [
+            51.67,
+            32.65
+          ],
+          "states": [
+            "Muzaffarids",
+            "Sarbadars",
+            "Kartids"
+          ],
+          "under": [
+            "Timurid Empire",
+            "Jalayirid Sultanate",
+            "Qara Qoyunlu",
+            "Aq Qoyunlu"
+          ]
         },
         {
           "title": {
@@ -2641,11 +3092,20 @@
           },
           "start": 1501,
           "end": 1736,
-          "approx": false,
           "description": {
             "en": "Shia Islam becomes the state faith; Isfahan flourishes.",
             "ru": "Шиизм становится государственной верой; расцвет Исфахана."
-          }
+          },
+          "at": [
+            51.67,
+            32.65
+          ],
+          "states": [
+            "Safavid Dynasty"
+          ],
+          "under": [
+            "Hotaki Dynasty"
+          ]
         },
         {
           "title": {
@@ -2654,11 +3114,18 @@
           },
           "start": 1736,
           "end": 1789,
-          "approx": false,
           "description": {
             "en": "Nader Shah’s campaigns, then Karim Khan Zand’s rule from Shiraz.",
             "ru": "Походы Надир-шаха, затем правление Керим-хана Зенда из Шираза."
-          }
+          },
+          "at": [
+            52.53,
+            29.6
+          ],
+          "states": [
+            "Afsharid Iran",
+            "Zand Dynasty"
+          ]
         },
         {
           "title": {
@@ -2667,30 +3134,23 @@
           },
           "start": 1789,
           "end": 1925,
-          "approx": false,
           "description": {
             "en": "The dynasty that met the modern age.",
             "ru": "Династия, встретившая Новое время."
-          }
+          },
+          "at": [
+            51.39,
+            35.69
+          ],
+          "states": [
+            "Qajar Dynasty"
+          ]
         }
       ],
       "wiki": {
         "en": "History of Iran",
         "ru": "История Ирана"
-      },
-      "states": [
-        "Achaemenid Empire",
-        "Seleucid Empire",
-        "Parthian Empire",
-        "Sasanian Empire",
-        "Samanid Empire",
-        "Buyid Dynasty",
-        "Ilkhanate",
-        "Safavid Dynasty",
-        "Afsharid Iran",
-        "Zand Dynasty",
-        "Qajar Dynasty"
-      ]
+      }
     },
     {
       "id": 8,
@@ -2729,11 +3189,14 @@
           },
           "start": 250,
           "end": 900,
-          "approx": false,
           "description": {
             "en": "Tikal, Calakmul, Palenque; dated monuments.",
             "ru": "Тикаль, Калакмуль, Паленке; датированные стелы."
-          }
+          },
+          "states": [
+            "Mayan City-States",
+            "Later Mayan City-States"
+          ]
         },
         {
           "title": {
@@ -2741,23 +3204,46 @@
             "ru": "Постклассический период"
           },
           "start": 900,
-          "end": 1697,
-          "approx": false,
+          "end": 1542,
           "description": {
-            "en": "Chichen Itza, Mayapan; the last kingdom falls in 1697.",
-            "ru": "Чичен-Ица, Майяпан; последнее царство пало в 1697 году."
-          }
+            "en": "Chichen Itza, then Mayapan lead the cities of Yucatán.",
+            "ru": "Чичен-Ица, затем Майяпан возглавляют города Юкатана."
+          },
+          "at": [
+            -89.46,
+            20.63
+          ],
+          "states": [
+            "Later Mayan City-States"
+          ]
+        },
+        {
+          "title": {
+            "en": "Itza kingdom",
+            "ru": "Царство Ица"
+          },
+          "start": 1542,
+          "end": 1697,
+          "description": {
+            "en": "The Spanish take Yucatán; the last Maya kingdom holds out on Lake Petén Itzá until 1697.",
+            "ru": "Испанцы покоряют Юкатан; последнее царство майя держится на озере Петен-Ица до 1697 года."
+          },
+          "at": [
+            -89.88,
+            16.93
+          ],
+          "states": [
+            "Itza Mayans"
+          ],
+          "under": [
+            "Spanish Empire"
+          ]
         }
       ],
       "wiki": {
         "en": "Maya civilization",
         "ru": "Цивилизация майя"
-      },
-      "states": [
-        "Mayan City-States",
-        "Later Mayan City-States",
-        "Itza Mayans"
-      ]
+      }
     },
     {
       "id": 9,
@@ -2783,11 +3269,13 @@
           },
           "start": 1200,
           "end": 1438,
-          "approx": false,
           "description": {
             "en": "A local kingdom in the Andes.",
             "ru": "Местное царство в Андах."
-          }
+          },
+          "states": [
+            "Cuzco"
+          ]
         },
         {
           "title": {
@@ -2796,35 +3284,41 @@
           },
           "start": 1438,
           "end": 1533,
-          "approx": false,
           "description": {
             "en": "Tawantinsuyu, from Ecuador to Chile.",
             "ru": "Тауантинсуйу — от Эквадора до Чили."
-          }
+          },
+          "states": [
+            "Inca Empire"
+          ]
         },
         {
           "title": {
             "en": "Vilcabamba",
             "ru": "Вилькабамба"
           },
-          "start": 1537,
+          "start": 1533,
           "end": 1572,
-          "approx": false,
           "description": {
             "en": "The last Inca refuge in the forest.",
             "ru": "Последнее убежище инков в лесах."
-          }
+          },
+          "at": [
+            -73.2,
+            -13.1
+          ],
+          "states": [
+            "Neo-Inca State"
+          ],
+          "under": [
+            "Spanish Empire"
+          ]
         }
       ],
       "wiki": {
         "en": "Inca Empire",
         "ru": "Государство инков"
-      },
-      "states": [
-        "Cuzco",
-        "Inca Empire",
-        "Neo-Inca State"
-      ]
+      }
     }
   ]
 }

@@ -1,8 +1,8 @@
 <!--
   Side panel (under the slider on narrow screens) for whatever was clicked on
-  the map: a civilization with its periods, a state, or a state that is a
-  chapter of a civilization, with that civilization's story beneath. Always the
-  same order: years and kind, name, story (if any), Wikipedia.
+  the map: a civilization, its story open at a chapter, or a state that is no
+  civilization's chapter. Always the same order: years, name, chapter (if
+  any), Wikipedia.
 -->
 <template>
     <div ref="panelRef" :class="['time-map-panel', { 'time-map-panel--short': !point }]" tabindex="-1"
@@ -16,8 +16,7 @@
         <template v-if="point">
             <div v-if="period" class="time-map-panel__period">
                 <p class="time-map-panel__period-years">
-                    <template v-if="state">{{ l(point.name) }} · </template>
-                    {{ yearRange(period.start, period.end, { approx: period.approx }) }}
+                    {{ yearRange(period.start, period.end, { approx: period.approx }) }}<template v-if="kind"> · {{ kind }}</template>
                 </p>
                 <h3 class="time-map-panel__period-title">{{ l(period.title) }}</h3>
                 <p class="time-map-panel__text">{{ l(period.description) }}</p>
@@ -28,10 +27,16 @@
                 :labels="periodLabels" :current="periodIndex" @select="selectPeriod" />
         </template>
 
-        <a v-if="article" class="time-map-panel__wiki" :href="article" target="_blank" rel="noopener noreferrer">
-            {{ t('wikipedia') }}
-            <Icon name="arrow-up-right" class="time-map-panel__wiki-icon" />
-        </a>
+        <p v-if="articles.length" class="time-map-panel__wiki">
+            <template v-if="articles.length > 1">{{ t('wikipedia') + ': ' }}</template>
+            <template v-for="(article, i) in articles" :key="article.href">
+                <template v-if="i"> · </template>
+                <a class="time-map-panel__wiki-link" :href="article.href" target="_blank" rel="noopener noreferrer">
+                    {{ articles.length > 1 ? article.text : t('wikipedia') }}
+                    <Icon name="arrow-up-right" class="time-map-panel__wiki-icon" />
+                </a>
+            </template>
+        </p>
     </div>
 </template>
 
@@ -46,8 +51,12 @@ import type { PolityInfo } from './usePolities'
 const props = defineProps<{
     /** The civilization whose story is shown, if any. */
     point: TimeMapPoint | null
-    /** The state that was clicked, if any; its info arrives a moment later. */
+    /** Or the state that was clicked; its info arrives a moment later. */
     state: { name: Localized; info: PolityInfo | null } | null
+    /** What the open chapter was: a state, a culture, part of another state. */
+    kind?: string
+    /** Wikipedia articles to link, in order. */
+    links: { text: string; wiki: WikiTitles }[]
 }>()
 
 const periodIndex = defineModel<number>('periodIndex', { required: true })
@@ -71,13 +80,12 @@ const eyebrow = computed(() => {
     return point ? year(point.founded, { approx: point.approx }) + ' · ' + t('founded') : ''
 })
 
-/** The state's article, or the civilization's; in the page's language when there is one. */
-const article = computed(() => {
-    const wiki: WikiTitles | undefined = props.state ? props.state.info?.wiki : props.point?.wiki
-    if (!wiki) return ''
+/** Articles in the page's language when there is one. */
+const articles = computed(() => props.links.flatMap(({ text, wiki }) => {
     const [lang, title] = locale.value === 'ru' && wiki.ru ? ['ru', wiki.ru] : ['en', wiki.en]
-    return title ? `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}` : ''
-})
+    if (!title) return []
+    return [{ text, href: `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}` }]
+}))
 
 const period = computed(() => props.point?.periods?.[periodIndex.value])
 const periodLabels = computed(() => props.point?.periods?.map((item) => l(item.title)) ?? [])
@@ -149,23 +157,27 @@ defineExpose({ open, close })
 }
 
 .time-map-panel__wiki {
+    margin: 14px 0 0;
+    color: var(--aw-color-text-subtle);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.time-map-panel__wiki-link {
     display: inline-flex;
-    align-self: flex-start;
     align-items: center;
     gap: 4px;
-    margin-top: 14px;
     color: var(--aw-color-text-muted);
-    font-size: 13px;
     text-decoration: underline;
     text-decoration-color: var(--aw-color-line-strong);
     text-underline-offset: 3px;
 }
 
-.time-map-panel__wiki:hover {
+.time-map-panel__wiki-link:hover {
     color: var(--aw-color-gold-bright);
 }
 
-.time-map-panel__wiki:focus-visible {
+.time-map-panel__wiki-link:focus-visible {
     border-radius: 2px;
     box-shadow: var(--aw-focus-ring);
     outline: none;

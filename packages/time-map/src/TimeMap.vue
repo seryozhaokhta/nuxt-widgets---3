@@ -17,7 +17,7 @@
                 @click="onMapClick">
                 <div class="time-map__content" :style="panZoomStyle">
                     <TimeMapGeography :geography="data.geography" :features="features" :polities="polities"
-                        :projection="projection"
+                        :highlight="highlighted" :projection="projection"
                         :land-url="epochs[epochIndex]?.land" :year="currentYear" :zoom="scale"
                         :label="l(data.title) || t('worldMap')" />
                     <span v-for="label in labels" :key="label.id"
@@ -26,7 +26,7 @@
                         aria-hidden="true">{{ label.text }}</span>
                     <TimeMapMarker v-for="marker in markers" :key="marker.point.id" :point="marker.point"
                         :name="marker.name" :x="marker.x" :y="marker.y" :visible="isOnMap(marker.point)"
-                        :active="marker.point.id === subject?.point?.id" :zoom="scale"
+                        :active="marker.point.id === story?.id" :zoom="scale"
                         @select="selectPoint(marker.point)" />
                 </div>
 
@@ -43,8 +43,8 @@
             </div>
 
             <TimeMapPanel v-if="subject" ref="panelRef" v-model:period-index="periodIndex" class="time-map__panel"
-                :point="subject.point" :state="subject.state && { name: subject.state.polity.name, info: subject.state.info }"
-                @select-period="onPeriodSelected" @closed="onPanelClosed" />
+                :point="story" :state="subject.kind === 'state' ? { name: subject.polity.name, info: subject.info } : null"
+                :kind="chapterKind" :links="panelLinks" @select-period="onPeriodSelected" @closed="onPanelClosed" />
         </div>
 
         <YearSlider v-model="currentYear" class="time-map__slider" :min="minYear" :max="maxYear" :step="yearStep"
@@ -348,13 +348,13 @@ const labels = computed(() => {
 // ---------------------------------------------------------------- panel
 
 /**
- * What the panel shows: a civilization (a point with its story), a state, or
- * a state that is a chapter of a civilization, with that story beneath.
+ * What the panel shows: a civilization, its story open at the chapter of the
+ * year (a click on its point or on one of its states), or a state that is no
+ * civilization's chapter.
  */
-interface Subject {
-    point: TimeMapPoint | null
-    state: { polity: Polity; info: PolityInfo | null } | null
-}
+type Subject =
+    | { kind: 'civilization'; point: TimeMapPoint }
+    | { kind: 'state'; polity: Polity; info: PolityInfo | null }
 
 // Opening something else while the panel is open closes it first and reopens
 // it with the new subject.
@@ -369,8 +369,8 @@ function periodIndexAt(point: TimeMapPoint, at: Year): number {
 
 function show(next: Subject) {
     subject.value = next
-    if (next.point) periodIndex.value = Math.max(0, periodIndexAt(next.point, currentYear.value))
-    if (next.state && !next.state.info) loadInfo(next.state.polity)
+    if (next.kind === 'civilization') periodIndex.value = Math.max(0, periodIndexAt(next.point, currentYear.value))
+    else if (!next.info) loadInfo(next.polity)
 }
 
 function open(next: Subject) {
@@ -394,50 +394,107 @@ function onPanelClosed() {
 
 async function loadInfo(polity: Polity) {
     const info = await polityInfo(polity)
-    const state = subject.value?.state
-    if (state?.polity.entity === polity.entity) subject.value = { ...subject.value!, state: { ...state, info } }
+    const current = subject.value
+    if (current?.kind === 'state' && current.polity.entity === polity.entity) subject.value = { ...current, info }
 }
 
-/** The civilization on the map now whose chapters include this state. */
+/** A state's English name, the one chapters list. */
+const englishName = (polity: Polity) => (typeof polity.name === 'string' ? polity.name : polity.name.en) ?? ''
+
+/** The civilization on the map now that has this state among its chapters. */
 function civilizationOf(polity: Polity): TimeMapPoint | null {
-    const name = typeof polity.name === 'string' ? polity.name : polity.name.en
-    return points.value.find((point) => isOnMap(point) && point.states?.includes(name ?? '')) ?? null
+    const name = englishName(polity)
+    return points.value.find((point) =>
+        isOnMap(point) && point.periods?.some((period) => period.states?.includes(name))) ?? null
 }
 
 function selectPoint(point: TimeMapPoint) {
-    if (subject.value?.point?.id === point.id && !subject.value.state) return
-    open({ point, state: null })
+    const current = subject.value
+    if (current?.kind === 'civilization' && current.point.id === point.id) return
+    open({ kind: 'civilization', point })
 }
 
 function selectState(polity: Polity) {
-    if (subject.value?.state?.polity.entity === polity.entity) return
-    open({ point: civilizationOf(polity), state: { polity, info: null } })
+    const civilization = civilizationOf(polity)
+    if (civilization) return selectPoint(civilization)
+    const current = subject.value
+    if (current?.kind === 'state' && current.polity.entity === polity.entity) return
+    open({ kind: 'state', polity, info: null })
 }
 
-// The story goes on with the slider: when the shown state leaves the map, the
-// civilization's state of the new year takes its place (the Ming give way to
-// the Qing); with no story to follow, the panel closes.
-function follow(current: Subject, shown: readonly Polity[]): Subject | null {
-    const state = current.state
-    if (!state || shown.some((polity) => polity.entity === state.polity.entity)) return current
-    const point = current.point && isOnMap(current.point) ? current.point : null
-    const next = point && shown.find((polity) => !polity.realm && civilizationOf(polity)?.id === point.id)
-    if (next) return { point, state: { polity: next, info: null } }
-    return point ? { point, state: null } : null
+// What is no longer on the map leaves the panel: a state that has gone, a
+// civilization past its last chapter.
+function onMapNow(item: Subject): boolean {
+    if (item.kind === 'civilization') return isOnMap(item.point)
+    return polities.value.some((polity) => polity.entity === item.polity.entity)
 }
 
-watch(polities, (shown) => {
-    // While the panel closes to open something else, only that something follows.
+watch([polities, currentYear], () => {
+    // While the panel closes to open something else, only that something counts.
     if (pending) {
-        pending = follow(pending, shown)
+        if (!onMapNow(pending)) pending = null
         return
     }
+    if (subject.value && !onMapNow(subject.value)) panelRef.value?.close()
+})
+
+// ---------------------------------------------------------------- chapter
+
+const story = computed(() => (subject.value?.kind === 'civilization' ? subject.value.point : null))
+const chapter = computed(() => story.value?.periods?.[periodIndex.value] ?? null)
+
+/** States on the map now with one of these names; the largest first. */
+const shownNamed = (names: string[] | undefined) => (names?.length
+    ? polities.value.filter((polity) => names.includes(englishName(polity)))
+    : [])
+
+/** The one standing where the point does (the capital's), else the largest. */
+function atPoint(list: Polity[]): Polity | null {
+    const at = chapter.value?.at ?? story.value?.at
+    return (at && list.find((polity) => !polity.realm && geoContains(polity.geometry, at))) || list[0] || null
+}
+
+const chapterStates = computed(() => shownNamed(chapter.value?.states).filter((polity) => !polity.realm))
+const chapterState = computed(() => atPoint(chapterStates.value))
+
+/** State, culture, or whose land it was ("part of the Abbasid Caliphate"). */
+const chapterKind = computed(() => {
+    const period = chapter.value
+    if (!period) return ''
+    if (chapterStates.value.length) return t('stateKind')
+    const ruler = atPoint(shownNamed(period.under))
+    if (ruler) return t('partOf', { name: l(ruler.name) })
+    if (period.states?.length) return t('stateKind')
+    return period.under?.length ? '' : t('cultureKind')
+})
+
+const chapterInfo = ref<PolityInfo | null>(null)
+watch(() => chapterState.value?.entity, async (entity) => {
+    chapterInfo.value = null
+    const polity = chapterState.value
+    if (entity === undefined || !polity) return
+    const info = await polityInfo(polity)
+    if (chapterState.value?.entity === entity) chapterInfo.value = info
+}, { immediate: true })
+
+/** Wikipedia articles: the civilization's and its chapter's, or the state's. */
+const panelLinks = computed(() => {
     const current = subject.value
-    if (!current) return
-    const next = follow(current, shown)
-    if (next === current) return
-    if (next) show(next)
-    else panelRef.value?.close()
+    if (!current) return []
+    if (current.kind === 'state') return current.info?.wiki ? [{ text: l(current.polity.name), wiki: current.info.wiki }] : []
+    const links = current.point.wiki ? [{ text: l(current.point.name), wiki: current.point.wiki }] : []
+    const wiki = chapterInfo.value?.wiki
+    if (chapterState.value && wiki?.en && !links.some((link) => link.wiki.en === wiki.en)) {
+        links.push({ text: l(chapterState.value.name), wiki })
+    }
+    return links
+})
+
+/** Drawn brighter on the map: the open state, or the open chapter's states. */
+const highlighted = computed(() => {
+    const current = subject.value
+    if (current?.kind === 'state') return polities.value.filter((polity) => polity.entity === current.polity.entity).map((polity) => polity.key)
+    return chapterStates.value.map((polity) => polity.key)
 })
 
 // Year and period follow each other: picking a period moves the slider to its
@@ -448,7 +505,7 @@ function onPeriodSelected(period: TimeMapPeriod) {
 }
 
 watch(currentYear, (now) => {
-    const point = subject.value?.point
+    const point = story.value
     if (!point) return
     const shown = point.periods?.[periodIndex.value]
     if (shown && now >= shown.start && now <= shown.end) return

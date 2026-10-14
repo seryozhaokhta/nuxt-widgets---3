@@ -13,6 +13,13 @@ export interface TimeMapPeriod {
   at?: LonLat
   /** The point's name on the map in this period, when it changes. */
   name?: Localized
+  /**
+   * The states that are this chapter on the map (English names, as in the
+   * states layer). Without them, and without `under`, the period is a culture.
+   */
+  states?: string[]
+  /** Whose land it was in this period, when not its own (Roman Egypt). */
+  under?: string[]
 }
 
 /** Wikipedia article titles, by language. */
@@ -22,9 +29,9 @@ export interface WikiTitles {
 }
 
 /**
- * A civilization: a clickable place with its own story and periods. Its
- * `states` (English names as in the states layer) are its chapters on the
- * map: a click on one of them opens the state with this story beneath.
+ * A civilization: a clickable place with its own story, told in periods that
+ * follow one another. A period's `states` are its chapters on the map: a click
+ * on one of them opens this story.
  */
 export interface TimeMapPoint {
   id: string | number
@@ -37,7 +44,6 @@ export interface TimeMapPoint {
   until?: Year
   approx?: boolean
   periods?: TimeMapPeriod[]
-  states?: string[]
   wiki?: WikiTitles
 }
 

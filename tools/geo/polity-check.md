@@ -193,12 +193,10 @@ Places are [lon, lat] of each dropped part.
 | Electorate of Brandenburg | 1450…1458 | [11,49] [12,50] |
 | Kingdom of England | 1450…1452 | [-1,49] |
 | Kingdom of England | 1453…1458 | [-1,44] [-1,49] |
-| Republic of Genoa | 1453…1474 | [25,40] |
+| Republic of Genoa | 1453…1460 | [25,40] |
 | Majapahit | 1459…1474 | [108,-3] [106,-3] [104,1] |
 | Kingdom of France | 1459…1462 | [8,44] |
-| Byzantine Empire | 1463…1467 | [22,38] |
-| Ottoman Empire | 1463…1467 | [26,39] [25,41] |
-| Ottoman Empire | 1468…1474 | [26,39] |
+| Ottoman Empire | 1463…1474 | [26,39] |
 | House of Valois-Anjou | 1475…1481 | [6,48] |
 | Ottoman Empire | 1475…1481 | [26,39] [36,45] [39,47] |
 | Republic of Venice | 1475…1481 | [25,40] |

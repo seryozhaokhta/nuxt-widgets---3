@@ -39,6 +39,8 @@ const en = {
   sources: 'Sources',
   wikipedia: 'Wikipedia',
   stateKind: 'state',
+  cultureKind: 'culture',
+  partOf: 'part of {name}',
 }
 
 export type MessageKey = keyof typeof en
@@ -80,6 +82,8 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     sources: 'Источники',
     wikipedia: 'Википедия',
     stateKind: 'государство',
+    cultureKind: 'культура',
+    partOf: 'в составе: {name}',
   },
 }
 

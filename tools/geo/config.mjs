@@ -448,6 +448,9 @@ export const DE_JURE = [
 export const WIKIPEDIA = {
   'Georgia': { en: 'Georgia (country)', ru: 'Грузия' },
   "Rus'": { en: "Rus' people", ru: 'Русь' },
+  // Renamed in CORRECTIONS, so Cliopatria's link was for another state.
+  'Eastern Jin': { en: 'Eastern Jin', ru: 'Восточная Цзинь' },
+  'Despotate of the Morea': { en: 'Despotate of the Morea', ru: 'Морейский деспотат' },
 }
 
 /**
@@ -536,6 +539,18 @@ export const CORRECTIONS = [
   { name: 'Sultan of Yogyakarta', from: 1700, to: 2000, en: 'Sultanate of Yogyakarta', ru: 'Джокьякарта' },
   // No UN member recognised Ichkeria: under international law Chechnya stayed in Russia.
   { name: 'Chechen Republic', from: 1990, to: 2010, en: 'Russian Federation', ru: 'Россия' },
+  // Alexander's empire, drawn before Ptolemy (king from 305 BC) under his kingdom's name.
+  { name: 'Ptolemaic Kingdom', from: -331, to: -324, en: 'Macedonian Empire', ru: 'Древняя Македония' },
+  // The Jin court fled south in 317: Eastern Jin, not Western.
+  { name: 'Western Jin', from: 317, to: 425, en: 'Eastern Jin', ru: 'Восточная Цзинь' },
+  // Constantinople fell in 1453; the Morea held out until 1460, Trebizond is its own record.
+  { name: 'Byzantine Empire', from: 1454, to: 1460, dropAt: [[28.6, 41.2], [41.25, 41.05]], en: 'Despotate of the Morea', ru: 'Морейский деспотат' },
+  { name: 'Byzantine Empire', from: 1461, to: 1474, remove: true },
+  // Names swapped for 1895–1897: Iran's land under "Dutch East Indies" and the
+  // other way round; the Netherlands' umbrella took Iran along.
+  { name: 'Dutch East Indies', from: 1895, to: 1897, en: 'Qajar Dynasty', ru: 'Каджары' },
+  { name: 'Qajar Dynasty', from: 1895, to: 1897, dropAt: [[51, 34.5]], en: 'Dutch East Indies', ru: 'Голландская Ост-Индия' },
+  { name: '(Netherlands)', from: 1895, to: 1897, dropAt: [[53, 32]] },
   // A copy of the whole Neo-Assyrian Empire (Egypt included) under another name.
   { name: 'Assyrian Egypt', from: -700, to: -600, remove: true },
   // Land kept after it was lost: Cabinda went to Angola in 1975, Hainan to the
