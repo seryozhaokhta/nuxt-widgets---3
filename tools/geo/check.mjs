@@ -68,6 +68,12 @@ async function main() {
   const problems = []
   const index = JSON.parse(await readFile(join(DIR, 'index.json'), 'utf8'))
 
+  const info = JSON.parse(await readFile(join(DIR, index.info), 'utf8'))
+  if (info.length !== index.entities.length) problems.push(`info: ${info.length} rows for ${index.entities.length} states`)
+  for (const [i, [, , en, ru]] of info.entries()) {
+    if (/\(disambiguation\)|\(значения\)/.test(en + ru)) problems.push(`info: "${index.entities[i].en}" links to a disambiguation page`)
+  }
+
   for (const [i, entity] of index.entities.entries()) {
     if (!/[А-Яа-яЁё]/.test(entity.ru)) problems.push(`name: "${entity.en}" has no Russian form ("${entity.ru}")`)
     else if (TOPIC.test(entity.ru)) problems.push(`name: "${entity.en}" is named after a topic: "${entity.ru}" (#${i})`)

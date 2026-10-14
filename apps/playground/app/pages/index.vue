@@ -1,4 +1,8 @@
-<!-- Showcase of all mechanics. ?lang=ru switches the language. -->
+<!--
+  Showcase of all mechanics. ?lang=ru switches the language; ?year=1453 (or
+  -3000 for 3000 BCE) opens the map at that year, and the address follows the
+  slider so the link can be shared.
+-->
 <template>
     <div class="page">
         <header class="page__header">
@@ -8,7 +12,7 @@
                 <p class="page__lead">{{ copy.lead }}</p>
             </div>
             <nav class="page__lang" :aria-label="copy.language">
-                <NuxtLink v-for="option in languages" :key="option" :to="{ query: { lang: option } }"
+                <NuxtLink v-for="option in languages" :key="option" :to="{ query: { ...route.query, lang: option } }"
                     :class="['page__lang-link', { 'page__lang-link--current': option === locale }]"
                     :aria-current="option === locale ? 'true' : undefined">{{ option }}</NuxtLink>
             </nav>
@@ -25,7 +29,7 @@
                 <NodeCard v-for="(card, cardIndex) in portraits" :key="cardIndex" :data="card" :locale="locale" />
             </div>
             <ArtStory v-else-if="section.id === 'story'" :data="venus" :locale="locale" />
-            <TimeMap v-else :data="ancientMap" :locale="locale" />
+            <TimeMap v-else :data="ancientMap" :locale="locale" :year="mapYear" @update:year="onMapYear" />
         </section>
     </div>
 </template>
@@ -47,7 +51,24 @@ const ancientMap = asTimeMapData(ancientMapJson)
 const languages: Locale[] = ['en', 'ru']
 
 const route = useRoute()
+const router = useRouter()
 const locale = computed<Locale>(() => (route.query.lang === 'ru' ? 'ru' : 'en'))
+
+/** The map's year from ?year=, if it is a whole number. */
+const mapYear = computed(() => {
+    const value = Number(route.query.year)
+    return route.query.year && Number.isInteger(value) ? value : undefined
+})
+
+// The address follows the slider once it settles, without adding history entries.
+let yearTimer: ReturnType<typeof setTimeout> | undefined
+function onMapYear(year: number) {
+    clearTimeout(yearTimer)
+    yearTimer = setTimeout(() => {
+        if (mapYear.value !== year) router.replace({ query: { ...route.query, year: String(year) } })
+    }, 400)
+}
+onBeforeUnmount(() => clearTimeout(yearTimer))
 
 const copies = {
     en: {

@@ -350,7 +350,8 @@ export const CAPITALS = {
  * annexations and breakaway states that the UN declared invalid or that no UN
  * member recognises go to the state the land belongs to. For the years given,
  * the land is cut from every other record and joined to the owner's (`create`
- * makes a record when the owner has none, e.g. a territory with no state yet).
+ * makes a record when the owner has none, e.g. a territory with no state yet;
+ * `wiki` is then its English Wikipedia title for the state card).
  *
  * The land is made of Natural Earth's disputed areas (`ne`: BRK_NAME in
  * ne_10m_admin_0_disputed_areas) and of parts of Cliopatria's own records
@@ -409,7 +410,7 @@ export const DE_JURE = [
     basis: 'Egypt–Israel armistice agreement (1949)',
   },
   {
-    owner: ['Palestinian territories'], ru: 'Палестинские территории', create: true, from: 1967, to: 2024,
+    owner: ['Palestinian territories'], ru: 'Палестинские территории', wiki: 'Palestinian territories', create: true, from: 1967, to: 2024,
     areas: [{ ne: 'West Bank' }, { ne: 'Gaza' }, { ne: 'East Jerusalem' }],
     basis: 'UN SC resolutions 242 (1967), 478 (1980) and 2334 (2016)',
   },
@@ -419,12 +420,12 @@ export const DE_JURE = [
     basis: 'UN SC resolutions 242 (1967) and 497 (1981)',
   },
   {
-    owner: ['Western Sahara'], ru: 'Западная Сахара', create: true, from: 1976, to: 2024,
+    owner: ['Western Sahara'], ru: 'Западная Сахара', wiki: 'Western Sahara', create: true, from: 1976, to: 2024,
     areas: [{ ne: 'W. Sahara' }],
     basis: 'UN list of Non-Self-Governing Territories; UN GA resolution 34/37 (1979)',
   },
   {
-    owner: ['South West Africa'], ru: 'Юго-Западная Африка', create: true, from: 1966, to: 1989,
+    owner: ['South West Africa'], ru: 'Юго-Западная Африка', wiki: 'South West Africa', create: true, from: 1966, to: 1989,
     areas: [{ record: 'Namibia', year: 1990 }],
     basis: 'UN GA resolution 2145 (1966); UN SC resolution 276 (1970); ICJ advisory opinion (1971)',
   },
@@ -439,6 +440,15 @@ export const DE_JURE = [
     basis: 'UN SC resolution 662 (1990)',
   },
 ]
+
+/**
+ * Wikipedia titles for the state card where Cliopatria's link lands on a
+ * disambiguation page. Keys are English display names.
+ */
+export const WIKIPEDIA = {
+  'Georgia': { en: 'Georgia (country)', ru: 'Грузия' },
+  "Rus'": { en: "Rus' people", ru: 'Русь' },
+}
 
 /**
  * States whose modern borders are disputed. resolveClaims leaves their

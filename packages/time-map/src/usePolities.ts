@@ -19,12 +19,24 @@ export interface Polity {
    * colonies, a union whose land its members hold): drawn as an outline.
    */
   realm: boolean
+  /** The state across its records; keys its card info. */
+  entity: number
+}
+
+/** What a state's card shows: its years on the map and its Wikipedia articles. */
+export interface PolityInfo {
+  from: number
+  to: number
+  /** Wikipedia titles; '' when there is none. */
+  wiki: { en: string; ru: string }
 }
 
 interface PolityIndex {
   source: string
   entities: { en: string; ru: string; realm?: 1 }[]
   chunks: { from: number; to: number; file: string }[]
+  /** File with a [from, to, enTitle, ruTitle] row per entity. */
+  info?: string
 }
 
 type RawRecord = [
@@ -95,6 +107,7 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
           key: [entity, from, to, label].join(':'),
           name: entities[entity] ?? '',
           realm: !!entities[entity]?.realm || umbrella === 1,
+          entity,
           from,
           to,
           geometry: { type: 'MultiPolygon', coordinates: polygons.map((polygon) => polygon.map((ring) => rings[ring] ?? [])) },
@@ -144,5 +157,26 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
       .sort((a, b) => b.area - a.area)
   })
 
-  return { polities, source: computed(() => index.value?.source ?? '') }
+  // Card info for all states, fetched on the first click on a state.
+  let info: Promise<PolityInfo[] | null> | null = null
+  async function polityInfo(polity: Polity): Promise<PolityInfo | null> {
+    const url = indexUrl()
+    const file = index.value?.info
+    if (!url || !file) return null
+    info ??= fetch(new URL(file, new URL(url, location.href)))
+      .then((response) => {
+        if (!response.ok) throw new Error(response.status + ' ' + file)
+        return response.json() as Promise<[number, number, string, string][]>
+      })
+      .then((rows) => rows.map(([from, to, en, ru]) => ({ from, to, wiki: { en, ru } })))
+      .catch((error) => {
+        // Asked again on the next click.
+        info = null
+        console.warn('[time-map] state info not loaded:', error)
+        return null
+      })
+    return (await info)?.[polity.entity] ?? null
+  }
+
+  return { polities, polityInfo, source: computed(() => index.value?.source ?? '') }
 }

@@ -3,7 +3,7 @@
   areas and points appear and disappear with their dates.
 -->
 <template>
-    <div class="time-map" :lang="locale" @keydown.esc="panelRef?.close()">
+    <div class="time-map" :lang="locale" @keydown.esc="onEscape">
         <header class="time-map__header">
             <div class="time-map__heading">
                 <p v-if="data.title" class="time-map__eyebrow">{{ l(data.title) }}</p>
@@ -13,7 +13,8 @@
         </header>
 
         <div class="time-map__stage">
-            <div ref="viewportRef" class="time-map__viewport" v-on="panZoomHandlers">
+            <div ref="viewportRef" class="time-map__viewport" v-on="panZoomHandlers" @pointerdown="onPointerDown"
+                @click="onMapClick">
                 <div class="time-map__content" :style="panZoomStyle">
                     <TimeMapGeography :geography="data.geography" :features="features" :polities="polities"
                         :projection="projection"
@@ -37,6 +38,10 @@
                 <Transition name="time-map-hint">
                     <p v-if="showWheelHint" class="time-map__hint">{{ t(hintKind === 'touch' ? 'touchHint' : 'wheelHint') }}</p>
                 </Transition>
+
+                <TimeMapStateCard v-if="stateCard" :polity="stateCard.polity" :info="stateCard.info"
+                    :x="stateCard.x" :y="stateCard.y" :width="mapWidth" :height="mapHeight"
+                    @close="stateCard = null" />
             </div>
 
             <TimeMapPanel v-if="selected" ref="panelRef" v-model:period-index="periodIndex" class="time-map__panel"
@@ -53,15 +58,16 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { refDebounced, useElementSize } from '@vueuse/core'
-import { geoCentroid } from 'd3-geo'
+import { geoCentroid, geoContains } from 'd3-geo'
 import gsap from 'gsap'
 import { provideI18n, usePanZoom, type Locale, type Year } from '@art-widgets/core'
 import { IconButton } from '@art-widgets/ui'
 import TimeMapGeography from './TimeMapGeography.vue'
-import { usePolities } from './usePolities'
+import { usePolities, type Polity, type PolityInfo } from './usePolities'
 import TimeMapLegend from './TimeMapLegend.vue'
 import TimeMapMarker from './TimeMapMarker.vue'
 import TimeMapPanel from './TimeMapPanel.vue'
+import TimeMapStateCard from './TimeMapStateCard.vue'
 import YearSlider from './YearSlider.vue'
 import { createProjection, featureGeometry, MAP_HEIGHT, MAP_WIDTH } from './geo'
 import type { LonLat, TimeMapData, TimeMapPeriod, TimeMapPoint } from './types'
@@ -69,7 +75,11 @@ import type { LonLat, TimeMapData, TimeMapPeriod, TimeMapPoint } from './types'
 const props = defineProps<{
     data: TimeMapData
     locale?: Locale
+    /** Year to open at (e.g. from the page's URL); the slider reports changes with update:year. */
+    year?: Year
 }>()
+
+const emit = defineEmits<{ 'update:year': [year: Year] }>()
 
 const { t, l, year, locale } = provideI18n(() => props.locale)
 
@@ -105,8 +115,19 @@ const maxYear = computed(() => {
     return minYear.value + Math.ceil((latest - minYear.value) / yearStep.value) * yearStep.value
 })
 
-const currentYear = ref(minYear.value)
+/** A year inside the slider's range; there is no year 0. */
+function clampYear(value: number): Year {
+    const clamped = Math.round(Math.min(maxYear.value, Math.max(minYear.value, value)))
+    return clamped === 0 ? 1 : clamped
+}
+
+const currentYear = ref(props.year === undefined ? minYear.value : clampYear(props.year))
 const displayYear = refDebounced(currentYear, 100)
+
+watch(() => props.year, (next) => {
+    if (next !== undefined && clampYear(next) !== currentYear.value) currentYear.value = clampYear(next)
+})
+watch(currentYear, (next) => emit('update:year', next))
 
 const yearRef = ref<HTMLElement | null>(null)
 watch(displayYear, () => {
@@ -123,7 +144,7 @@ const seaLevelText = computed(() => {
     return level >= 0 ? t('seaLevelToday') : t('seaLevel', { value: '−' + Math.abs(level) })
 })
 
-const { polities } = usePolities(() => props.data.geography.polities, currentYear)
+const { polities, polityInfo } = usePolities(() => props.data.geography.polities, currentYear)
 
 const viewportRef = ref<HTMLElement | null>(null)
 const {
@@ -145,6 +166,58 @@ onMounted(() => {
     const center = view && toPercent(view.center)
     if (view && center) centerOn(center.x / 100, center.y / 100, view.zoom)
 })
+
+// ---------------------------------------------------------------- state card
+
+/** A click on a state opens its card; a drag that pans the map doesn't. */
+const stateCard = ref<{ polity: Polity; info: PolityInfo | null; x: number; y: number } | null>(null)
+let pressedAt: { x: number; y: number } | null = null
+
+function onPointerDown(event: PointerEvent) {
+    pressedAt = { x: event.clientX, y: event.clientY }
+}
+
+/** The topmost (so the smallest) filled state under a point of the viewport. */
+function polityAt(clientX: number, clientY: number): Polity | null {
+    const rect = viewportRef.value?.getBoundingClientRect()
+    if (!rect?.width) return null
+    const x = ((clientX - rect.left - offset.value.x) / scale.value / rect.width) * MAP_WIDTH
+    const y = ((clientY - rect.top - offset.value.y) / scale.value / rect.height) * MAP_HEIGHT
+    const at = projection.invert?.([x, y])
+    if (!at) return null
+    return [...polities.value].reverse().find((polity) => !polity.realm && geoContains(polity.geometry, at)) ?? null
+}
+
+async function onMapClick(event: MouseEvent) {
+    if ((event.target as Element).closest('button, a, .time-map-state')) return
+    if (pressedAt && Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y) > 5) return
+    const rect = viewportRef.value?.getBoundingClientRect()
+    const polity = polityAt(event.clientX, event.clientY)
+    // A click on the sea, or on the same state again, closes the card.
+    if (!rect || !polity || polity.key === stateCard.value?.polity.key) {
+        stateCard.value = null
+        return
+    }
+    stateCard.value = { polity, info: null, x: event.clientX - rect.left, y: event.clientY - rect.top }
+    const info = await polityInfo(polity)
+    if (stateCard.value?.polity.key === polity.key) stateCard.value = { ...stateCard.value, info }
+}
+
+// The card belongs to a place and a year: moving the map or leaving the
+// state's years closes it. (Compared by value: a click without a drag still
+// sets the same offset again.)
+watch(() => [offset.value.x, offset.value.y, scale.value].join(), () => {
+    stateCard.value = null
+})
+watch(polities, (shown) => {
+    const card = stateCard.value
+    if (card && !shown.some((polity) => polity.entity === card.polity.entity)) stateCard.value = null
+})
+
+function onEscape() {
+    if (stateCard.value) stateCard.value = null
+    else panelRef.value?.close()
+}
 
 /** A point shows from its founding until `until` or the end of its last period. */
 function isOnMap(point: TimeMapPoint): boolean {

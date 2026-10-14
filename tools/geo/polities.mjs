@@ -5,6 +5,7 @@
 // Output, in OUT_DIR/polities/:
 //   index.json        names (English; Russian via Wikidata/Wikipedia) and time chunks
 //   <from>-<to>.json  records alive in that span, rings stored once ("3400bce-203bce.json")
+//   info.json         per state: years on the map and Wikipedia titles (for the state card)
 //
 // Rings are kept as integer hundredths of a degree, delta-encoded:
 // [x0, y0, dx1, dy1, ...]. Each record: [entity, fromYear, toYear,
@@ -31,7 +32,7 @@ import { fileURLToPath } from 'node:url'
 import { geoArea } from 'd3-geo'
 import polygonClipping from 'polygon-clipping'
 import { bounds, cleanRing, depth, distanceToPolygon, orient, pointInPolygon, polylabel, rasterize, ringArea } from './geometry.mjs'
-import { CAPITALS, CORRECTIONS, DE_JURE, DISPUTED, OUT_DIR, RUSSIAN_NAMES } from './config.mjs'
+import { CAPITALS, CORRECTIONS, DE_JURE, DISPUTED, OUT_DIR, RUSSIAN_NAMES, WIKIPEDIA } from './config.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const CACHE = join(tmpdir(), 'art-widgets-geo')
@@ -532,7 +533,7 @@ function applyDeJure(records, disputed, entityOf, log) {
         let to = year
         while (to < rule.to && !held.has(to + 1)) to++
         const entity = entityOf(rule.owner[0], rule.ru)
-        records.push({ name: rule.owner[0], entity, from: year, to, polygons, area, realm: false, fixed: true, item: null })
+        records.push({ name: rule.owner[0], entity, from: year, to, polygons, area, realm: false, fixed: true, item: null, wiki: rule.wiki ?? null })
         log.push({ name: rule.owner[0], from: year, to, change: 'drawn', basis: rule.basis })
         year = to
       }
@@ -820,7 +821,8 @@ async function main() {
       if (!piece.fixed && (late || early)) {
         issues.push({ name: piece.name, wikipedia: Wikipedia, from: piece.from, to: piece.to, start: span.start, end: span.end })
       }
-      records.push({ ...piece, name: en, entity, realm })
+      // A renamed record keeps no article: Cliopatria's link was for the old name.
+      records.push({ ...piece, name: en, entity, realm, wiki: piece.name === source ? Wikipedia : null })
     }
   }
   // Some records (often an umbrella) come without a Wikipedia link: they take
@@ -863,10 +865,28 @@ async function main() {
     chunks.push({ from: span[0], to: span[1], file })
     total += text.length
   }
+  // What the card of a clicked state shows, fetched on the first click only:
+  // per entity, [first year, last year on the map, English and Russian
+  // Wikipedia titles ('' when unknown)].
+  const info = entities.map(() => ({ from: Infinity, to: -Infinity, wiki: null }))
+  for (const record of records) {
+    const item = info[record.entity]
+    item.from = Math.min(item.from, record.from)
+    item.to = Math.max(item.to, record.to)
+    item.wiki ??= record.wiki ?? null
+  }
+  const articles = info.map(({ from, to, wiki }, i) => {
+    const fixed = WIKIPEDIA[entities[i].en]
+    if (fixed) return [from, to, fixed.en, fixed.ru]
+    return [from, to, wiki ?? '', (wiki && titles[wiki]?.ruwiki) || '']
+  })
+  await writeFile(join(out, 'info.json'), JSON.stringify(articles))
+
   const index = {
     source: 'Cliopatria v0.2.1, Seshat Global History Databank, CC BY 4.0 (modified)',
     entities,
     chunks,
+    info: 'info.json',
   }
   await writeFile(join(out, 'index.json'), JSON.stringify(index))
   await writeFile(join(ROOT, 'tools', 'geo', 'polity-check.md'), [
