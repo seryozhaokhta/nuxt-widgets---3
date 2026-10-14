@@ -14,7 +14,11 @@ packages/
   time-map/    карта с ползунком времени и периодами
 apps/
   playground/  Nuxt-витрина, где механики собраны на одной странице
+    app/       код витрины (Nuxt 4): app.vue, pages/, assets/, data/ — `~` указывает сюда
+    public/    статика, в том числе слои карты (public/geo)
 ```
+
+Нужен Node 24 (как и на Vercel, см. `engines` в `package.json`); витрина — на Nuxt 4.
 
 ## Команды
 
@@ -109,7 +113,7 @@ npm run geo:polities
   с заливкой, Крым в 2024-м — Украина и т. д., список `PLACES` в `tools/geo/check.mjs`). При ошибке
   команда завершается с кодом 1 и списком.
 
-Вручную в данных карты (`features` в `apps/playground/data/map-ancient.json`) остались только то, чего
+Вручную в данных карты (`features` в `apps/playground/app/data/map-ancient.json`) остались только то, чего
 нет в Cliopatria: археологические культуры до государств, ледники, бывшие берега, древние русла и названия
 исчезнувших земель. Их даты сверены с Википедией (октябрь 2026). У каждой области есть `from` и `to`;
 координаты — `[долгота, широта]`. `asTimeMapData()` проверяет данные при загрузке.
@@ -137,7 +141,7 @@ workspaces (npm и pnpm). Поэтому пакеты связаны алиас�
 
 - **`npm run build` падает на exFAT:** сборщик Nitro ожидает от `readlink` ошибку `EINVAL`, а на
   exFAT Node возвращает `EISDIR`. Dev-сервер работает. Сборка проходит, если проект лежит на NTFS.
-- **Ссылки на источники** в `apps/playground/data/portraits.json` — заглушки `example.com`.
+- **Ссылки на источники** в `apps/playground/app/data/portraits.json` — заглушки `example.com`.
 
 ## Дальше
 

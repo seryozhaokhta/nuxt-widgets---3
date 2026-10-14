@@ -24,9 +24,8 @@
     "@vueuse/core": "^11.3.0",
     "d3-geo": "^3.1.1",
     "gsap": "^3.15.0",
-    "nuxt": "^3.21.11",
-    "vue": "^3.5.44",
-    "vue-router": "^4.6.4"
+    "nuxt": "^4.6.1",
+    "vue": "^3.5.44"
   },
   "devDependencies": {
     "@types/d3-geo": "^3.1.1",
@@ -35,7 +34,7 @@
     "d3-contour": "^4.0.2",
     "netcdfjs": "^3.0.0",
     "polygon-clipping": "^0.15.7",
-    "typescript": "~5.6.2",
-    "vue-tsc": "^2.1.6"
+    "typescript": "~5.9",
+    "vue-tsc": "^3.3.13"
   }
 }

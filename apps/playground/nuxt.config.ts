@@ -8,8 +8,10 @@ const vercelOutput = process.env.VERCEL
   : {}
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
+// App code lives in app/ (Nuxt 4's srcDir, which `~` points to); public/ and
+// server/ stay next to this file.
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   alias: packageAliases,
   css: ['@art-widgets/ui/fonts.css', '@art-widgets/ui/tokens.css', '~/assets/page.css'],
