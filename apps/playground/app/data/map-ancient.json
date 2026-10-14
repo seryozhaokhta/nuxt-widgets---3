@@ -54,17 +54,75 @@
     1500
   ],
   "eras": [
-    { "name": { "en": "Prehistory", "ru": "Первобытность" }, "start": -10000 },
-    { "name": { "en": "Ancient world", "ru": "Древний мир" }, "start": -3000 },
-    { "name": { "en": "Middle Ages", "ru": "Средние века" }, "start": 476 },
-    { "name": { "en": "Modern era", "ru": "Новое время" }, "start": 1500 },
-    { "name": { "en": "Contemporary era", "ru": "Новейшее время" }, "start": 1914 }
+    {
+      "name": {
+        "en": "Prehistory",
+        "ru": "Первобытность"
+      },
+      "start": -10000
+    },
+    {
+      "name": {
+        "en": "Ancient world",
+        "ru": "Древний мир"
+      },
+      "start": -3000
+    },
+    {
+      "name": {
+        "en": "Middle Ages",
+        "ru": "Средние века"
+      },
+      "start": 476
+    },
+    {
+      "name": {
+        "en": "Modern era",
+        "ru": "Новое время"
+      },
+      "start": 1500
+    },
+    {
+      "name": {
+        "en": "Contemporary era",
+        "ru": "Новейшее время"
+      },
+      "start": 1914
+    }
   ],
   "ideas": [
-    { "name": { "en": "Neolithic Revolution", "ru": "Неолитическая революция" }, "start": -10000, "end": -7000 },
-    { "name": { "en": "Axial Age", "ru": "Осевое время" }, "start": -800, "end": -200 },
-    { "name": { "en": "Renaissance", "ru": "Возрождение" }, "start": 1300, "end": 1600 },
-    { "name": { "en": "Age of Enlightenment", "ru": "Эпоха Просвещения" }, "start": 1685, "end": 1815 }
+    {
+      "name": {
+        "en": "Neolithic Revolution",
+        "ru": "Неолитическая революция"
+      },
+      "start": -10000,
+      "end": -7000
+    },
+    {
+      "name": {
+        "en": "Axial Age",
+        "ru": "Осевое время"
+      },
+      "start": -800,
+      "end": -200
+    },
+    {
+      "name": {
+        "en": "Renaissance",
+        "ru": "Возрождение"
+      },
+      "start": 1300,
+      "end": 1600
+    },
+    {
+      "name": {
+        "en": "Age of Enlightenment",
+        "ru": "Эпоха Просвещения"
+      },
+      "start": 1685,
+      "end": 1815
+    }
   ],
   "view": {
     "center": [
@@ -81,7 +139,10 @@
     {
       "name": "Cliopatria",
       "url": "https://github.com/Seshat-Global-History-Databank/cliopatria",
-      "note": { "en": "modified", "ru": "с изменениями" }
+      "note": {
+        "en": "modified",
+        "ru": "с изменениями"
+      }
     },
     {
       "name": "CC BY 4.0",
@@ -1857,6 +1918,15 @@
             "ru": "Упадок Шумера и возвышение Вавилона."
           }
         }
+      ],
+      "wiki": {
+        "en": "Sumer",
+        "ru": "Шумер"
+      },
+      "states": [
+        "Sumerian City-States",
+        "Akkadian Empire",
+        "Babylonia"
       ]
     },
     {
@@ -2006,6 +2076,25 @@
             "ru": "Житница Рима."
           }
         }
+      ],
+      "wiki": {
+        "en": "Ancient Egypt",
+        "ru": "Древний Египет"
+      },
+      "states": [
+        "Early Dynastic Period of Egypt",
+        "Old Kingdom of Egypt",
+        "Lower Egypt",
+        "Upper Egypt",
+        "Middle Kingdom of Egypt",
+        "Sixteenth Dynasty of Egypt",
+        "Seventeenth Dynasty of Egypt",
+        "New Kingdom of Egypt",
+        "Twenty-second Dynasty of Egypt",
+        "Twenty-third Dynasty of Egypt",
+        "Twenty-sixth Dynasty of Egypt",
+        "Thirtieth Dynasty of Egypt",
+        "Ptolemaic Kingdom"
       ]
     },
     {
@@ -2064,6 +2153,13 @@
             "ru": "Упадок и запустение городов."
           }
         }
+      ],
+      "wiki": {
+        "en": "Indus Valley Civilisation",
+        "ru": "Хараппская цивилизация"
+      },
+      "states": [
+        "Indus Valley Civilization"
       ]
     },
     {
@@ -2265,6 +2361,26 @@
             "ru": "Последняя династия."
           }
         }
+      ],
+      "wiki": {
+        "en": "History of China",
+        "ru": "История Китая"
+      },
+      "states": [
+        "Shang Dynasty",
+        "Zhou Dynasty",
+        "Eastern Zhou",
+        "Qin Dynasty",
+        "Han Dynasty",
+        "Xin Dynasty",
+        "Western Jin",
+        "Sui Dynasty",
+        "Tang Dynasty",
+        "Northern Song",
+        "Southern Song",
+        "Yuan Dynasty",
+        "Ming Dynasty",
+        "Qing Dynasty"
       ]
     },
     {
@@ -2323,6 +2439,13 @@
             "ru": "Упадок из-за природных катастроф и вторжений."
           }
         }
+      ],
+      "wiki": {
+        "en": "Minoan civilization",
+        "ru": "Минойская цивилизация"
+      },
+      "states": [
+        "Minoan civilization"
       ]
     },
     {
@@ -2415,6 +2538,18 @@
             "ru": "Византия"
           }
         }
+      ],
+      "wiki": {
+        "en": "Ancient Rome",
+        "ru": "Древний Рим"
+      },
+      "states": [
+        "Roman Kingdom",
+        "Roman Republic",
+        "Roman Empire",
+        "Western Roman Empire",
+        "Eastern Roman Empire",
+        "Byzantine Empire"
       ]
     },
     {
@@ -2538,6 +2673,23 @@
             "ru": "Династия, встретившая Новое время."
           }
         }
+      ],
+      "wiki": {
+        "en": "History of Iran",
+        "ru": "История Ирана"
+      },
+      "states": [
+        "Achaemenid Empire",
+        "Seleucid Empire",
+        "Parthian Empire",
+        "Sasanian Empire",
+        "Samanid Empire",
+        "Buyid Dynasty",
+        "Ilkhanate",
+        "Safavid Dynasty",
+        "Afsharid Iran",
+        "Zand Dynasty",
+        "Qajar Dynasty"
       ]
     },
     {
@@ -2596,6 +2748,15 @@
             "ru": "Чичен-Ица, Майяпан; последнее царство пало в 1697 году."
           }
         }
+      ],
+      "wiki": {
+        "en": "Maya civilization",
+        "ru": "Цивилизация майя"
+      },
+      "states": [
+        "Mayan City-States",
+        "Later Mayan City-States",
+        "Itza Mayans"
       ]
     },
     {
@@ -2654,6 +2815,15 @@
             "ru": "Последнее убежище инков в лесах."
           }
         }
+      ],
+      "wiki": {
+        "en": "Inca Empire",
+        "ru": "Государство инков"
+      },
+      "states": [
+        "Cuzco",
+        "Inca Empire",
+        "Neo-Inca State"
       ]
     }
   ]

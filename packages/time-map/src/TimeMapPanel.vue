@@ -1,36 +1,54 @@
-<!-- Side panel (bottom sheet on narrow screens) with a point's details and periods. -->
+<!--
+  Side panel (under the slider on narrow screens) for whatever was clicked on
+  the map: a civilization with its periods, a state, or a state that is a
+  chapter of a civilization, with that civilization's story beneath. Always the
+  same order: years and kind, name, story (if any), Wikipedia.
+-->
 <template>
-    <div ref="panelRef" class="time-map-panel" tabindex="-1" role="dialog" :aria-label="l(point.name)">
+    <div ref="panelRef" :class="['time-map-panel', { 'time-map-panel--short': !point }]" tabindex="-1"
+        role="dialog" :aria-label="title">
         <div class="time-map-panel__top">
-            <p class="time-map-panel__eyebrow">
-                {{ year(point.founded, { approx: point.approx }) }} · {{ t('founded') }}
-            </p>
+            <p class="time-map-panel__eyebrow">{{ eyebrow }}</p>
             <IconButton class="time-map-panel__close" icon="close" size="sm" :label="t('close')" @click="close" />
         </div>
-        <h2 class="time-map-panel__title">{{ l(point.name) }}</h2>
+        <h2 class="time-map-panel__title">{{ title }}</h2>
 
-        <div v-if="period" class="time-map-panel__period">
-            <p class="time-map-panel__period-years">
-                {{ yearRange(period.start, period.end, { approx: period.approx }) }}
-            </p>
-            <h3 class="time-map-panel__period-title">{{ l(period.title) }}</h3>
-            <p class="time-map-panel__text">{{ l(period.description) }}</p>
-        </div>
-        <p v-else class="time-map-panel__text">{{ l(point.description) }}</p>
+        <template v-if="point">
+            <div v-if="period" class="time-map-panel__period">
+                <p class="time-map-panel__period-years">
+                    <template v-if="state">{{ l(point.name) }} · </template>
+                    {{ yearRange(period.start, period.end, { approx: period.approx }) }}
+                </p>
+                <h3 class="time-map-panel__period-title">{{ l(period.title) }}</h3>
+                <p class="time-map-panel__text">{{ l(period.description) }}</p>
+            </div>
+            <p v-else class="time-map-panel__text">{{ l(point.description) }}</p>
 
-        <SegmentedProgress v-if="point.periods?.length" class="time-map-panel__periods" smooth
-            :labels="periodLabels" :current="periodIndex" @select="selectPeriod" />
+            <SegmentedProgress v-if="point.periods?.length" class="time-map-panel__periods" smooth
+                :labels="periodLabels" :current="periodIndex" @select="selectPeriod" />
+        </template>
+
+        <a v-if="article" class="time-map-panel__wiki" :href="article" target="_blank" rel="noopener noreferrer">
+            {{ t('wikipedia') }}
+            <Icon name="arrow-up-right" class="time-map-panel__wiki-icon" />
+        </a>
     </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import gsap from 'gsap'
-import { useI18n } from '@art-widgets/core'
-import { IconButton, SegmentedProgress } from '@art-widgets/ui'
-import type { TimeMapPeriod, TimeMapPoint } from './types'
+import { useI18n, type Localized } from '@art-widgets/core'
+import { Icon, IconButton, SegmentedProgress } from '@art-widgets/ui'
+import type { TimeMapPeriod, TimeMapPoint, WikiTitles } from './types'
+import type { PolityInfo } from './usePolities'
 
-const props = defineProps<{ point: TimeMapPoint }>()
+const props = defineProps<{
+    /** The civilization whose story is shown, if any. */
+    point: TimeMapPoint | null
+    /** The state that was clicked, if any; its info arrives a moment later. */
+    state: { name: Localized; info: PolityInfo | null } | null
+}>()
 
 const periodIndex = defineModel<number>('periodIndex', { required: true })
 
@@ -40,29 +58,54 @@ const emit = defineEmits<{
     closed: []
 }>()
 
-const { t, l, year, yearRange } = useI18n()
+const { t, l, year, yearRange, locale } = useI18n()
 
-const period = computed(() => props.point.periods?.[periodIndex.value])
-const periodLabels = computed(() => props.point.periods?.map((item) => l(item.title)) ?? [])
+const title = computed(() => l(props.state?.name ?? props.point?.name))
+
+const eyebrow = computed(() => {
+    if (props.state) {
+        const info = props.state.info
+        return (info ? yearRange(info.from, info.to) + ' · ' : '') + t('stateKind')
+    }
+    const point = props.point
+    return point ? year(point.founded, { approx: point.approx }) + ' · ' + t('founded') : ''
+})
+
+/** The state's article, or the civilization's; in the page's language when there is one. */
+const article = computed(() => {
+    const wiki: WikiTitles | undefined = props.state ? props.state.info?.wiki : props.point?.wiki
+    if (!wiki) return ''
+    const [lang, title] = locale.value === 'ru' && wiki.ru ? ['ru', wiki.ru] : ['en', wiki.en]
+    return title ? `https://${lang}.wikipedia.org/wiki/${encodeURIComponent(title.replace(/ /g, '_'))}` : ''
+})
+
+const period = computed(() => props.point?.periods?.[periodIndex.value])
+const periodLabels = computed(() => props.point?.periods?.map((item) => l(item.title)) ?? [])
 
 function selectPeriod(index: number) {
-    const selected = props.point.periods?.[index]
+    const selected = props.point?.periods?.[index]
     if (!selected) return
     periodIndex.value = index
     emit('selectPeriod', selected)
 }
 
 const panelRef = ref<HTMLElement | null>(null)
+// A second close while the first is running would report "closed" twice.
+let closing = false
 
 function open() {
     if (!panelRef.value) return
+    closing = false
+    gsap.killTweensOf(panelRef.value)
     gsap.fromTo(panelRef.value, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' })
     // Focus keeps Esc working for this map only.
     panelRef.value.focus({ preventScroll: true })
 }
 
 function close() {
-    if (!panelRef.value) return
+    if (!panelRef.value || closing) return
+    closing = true
+    gsap.killTweensOf(panelRef.value)
     gsap.to(panelRef.value, {
         opacity: 0,
         y: 12,
@@ -98,6 +141,39 @@ defineExpose({ open, close })
 
 .time-map-panel:focus {
     outline: none;
+}
+
+/* A state without a story needs no full-height panel. */
+.time-map-panel--short {
+    bottom: auto;
+}
+
+.time-map-panel__wiki {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 4px;
+    margin-top: 14px;
+    color: var(--aw-color-text-muted);
+    font-size: 13px;
+    text-decoration: underline;
+    text-decoration-color: var(--aw-color-line-strong);
+    text-underline-offset: 3px;
+}
+
+.time-map-panel__wiki:hover {
+    color: var(--aw-color-gold-bright);
+}
+
+.time-map-panel__wiki:focus-visible {
+    border-radius: 2px;
+    box-shadow: var(--aw-focus-ring);
+    outline: none;
+}
+
+.time-map-panel__wiki-icon {
+    width: 12px;
+    height: 12px;
 }
 
 .time-map-panel__top {

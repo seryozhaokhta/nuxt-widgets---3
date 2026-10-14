@@ -22,10 +22,12 @@
                         :label="l(data.title) || t('worldMap')" />
                     <span v-for="label in labels" :key="label.id"
                         :class="['time-map__label', 'time-map__label--' + label.kind, { 'time-map__label--visible': label.visible }]"
-                        :style="label.style" aria-hidden="true">{{ label.text }}</span>
+                        :style="label.style" :data-polity="label.kind === 'state' ? label.id : undefined"
+                        aria-hidden="true">{{ label.text }}</span>
                     <TimeMapMarker v-for="marker in markers" :key="marker.point.id" :point="marker.point"
                         :name="marker.name" :x="marker.x" :y="marker.y" :visible="isOnMap(marker.point)"
-                        :active="marker.point.id === selected?.id" :zoom="scale" @select="selectPoint(marker.point)" />
+                        :active="marker.point.id === subject?.point?.id" :zoom="scale"
+                        @select="selectPoint(marker.point)" />
                 </div>
 
                 <div ref="zoomRef" class="time-map__zoom" @mousedown.stop @touchstart.stop>
@@ -38,14 +40,11 @@
                 <Transition name="time-map-hint">
                     <p v-if="showWheelHint" class="time-map__hint">{{ t(hintKind === 'touch' ? 'touchHint' : 'wheelHint') }}</p>
                 </Transition>
-
-                <TimeMapStateCard v-if="stateCard" :polity="stateCard.polity" :info="stateCard.info"
-                    :x="stateCard.x" :y="stateCard.y" :width="mapWidth" :height="mapHeight"
-                    @close="stateCard = null" />
             </div>
 
-            <TimeMapPanel v-if="selected" ref="panelRef" v-model:period-index="periodIndex" class="time-map__panel"
-                :point="selected" @select-period="onPeriodSelected" @closed="onPanelClosed" />
+            <TimeMapPanel v-if="subject" ref="panelRef" v-model:period-index="periodIndex" class="time-map__panel"
+                :point="subject.point" :state="subject.state && { name: subject.state.polity.name, info: subject.state.info }"
+                @select-period="onPeriodSelected" @closed="onPanelClosed" />
         </div>
 
         <YearSlider v-model="currentYear" class="time-map__slider" :min="minYear" :max="maxYear" :step="yearStep"
@@ -67,7 +66,6 @@ import { usePolities, type Polity, type PolityInfo } from './usePolities'
 import TimeMapLegend from './TimeMapLegend.vue'
 import TimeMapMarker from './TimeMapMarker.vue'
 import TimeMapPanel from './TimeMapPanel.vue'
-import TimeMapStateCard from './TimeMapStateCard.vue'
 import YearSlider from './YearSlider.vue'
 import { createProjection, featureGeometry, MAP_HEIGHT, MAP_WIDTH } from './geo'
 import type { LonLat, TimeMapData, TimeMapPeriod, TimeMapPoint } from './types'
@@ -167,10 +165,9 @@ onMounted(() => {
     if (view && center) centerOn(center.x / 100, center.y / 100, view.zoom)
 })
 
-// ---------------------------------------------------------------- state card
+// ---------------------------------------------------------------- clicks on states
 
-/** A click on a state opens its card; a drag that pans the map doesn't. */
-const stateCard = ref<{ polity: Polity; info: PolityInfo | null; x: number; y: number } | null>(null)
+/** A click on a state opens it in the panel; a drag that pans the map doesn't. */
 let pressedAt: { x: number; y: number } | null = null
 
 function onPointerDown(event: PointerEvent) {
@@ -188,35 +185,19 @@ function polityAt(clientX: number, clientY: number): Polity | null {
     return [...polities.value].reverse().find((polity) => !polity.realm && geoContains(polity.geometry, at)) ?? null
 }
 
-async function onMapClick(event: MouseEvent) {
-    if ((event.target as Element).closest('button, a, .time-map-state')) return
+function onMapClick(event: MouseEvent) {
+    const target = event.target as Element
+    if (target.closest('button, a')) return
     if (pressedAt && Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y) > 5) return
-    const rect = viewportRef.value?.getBoundingClientRect()
-    const polity = polityAt(event.clientX, event.clientY)
-    // A click on the sea, or on the same state again, closes the card.
-    if (!rect || !polity || polity.key === stateCard.value?.polity.key) {
-        stateCard.value = null
-        return
-    }
-    stateCard.value = { polity, info: null, x: event.clientX - rect.left, y: event.clientY - rect.top }
-    const info = await polityInfo(polity)
-    if (stateCard.value?.polity.key === polity.key) stateCard.value = { ...stateCard.value, info }
+    // A name may stand a little off its state to make room for others; it
+    // still opens its own state.
+    const key = target.closest<HTMLElement>('[data-polity]')?.dataset.polity
+    const polity = (key && polities.value.find((item) => item.key === key)) || polityAt(event.clientX, event.clientY)
+    if (polity) selectState(polity)
 }
 
-// The card belongs to a place and a year: moving the map or leaving the
-// state's years closes it. (Compared by value: a click without a drag still
-// sets the same offset again.)
-watch(() => [offset.value.x, offset.value.y, scale.value].join(), () => {
-    stateCard.value = null
-})
-watch(polities, (shown) => {
-    const card = stateCard.value
-    if (card && !shown.some((polity) => polity.entity === card.polity.entity)) stateCard.value = null
-})
-
 function onEscape() {
-    if (stateCard.value) stateCard.value = null
-    else panelRef.value?.close()
+    panelRef.value?.close()
 }
 
 /** A point shows from its founding until `until` or the end of its last period. */
@@ -266,8 +247,9 @@ function onScreen(position: { x: number; y: number }) {
 
 const labels = computed(() => {
     // A state drawn in several records at once (a part joined from elsewhere)
-    // is named once, on its largest record.
-    const named = new Set<string>()
+    // is named once, on its largest record; one a civilization's point already
+    // names (Byzantium) isn't named again.
+    const named = new Set<string>(markers.value.filter((marker) => isOnMap(marker.point)).map((marker) => l(marker.name)))
     const stateLabels = polities.value
         .filter((polity) => !polity.realm)
         .sort((a, b) => b.area - a.area)
@@ -363,28 +345,40 @@ const labels = computed(() => {
     })
 })
 
-// Panel of the selected point. Selecting another point while the panel is
-// open closes it first and reopens it with the new point.
+// ---------------------------------------------------------------- panel
+
+/**
+ * What the panel shows: a civilization (a point with its story), a state, or
+ * a state that is a chapter of a civilization, with that story beneath.
+ */
+interface Subject {
+    point: TimeMapPoint | null
+    state: { polity: Polity; info: PolityInfo | null } | null
+}
+
+// Opening something else while the panel is open closes it first and reopens
+// it with the new subject.
 const panelRef = ref<InstanceType<typeof TimeMapPanel> | null>(null)
-const selected = ref<TimeMapPoint | null>(null)
+const subject = ref<Subject | null>(null)
 const periodIndex = ref(0)
-let pending: TimeMapPoint | null = null
+let pending: Subject | null = null
 
 function periodIndexAt(point: TimeMapPoint, at: Year): number {
     return point.periods?.findIndex((period) => at >= period.start && at <= period.end) ?? -1
 }
 
-function show(point: TimeMapPoint) {
-    selected.value = point
-    periodIndex.value = Math.max(0, periodIndexAt(point, currentYear.value))
+function show(next: Subject) {
+    subject.value = next
+    if (next.point) periodIndex.value = Math.max(0, periodIndexAt(next.point, currentYear.value))
+    if (next.state && !next.state.info) loadInfo(next.state.polity)
 }
 
-function selectPoint(point: TimeMapPoint) {
-    if (selected.value) {
-        pending = point
+function open(next: Subject) {
+    if (subject.value) {
+        pending = next
         panelRef.value?.close()
     } else {
-        show(point)
+        show(next)
     }
 }
 
@@ -394,9 +388,57 @@ function onPanelClosed() {
         pending = null
         nextTick(() => panelRef.value?.open())
     } else {
-        selected.value = null
+        subject.value = null
     }
 }
+
+async function loadInfo(polity: Polity) {
+    const info = await polityInfo(polity)
+    const state = subject.value?.state
+    if (state?.polity.entity === polity.entity) subject.value = { ...subject.value!, state: { ...state, info } }
+}
+
+/** The civilization on the map now whose chapters include this state. */
+function civilizationOf(polity: Polity): TimeMapPoint | null {
+    const name = typeof polity.name === 'string' ? polity.name : polity.name.en
+    return points.value.find((point) => isOnMap(point) && point.states?.includes(name ?? '')) ?? null
+}
+
+function selectPoint(point: TimeMapPoint) {
+    if (subject.value?.point?.id === point.id && !subject.value.state) return
+    open({ point, state: null })
+}
+
+function selectState(polity: Polity) {
+    if (subject.value?.state?.polity.entity === polity.entity) return
+    open({ point: civilizationOf(polity), state: { polity, info: null } })
+}
+
+// The story goes on with the slider: when the shown state leaves the map, the
+// civilization's state of the new year takes its place (the Ming give way to
+// the Qing); with no story to follow, the panel closes.
+function follow(current: Subject, shown: readonly Polity[]): Subject | null {
+    const state = current.state
+    if (!state || shown.some((polity) => polity.entity === state.polity.entity)) return current
+    const point = current.point && isOnMap(current.point) ? current.point : null
+    const next = point && shown.find((polity) => !polity.realm && civilizationOf(polity)?.id === point.id)
+    if (next) return { point, state: { polity: next, info: null } }
+    return point ? { point, state: null } : null
+}
+
+watch(polities, (shown) => {
+    // While the panel closes to open something else, only that something follows.
+    if (pending) {
+        pending = follow(pending, shown)
+        return
+    }
+    const current = subject.value
+    if (!current) return
+    const next = follow(current, shown)
+    if (next === current) return
+    if (next) show(next)
+    else panelRef.value?.close()
+})
 
 // Year and period follow each other: picking a period moves the slider to its
 // middle; moving the slider out of the shown period switches to the matching one.
@@ -406,7 +448,7 @@ function onPeriodSelected(period: TimeMapPeriod) {
 }
 
 watch(currentYear, (now) => {
-    const point = selected.value
+    const point = subject.value?.point
     if (!point) return
     const shown = point.periods?.[periodIndex.value]
     if (shown && now >= shown.start && now <= shown.end) return
@@ -508,6 +550,11 @@ watch(currentYear, (now) => {
     color: var(--aw-color-gold-bright);
     font-weight: 600;
     letter-spacing: 0.01em;
+}
+
+.time-map__label--state.time-map__label--visible {
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 .time-map__label--culture,

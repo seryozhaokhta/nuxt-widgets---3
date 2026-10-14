@@ -74,6 +74,15 @@ async function main() {
     if (/\(disambiguation\)|\(значения\)/.test(en + ru)) problems.push(`info: "${index.entities[i].en}" links to a disambiguation page`)
   }
 
+  // A civilization's chapters must name states that exist in the layer.
+  const map = JSON.parse(await readFile(join(ROOT, 'apps', 'playground', 'app', 'data', 'map-ancient.json'), 'utf8'))
+  const stateNames = new Set(index.entities.filter((entity) => !entity.realm).map((entity) => entity.en))
+  for (const point of map.points) {
+    for (const name of point.states ?? []) {
+      if (!stateNames.has(name)) problems.push(`civilization: "${point.name.en}" lists "${name}", which is not in the states layer`)
+    }
+  }
+
   for (const [i, entity] of index.entities.entries()) {
     if (!/[А-Яа-яЁё]/.test(entity.ru)) problems.push(`name: "${entity.en}" has no Russian form ("${entity.ru}")`)
     else if (TOPIC.test(entity.ru)) problems.push(`name: "${entity.en}" is named after a topic: "${entity.ru}" (#${i})`)

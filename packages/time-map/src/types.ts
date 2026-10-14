@@ -15,7 +15,17 @@ export interface TimeMapPeriod {
   name?: Localized
 }
 
-/** A clickable place with its own story and periods. */
+/** Wikipedia article titles, by language. */
+export interface WikiTitles {
+  en?: string
+  ru?: string
+}
+
+/**
+ * A civilization: a clickable place with its own story and periods. Its
+ * `states` (English names as in the states layer) are its chapters on the
+ * map: a click on one of them opens the state with this story beneath.
+ */
 export interface TimeMapPoint {
   id: string | number
   name: Localized
@@ -27,6 +37,8 @@ export interface TimeMapPoint {
   until?: Year
   approx?: boolean
   periods?: TimeMapPeriod[]
+  states?: string[]
+  wiki?: WikiTitles
 }
 
 export type TimeMapFeatureKind =

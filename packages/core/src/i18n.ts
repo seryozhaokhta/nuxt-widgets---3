@@ -38,6 +38,7 @@ const en = {
   legendBorders: 'Today’s borders',
   sources: 'Sources',
   wikipedia: 'Wikipedia',
+  stateKind: 'state',
 }
 
 export type MessageKey = keyof typeof en
@@ -78,6 +79,7 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     legendBorders: 'Нынешние границы',
     sources: 'Источники',
     wikipedia: 'Википедия',
+    stateKind: 'государство',
   },
 }
 
