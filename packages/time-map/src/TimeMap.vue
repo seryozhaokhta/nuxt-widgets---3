@@ -498,7 +498,8 @@ watch(currentYear, (now) => {
     margin-top: 14px;
 }
 
-/* Narrow: the panel moves under the slider instead of covering the map. */
+/* Narrow: the panel moves under the slider instead of covering the map, ahead
+   of the legend and the credits, so it opens next to where it was asked for. */
 @container (max-width: 760px) {
     .time-map__stage {
         display: contents;
@@ -508,11 +509,11 @@ watch(currentYear, (now) => {
         order: 1;
     }
 
-    .time-map__legend {
+    .time-map__panel {
         order: 2;
     }
 
-    .time-map__panel {
+    .time-map__legend {
         order: 3;
     }
 }

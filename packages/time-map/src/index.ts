@@ -11,4 +11,5 @@ export type {
   TimeMapGeography,
   TimeMapPeriod,
   TimeMapPoint,
+  TimeMapSource,
 } from './types'

@@ -80,7 +80,8 @@
   "sources": [
     {
       "name": "Cliopatria",
-      "url": "https://github.com/Seshat-Global-History-Databank/cliopatria"
+      "url": "https://github.com/Seshat-Global-History-Databank/cliopatria",
+      "note": { "en": "modified", "ru": "с изменениями" }
     },
     {
       "name": "CC BY 4.0",

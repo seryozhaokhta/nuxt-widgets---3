@@ -111,6 +111,13 @@ export interface TimeMapData {
   view?: { center: LonLat; zoom: number }
   /** Data credits shown under the map. */
   credits?: Localized
-  /** Linked sources shown after the credits. */
-  sources?: { name: string; url: string }[]
+  /** Linked sources: one short line under the map, with the credits behind "More". */
+  sources?: TimeMapSource[]
+}
+
+export interface TimeMapSource {
+  name: string
+  url: string
+  /** Shown after the name in brackets, e.g. that the data was changed (as CC BY asks). */
+  note?: Localized
 }

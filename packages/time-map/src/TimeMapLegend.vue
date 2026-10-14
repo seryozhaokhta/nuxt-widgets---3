@@ -1,4 +1,7 @@
-<!-- Key to the map's symbols, plus data credits. -->
+<!--
+  Key to the map's symbols, plus data credits: one short line of sources
+  (names, licence, changes) with the full credits behind "More".
+-->
 <template>
     <div class="legend">
         <ul class="legend__items">
@@ -18,28 +21,40 @@
                 <span class="legend__line legend__line--borders" />{{ t('legendBorders') }}
             </li>
         </ul>
-        <p v-if="credits || sources?.length" class="legend__credits">
-            {{ credits }}
-            <template v-for="source in sources" :key="source.url">
-                <a class="legend__source" :href="source.url" target="_blank" rel="noopener noreferrer">{{ source.name }}</a>
-            </template>
-        </p>
+        <div v-if="credits || sources?.length" class="legend__credits">
+            <p class="legend__sources">
+                <span>{{ t('sources') }}:</span>
+                <template v-for="(source, i) in sources" :key="source.url">
+                    <span v-if="i" class="legend__dot" aria-hidden="true">·</span>
+                    <a class="legend__source" :href="source.url" target="_blank" rel="noopener noreferrer">{{
+                        source.name }}</a><span v-if="source.note"> ({{ l(source.note) }})</span>
+                </template>
+                <button v-if="credits" type="button" class="legend__more" :aria-expanded="open"
+                    :aria-controls="aboutId" @click="open = !open">{{ open ? t('hideDetails') : t('showDetails')
+                    }}</button>
+            </p>
+            <p v-if="credits" v-show="open" :id="aboutId" class="legend__about">{{ credits }}</p>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref, useId } from 'vue'
 import { useI18n } from '@art-widgets/core'
-import type { TimeMapFeatureKind } from './types'
+import type { TimeMapFeatureKind, TimeMapSource } from './types'
 
 defineProps<{
     kinds: Set<TimeMapFeatureKind>
     showCoast: boolean
     showBorders?: boolean
     credits?: string
-    sources?: { name: string; url: string }[]
+    sources?: TimeMapSource[]
 }>()
 
-const { t } = useI18n()
+const open = ref(false)
+const aboutId = useId()
+
+const { t, l } = useI18n()
 </script>
 
 <style scoped>
@@ -101,19 +116,53 @@ const { t } = useI18n()
 }
 
 .legend__credits {
+    font-size: 11px;
+}
+
+.legend__sources {
     margin: 0;
-    max-width: 64ch;
+}
+
+.legend__dot {
+    margin: 0 0.4em;
 }
 
 .legend__source {
-    margin-left: 0.6em;
+    margin-left: 0.4em;
     color: var(--aw-color-text-muted);
     text-decoration: underline;
     text-decoration-color: var(--aw-color-line-strong);
     text-underline-offset: 2px;
 }
 
-.legend__source:hover {
+.legend__dot + .legend__source {
+    margin-left: 0;
+}
+
+.legend__source:hover,
+.legend__more:hover {
     color: var(--aw-color-gold-bright);
+}
+
+.legend__more {
+    margin-left: 0.8em;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--aw-color-text-muted);
+    font: inherit;
+    cursor: pointer;
+}
+
+.legend__more:focus-visible {
+    border-radius: 2px;
+    box-shadow: var(--aw-focus-ring);
+    outline: none;
+}
+
+.legend__about {
+    max-width: 72ch;
+    margin: 8px 0 0;
+    line-height: 1.5;
 }
 </style>
