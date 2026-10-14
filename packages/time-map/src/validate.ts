@@ -25,6 +25,9 @@ export function asTimeMapData(input: unknown): TimeMapData {
       if (period.start > period.end) throw new Error(`[time-map] point ${point.id}: a period starts after it ends`)
     }
   }
+  for (const idea of data.ideas ?? []) {
+    if (idea.start > idea.end) throw new Error(`[time-map] idea starting ${idea.start}: "start" is after "end"`)
+  }
   for (const feature of data.features ?? []) {
     if (!KINDS.has(feature.kind)) throw new Error(`[time-map] feature ${feature.id}: unknown kind "${feature.kind}"`)
     if (feature.label && !isLonLat(feature.label)) throw new Error(`[time-map] feature ${feature.id}: bad label`)

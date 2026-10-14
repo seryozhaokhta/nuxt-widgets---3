@@ -4,6 +4,8 @@ export type {
   LonLat,
   TimeMapData,
   TimeMapEpoch,
+  TimeMapEra,
+  TimeMapIdea,
   TimeMapFeature,
   TimeMapFeatureKind,
   TimeMapGeography,

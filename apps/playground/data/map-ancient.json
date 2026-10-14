@@ -53,6 +53,19 @@
     1000,
     1500
   ],
+  "eras": [
+    { "name": { "en": "Prehistory", "ru": "Первобытность" }, "start": -10000 },
+    { "name": { "en": "Ancient world", "ru": "Древний мир" }, "start": -3000 },
+    { "name": { "en": "Middle Ages", "ru": "Средние века" }, "start": 476 },
+    { "name": { "en": "Modern era", "ru": "Новое время" }, "start": 1500 },
+    { "name": { "en": "Contemporary era", "ru": "Новейшее время" }, "start": 1914 }
+  ],
+  "ideas": [
+    { "name": { "en": "Neolithic Revolution", "ru": "Неолитическая революция" }, "start": -10000, "end": -7000 },
+    { "name": { "en": "Axial Age", "ru": "Осевое время" }, "start": -800, "end": -200 },
+    { "name": { "en": "Renaissance", "ru": "Возрождение" }, "start": 1300, "end": 1600 },
+    { "name": { "en": "Age of Enlightenment", "ru": "Эпоха Просвещения" }, "start": 1685, "end": 1815 }
+  ],
   "view": {
     "center": [
       48,

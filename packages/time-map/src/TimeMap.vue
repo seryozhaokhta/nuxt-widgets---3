@@ -44,7 +44,7 @@
         </div>
 
         <YearSlider v-model="currentYear" class="time-map__slider" :min="minYear" :max="maxYear" :step="yearStep"
-            :scale="data.timeScale" :ticks="data.ticks" :marks="points.map((point) => point.founded)" />
+            :scale="data.timeScale" :ticks="data.ticks" :eras="data.eras" :ideas="data.ideas" />
         <TimeMapLegend class="time-map__legend" :kinds="featureKinds" :show-coast="!!data.geography.modernCoast"
             :show-borders="!!data.geography.borders" :credits="l(data.credits)" :sources="data.sources" />
     </div>

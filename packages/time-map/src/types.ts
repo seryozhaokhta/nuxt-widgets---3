@@ -74,6 +74,19 @@ export interface TimeMapGeography {
   polities?: string
 }
 
+/** An era of the slider track; it runs until the next era starts. */
+export interface TimeMapEra {
+  name: Localized
+  start: Year
+}
+
+/** An age of ideas, shown above the slider while the year is inside it. */
+export interface TimeMapIdea {
+  name: Localized
+  start: Year
+  end: Year
+}
+
 export interface TimeMapData {
   title?: Localized
   geography: TimeMapGeography
@@ -90,6 +103,10 @@ export interface TimeMapData {
   timeScale?: 'linear' | 'sqrt'
   /** Years labelled under the slider. */
   ticks?: Year[]
+  /** Eras the slider track is cut into; the current one is named under it. */
+  eras?: TimeMapEra[]
+  /** Ages of ideas drawn as a thin line above the slider (the Axial Age, the Enlightenment). */
+  ideas?: TimeMapIdea[]
   /** Opening view; the map starts showing the whole world. */
   view?: { center: LonLat; zoom: number }
   /** Data credits shown under the map. */
