@@ -52,7 +52,7 @@ export const japan: ThreadConfig = {
             kind: 'compare', duration: 4.8, years: [1857, 1887],
             type: 'Copy', note: 'Same bridge, same rain, new colours',
             footnote: 'He owned about 50 of Hiroshige’s landscapes',
-            context: 'Hiroshige → Van Gogh', counterSide: 'right',
+            context: 'Hiroshige → Van Gogh',
             top: {
                 ...P.hiroshigeBridge, meta: '1857 · Hiroshige', title: 'Sudden Shower over Ōhashi',
                 focus: { x: 46, y: 64 }, zoom: 1.25,
@@ -108,7 +108,7 @@ export const japan: ThreadConfig = {
             context: 'Hokusai → Debussy',
             top: {
                 ...P.wave, meta: 'c. 1831 · Hokusai', title: 'The Great Wave',
-                focus: { x: 38, y: 32 }, zoom: 1.3,
+                focus: { x: 38, y: 45 }, zoom: 1.5,
                 boxes: [{ x: 17, y: 8, w: 44, h: 50 }],
             },
             bottom: {

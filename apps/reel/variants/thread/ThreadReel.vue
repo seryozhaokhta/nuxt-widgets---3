@@ -15,6 +15,7 @@
             </div>
             <div v-else-if="t >= item.start && t < item.end" class="th__print" :style="printStyle(item)">
                 <img :src="item.scene.picture.src" alt="" />
+                <span v-if="item.scene.note" class="th__print-note">{{ item.scene.note }}</span>
             </div>
         </template>
 
@@ -45,14 +46,16 @@
         </div>
 
         <div class="th__shade" :style="{ opacity: counter.visible }" />
-        <div :class="['th__counter', { 'th__counter--right': counter.right }]" :style="{ opacity: counter.visible }">
+        <div class="th__counter" :style="{ opacity: counter.visible }">
             <YearCounter :year="counter.year" :size="56" />
             <p class="th__context">{{ counter.context }}</p>
         </div>
-        <p class="th__chapter" :style="{ opacity: counter.chapterOpacity }">
+        <p class="th__chapter" :style="{ opacity: counter.visible }">
             <span class="th__chapter-number">{{ counter.chapter.n }}</span>{{ counter.chapter.title }}
         </p>
 
+        <!-- Darkens a bright picture behind the captions, so white type always reads. -->
+        <div class="th__scrim" :style="{ opacity: scrim }" />
         <RevealText v-for="caption in captions" :key="caption.key"
             :class="['th__caption', 'th__caption--' + caption.place]" :lines="caption.lines" :at="caption.at"
             :out="caption.out" :duration="caption.duration" />
@@ -62,7 +65,7 @@
             <p class="th__series">{{ config.series }}</p>
             <RevealText class="th__end-title" :lines="['Art Widgets']" :at="ending.at" />
             <RevealText class="th__end-lead" :lines="ending.lead" :at="ending.at + 0.25" :stagger="0.08" />
-            <p class="th__end-list" :style="{ opacity: span(t, ending.at + 0.8, ending.at + 1.2) }">
+            <p class="th__end-list" :style="{ opacity: span(t, ending.at + 0.7, ending.at + 1.1) }">
                 Map of time · A closer look · Nodes &amp; threads
             </p>
         </div>
@@ -86,7 +89,7 @@ import { ease, fade, keys, lerp, rectStyle, span, tween, type Rect } from '~/ree
 import { holdFirstFrame, reelTime, STAGE } from '~/reel/time'
 import { useTouch, type TouchStep } from '~/reel/touch'
 import {
-    COMPARE, FLIGHT, graphTimes, timeline,
+    CLOSE, COMPARE, FLIGHT, graphTimes, timeline,
     type CompareScene, type EndScene, type FlightScene, type GraphNode, type GraphScene, type StillScene,
     type StoryScene, type ThreadConfig, type Timed,
 } from './types'
@@ -192,20 +195,30 @@ function printStyle({ scene, start, end }: Timed<StillScene>) {
     const time = t.value
     const p = ease.inOut(span(time, start, end))
     const appear = tween(time, start, start + 0.6, ease.out)
-    const width = 270
+    // Small enough to leave the captions their own room below it.
+    const width = 230
     const height = (width * scene.picture.size.height) / scene.picture.size.width
     const zoom = lerp(scene.from.zoom, scene.to.zoom, p)
     return {
         width: width + 'px',
         height: height + 'px',
         left: (STAGE.width - width) / 2 + 'px',
-        top: 270 - height / 2 + 'px',
+        top: 250 - height / 2 + 'px',
         opacity: appear,
         transform: `translateY(${(1 - appear) * 20}px) rotate(-1.2deg) scale(${zoom})`,
     }
 }
 
-const stillNotes = computed(() => stills.filter(({ scene }) => scene.note).map(({ scene, start, end }) => ({
+/** Under the captions of a full-bleed picture. */
+const scrim = computed(() => {
+    const item = stills.find(({ scene, start, end }) => !scene.framed && scene.captions?.length && t.value >= start && t.value < end)
+    if (!item) return 0
+    const { scene, start, end } = item
+    return fade(t.value, start, scene.intoStory ? end - MORPH + 0.2 : end, start === 0 ? 0 : 0.25, 0.3)
+})
+
+// A print carries its note on its own margin.
+const stillNotes = computed(() => stills.filter(({ scene }) => scene.note && !scene.framed).map(({ scene, start, end }) => ({
     start,
     text: scene.note!,
     opacity: fade(t.value, start + 0.4, end, 0.4, 0.3),
@@ -390,7 +403,7 @@ const graph = computed(() => {
         }
         return list
     })
-    const settle = endItem ? tween(time, endItem.start + 1.0, endItem.start + 1.8, ease.quartInOut) : 0
+    const settle = endItem ? tween(time, endItem.start + CLOSE.settle[0], endItem.start + CLOSE.settle[1], ease.quartInOut) : 0
     return {
         nodes,
         threads,
@@ -434,12 +447,13 @@ if (graphLayout) {
     })
 }
 if (endItem) {
-    captions.push({ key: 'end', lines: endItem.scene.line, at: endItem.start, out: endItem.start + 1.05, place: 'big' })
+    const [at, out] = CLOSE.line
+    captions.push({ key: 'end', lines: endItem.scene.line, at: endItem.start + at, out: endItem.start + out, place: 'big' })
 }
 
 const ending = computed(() => {
-    if (!endItem || t.value < endItem.start + 1.2) return null
-    return { at: endItem.start + 1.2, lead: endItem.scene.lead, opacity: 1 }
+    if (!endItem || t.value < endItem.start + CLOSE.lockup) return null
+    return { at: endItem.start + CLOSE.lockup, lead: endItem.scene.lead, opacity: 1 }
 })
 
 // ── Counter and chapter ────────────────────────────────────────────────────
@@ -471,9 +485,11 @@ const counter = computed(() => {
         return undefined
     }
     const time = t.value
-    // A print carries its own year in the caption; the counter would sit on it.
+    // The year and the chapter show over full-bleed pictures and flights only: a comparison names its own
+    // years and would put outlines under them, the widget and the graph have their own headings, and a
+    // print carries its year in the caption.
     const hides = (other?: Timed) => !!other && (other.scene.kind === 'story' || other.scene.kind === 'graph'
-        || other.scene.kind === 'end' || (other.scene.kind === 'still' && !!other.scene.framed))
+        || other.scene.kind === 'end' || other.scene.kind === 'compare' || (other.scene.kind === 'still' && !!other.scene.framed))
     const hidden = hides(item)
     // Fade around the scenes that hide it.
     let visible = hidden ? 0 : 1
@@ -486,11 +502,8 @@ const counter = computed(() => {
     return {
         year: yearAt(item.scene.kind === 'graph' || item.scene.kind === 'end' ? items[Math.max(0, index - 1)]! : item),
         visible,
-        right: item.scene.kind === 'compare' && item.scene.counterSide === 'right',
         context: inherited('context') ?? '',
         chapter: inherited('chapter') ?? { n: '', title: '' },
-        chapterOpacity: (item.scene.kind === 'compare' && item.scene.counterSide === 'right') || item.scene.kind === 'end'
-            || (item.scene.kind === 'still' && item.scene.framed) ? 0 : 1,
     }
 })
 
@@ -541,6 +554,17 @@ const { touch } = useTouch(root, steps)
     width: 100%;
     height: 100%;
     filter: contrast(1.05);
+}
+
+.th__print-note {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 11px;
+    color: #4a4238;
+    font-family: var(--aw-font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
 }
 
 .th__story {
@@ -595,15 +619,20 @@ const { touch } = useTouch(root, steps)
 .th__note {
     position: absolute;
     z-index: 21;
-    left: 24px;
-    right: 24px;
+    left: 50%;
+    width: max-content;
+    max-width: 384px;
     margin: 0;
-    color: var(--aw-color-text-muted);
+    padding: 6px 12px;
+    border-radius: 3px;
+    background: rgba(8, 8, 8, 0.86);
+    color: rgba(242, 238, 230, 0.86);
     font-family: var(--aw-font-mono);
-    font-size: 9px;
-    letter-spacing: 0.04em;
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
     text-align: center;
-    text-shadow: 0 1px 8px #000;
+    transform: translateX(-50%);
 }
 
 .th__footnote {
@@ -678,20 +707,20 @@ const { touch } = useTouch(root, steps)
 .th__node-label {
     position: absolute;
     display: grid;
-    gap: 1px;
+    gap: 2px;
     color: var(--aw-color-text);
     font-family: var(--aw-font-sans);
-    font-size: 10.5px;
-    font-weight: 500;
-    line-height: 1.2;
+    font-size: 12.5px;
+    font-weight: 600;
+    line-height: 1.15;
     white-space: nowrap;
-    text-shadow: 0 1px 6px #000;
+    text-shadow: 0 1px 2px #000, 0 1px 8px #000;
 }
 
 .th__node-year {
     color: var(--aw-color-gold-bright);
     font-family: var(--aw-font-mono);
-    font-size: 9px;
+    font-size: 10.5px;
     font-weight: 400;
     letter-spacing: 0.04em;
 }
@@ -701,8 +730,16 @@ const { touch } = useTouch(root, steps)
     position: absolute;
     inset: 0 0 auto;
     z-index: 10;
-    height: 280px;
-    background: linear-gradient(to bottom, rgba(5, 5, 5, 0.85) 0%, rgba(5, 5, 5, 0.55) 45%, transparent 100%);
+    height: 300px;
+    background: linear-gradient(to bottom, rgba(5, 5, 5, 0.85) 0%, rgba(5, 5, 5, 0.72) 40%, rgba(5, 5, 5, 0.45) 64%, transparent 100%);
+    pointer-events: none;
+}
+
+.th__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 21;
+    background: linear-gradient(to top, rgba(5, 5, 5, 0.62) 0%, rgba(5, 5, 5, 0.74) 30%, rgba(5, 5, 5, 0.42) 46%, transparent 64%);
     pointer-events: none;
 }
 
@@ -713,23 +750,22 @@ const { touch } = useTouch(root, steps)
     top: 104px;
 }
 
-.th__counter--right {
-    left: auto;
-    right: 60px;
-    text-align: right;
+.th__counter :deep(.year-counter) {
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
 }
 
-.th__counter--right :deep(.year-counter) {
-    justify-content: flex-end;
+.th__context,
+.th__chapter {
+    color: rgba(242, 238, 230, 0.88);
+    font-family: var(--aw-font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 14px rgba(0, 0, 0, 0.7);
 }
 
 .th__context {
     margin: 10px 0 0;
-    color: var(--aw-color-text-muted);
-    font-family: var(--aw-font-mono);
-    font-size: 10.5px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
 }
 
 .th__chapter {
@@ -738,16 +774,11 @@ const { touch } = useTouch(root, steps)
     top: 106px;
     right: 60px;
     margin: 0;
-    color: var(--aw-color-text-muted);
-    font-family: var(--aw-font-mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
 }
 
 .th__chapter-number {
     margin-right: 8px;
-    color: var(--aw-color-gold);
+    color: var(--aw-color-gold-bright);
 }
 
 /* Captions */
@@ -760,7 +791,7 @@ const { touch } = useTouch(root, steps)
     font-weight: 600;
     line-height: 1.02;
     letter-spacing: -0.04em;
-    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 2px 24px rgba(0, 0, 0, 0.7);
 }
 
 .th__caption--bottom {
@@ -773,9 +804,10 @@ const { touch } = useTouch(root, steps)
     font-size: 28px;
 }
 
+/* The closing line takes the place the lockup will take, under the graph once it has stepped back. */
 .th__caption--big {
-    top: 100px;
-    font-size: 40px;
+    top: 392px;
+    font-size: 42px;
 }
 
 /* End */
@@ -789,9 +821,9 @@ const { touch } = useTouch(root, steps)
 
 .th__series {
     margin: 0 0 12px;
-    color: var(--aw-color-gold);
+    color: var(--aw-color-gold-bright);
     font-family: var(--aw-font-mono);
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
@@ -806,8 +838,8 @@ const { touch } = useTouch(root, steps)
 
 .th__end-lead {
     margin-top: 12px;
-    color: var(--aw-color-text-muted);
-    font-size: 16px;
+    color: rgba(242, 238, 230, 0.84);
+    font-size: 17px;
     line-height: 1.35;
 }
 
@@ -815,9 +847,9 @@ const { touch } = useTouch(root, steps)
     margin: 18px 0 0;
     padding-top: 14px;
     border-top: 1px solid var(--aw-color-line-strong);
-    color: var(--aw-color-text-subtle);
+    color: rgba(242, 238, 230, 0.62);
     font-family: var(--aw-font-mono);
-    font-size: 10.5px;
+    font-size: 11px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }

@@ -80,8 +80,6 @@ export interface CompareScene extends SceneBase {
     note: string
     footnote?: string
     years: [number, number]
-    /** Keep the counter off a detail on the left. */
-    counterSide?: 'left' | 'right'
 }
 
 export interface GraphNode {
@@ -145,6 +143,8 @@ export const duration = (config: ThreadConfig) => config.scenes.reduce((sum, sce
 export const FLIGHT = { hold: 0.8, settle: 0.8 }
 export const COMPARE = { reveal: [0, 0.5], outline: [0.7, 1.3], thread: [1.3, 2.1], chip: 1.8 } as const
 export const GRAPH = { first: 0.6, step: 1.15 }
+/** The end: the graph steps back, the closing line plays below it, then the lockup. */
+export const CLOSE = { settle: [0, 0.8], line: [0.4, 1.55], lockup: 1.9 } as const
 
 export function graphTimes(scene: GraphScene, start: number) {
     const stepped = scene.nodes.filter((node) => node.lines)
@@ -187,8 +187,8 @@ export function sounds(config: ThreadConfig): SoundCue[] {
             }
             case 'end':
                 cues.push({ at: start, kind: 'swell', gain: 0.6 })
-                cues.push({ at: start + 1.2, kind: 'hit', gain: 1 })
-                cues.push({ at: start + 1.5, kind: 'chime', note: 4 })
+                cues.push({ at: start + CLOSE.lockup, kind: 'hit', gain: 1 })
+                cues.push({ at: start + CLOSE.lockup + 0.3, kind: 'chime', note: 4 })
                 break
         }
     }

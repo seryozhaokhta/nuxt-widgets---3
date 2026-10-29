@@ -5,14 +5,18 @@
 <template>
     <div class="compare" :style="{ opacity }">
         <div v-for="(panel, i) in panels" :key="i" class="compare__panel" :style="panel.style">
+            <!-- Where the picture doesn't reach the panel's edge, a dark, blurred copy fills the rest. -->
+            <img v-if="panel.ambient" :src="panel.src" alt="" class="compare__ambient" :style="panel.ambient" />
             <img :src="panel.src" alt="" class="compare__image" :style="panel.image" />
             <div class="compare__shade" :class="'compare__shade--' + (i ? 'bottom' : 'top')" />
         </div>
         <!-- Names sit in the band between the pictures, never over the outlines. -->
         <p v-for="(panel, i) in panels" :key="'label' + i" :class="['compare__label', 'compare__label--' + (i ? 'bottom' : 'top')]"
             :style="{ opacity: reveal }">
-            <span class="compare__meta">{{ panel.meta }}</span>
-            <span class="compare__title">{{ panel.title }}</span>
+            <span class="compare__plate">
+                <span class="compare__meta">{{ panel.meta }}</span>
+                <span class="compare__title">{{ panel.title }}</span>
+            </span>
         </p>
         <svg class="compare__lines" :viewBox="`0 0 ${STAGE.width} ${STAGE.height}`" aria-hidden="true">
             <rect v-for="(box, i) in boxes" :key="'b' + i" :x="box.x" :y="box.y" :width="box.w" :height="box.h" rx="3"
@@ -84,13 +88,34 @@ function place(panel: Panel, index: number) {
     const height = base.height * (props.drift ?? 1)
     const width = height * aspect
     const left = Math.min(0, Math.max(STAGE.width - width, STAGE.width / 2 - (panel.focus.x / 100) * width))
-    // Vertically the detail wins: a detail near a picture's edge may leave dark above or below it.
+    // Vertically the detail wins: a detail near a picture's edge may leave a gap above or below it.
     const top = frame.focusY - (panel.focus.y / 100) * height
-    return { frame, base, width, height, left, top }
+    return { frame, base, width, height, left, top, gapTop: top > 0.5, gapBottom: top + height < frame.height - 0.5 }
+}
+
+/** The picture blurred and dimmed, covering the whole panel, for the gap a detail near an edge leaves. */
+function ambient(panel: Panel, frame: (typeof LAYOUT)[number]) {
+    const aspect = panel.size.width / panel.size.height
+    const width = Math.max(STAGE.width, frame.height * aspect)
+    const height = width / aspect
+    return {
+        left: Math.min(0, Math.max(STAGE.width - width, STAGE.width / 2 - (panel.focus.x / 100) * width)) + 'px',
+        top: Math.min(0, Math.max(frame.height - height, frame.height / 2 - (panel.focus.y / 100) * height)) + 'px',
+        width: width + 'px',
+        height: height + 'px',
+    }
+}
+
+/** Fade the picture's own edge into the gap, so it doesn't end on a hard line. */
+function edgeMask(gapTop: boolean, gapBottom: boolean) {
+    if (!gapTop && !gapBottom) return {}
+    const stops = [gapTop ? 'transparent 0%, #000 7%' : '#000 0%', gapBottom ? '#000 93%, transparent 100%' : '#000 100%']
+    const mask = `linear-gradient(to bottom, ${stops.join(', ')})`
+    return { maskImage: mask, WebkitMaskImage: mask }
 }
 
 const panels = computed(() => [props.top, props.bottom].map((panel, i) => {
-    const { frame, base, width, height, left, top } = place(panel, i)
+    const { frame, base, width, height, left, top, gapTop, gapBottom } = place(panel, i)
     // Top wipes in from the left, bottom from the right.
     const hidden = (1 - props.reveal) * 100
     return {
@@ -102,7 +127,8 @@ const panels = computed(() => [props.top, props.bottom].map((panel, i) => {
             height: frame.height + 'px',
             clipPath: i === 0 ? `inset(0 ${hidden}% 0 0)` : `inset(0 0 0 ${hidden}%)`,
         },
-        image: rectStyle({ left, top, width, height }, base),
+        image: { ...rectStyle({ left, top, width, height }, base), ...edgeMask(gapTop, gapBottom) },
+        ambient: gapTop || gapBottom ? ambient(panel, frame) : null,
     }
 }))
 
@@ -161,6 +187,13 @@ const opacity = computed(() => props.opacity ?? 1)
     max-width: none;
 }
 
+.compare__ambient {
+    position: absolute;
+    max-width: none;
+    filter: blur(18px) brightness(0.3) saturate(1.15);
+    transform: scale(1.1);
+}
+
 .compare__shade {
     position: absolute;
     inset: 0;
@@ -179,49 +212,59 @@ const opacity = computed(() => props.opacity ?? 1)
         linear-gradient(to top, rgba(5, 5, 5, 0.8), transparent 40%);
 }
 
+/* Names sit on dark plates, so the outlines and threads pass behind them. */
 .compare__label {
     position: absolute;
     z-index: 2;
-    left: 24px;
-    right: 24px;
+    left: 16px;
+    right: 16px;
     display: flex;
-    gap: 8px;
-    align-items: baseline;
     justify-content: center;
     margin: 0;
-    overflow: hidden;
     white-space: nowrap;
-    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.9);
 }
 
 .compare__label--top {
-    top: 343px;
+    top: 338px;
 }
 
 .compare__label--bottom {
-    top: 408px;
+    top: 404px;
+}
+
+.compare__plate {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    max-width: 100%;
+    padding: 4px 12px 5px;
+    border-radius: 999px;
+    background: rgba(8, 8, 8, 0.86);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
 }
 
 .compare__meta {
     flex: none;
     color: var(--aw-color-gold-bright);
     font-family: var(--aw-font-mono);
-    font-size: 9.5px;
-    letter-spacing: 0.06em;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 .compare__title {
     overflow: hidden;
+    color: var(--aw-color-text);
     text-overflow: ellipsis;
     font-family: var(--aw-font-artwork);
-    font-size: 15px;
+    font-size: 16.5px;
     font-style: italic;
     line-height: 1.2;
 }
 
 .compare__lines {
     position: absolute;
+    z-index: 1;
     inset: 0;
     width: 432px;
     height: 768px;
@@ -254,13 +297,13 @@ const opacity = computed(() => props.opacity ?? 1)
     gap: 10px;
     align-items: center;
     margin: 0;
-    padding: 8px 14px;
+    padding: 8px 15px;
     border-radius: 999px;
-    background: rgba(8, 8, 8, 0.92);
+    background: rgba(8, 8, 8, 0.94);
     box-shadow: 0 0 0 1px var(--aw-color-gold-soft), 0 10px 30px rgba(0, 0, 0, 0.6);
-    color: var(--aw-color-text-muted);
+    color: rgba(242, 238, 230, 0.86);
     font-family: var(--aw-font-mono);
-    font-size: 10px;
+    font-size: 11px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
     white-space: nowrap;
