@@ -79,6 +79,8 @@ const props = withDefaults(defineProps<{
     mode?: 'full' | 'quiet'
     /** Places whose state is filled in gold and named; `opacity` fades each one. */
     highlight?: { at: LonLat; opacity?: number }[]
+    /** 0–1: dims the state borders, e.g. while they change from one era to another. */
+    stateOpacity?: number
     /** Stage areas kept free of names (captions, UI). */
     avoid?: { x: number; y: number; w: number; h: number }[]
 }>(), {
@@ -91,6 +93,7 @@ const props = withDefaults(defineProps<{
     featureLabels: true,
     opacity: 1,
     strokeZoom: 0.8,
+    stateOpacity: 1,
 })
 
 const map = asTimeMapData(mapJson)
@@ -164,6 +167,7 @@ const worldStyle = computed(() => ({
     width: MAP_WIDTH * BASE + 'px',
     height: MAP_HEIGHT * BASE + 'px',
     transform: `translate(${view.value.x}px, ${view.value.y}px) scale(${props.camera.zoom})`,
+    '--state-opacity': String(props.stateOpacity),
 }))
 
 function toStage(at: LonLat) {
@@ -314,6 +318,7 @@ const placedPins = computed(() => props.pins.flatMap((pin) => {
 .reel-map--quiet .reel-map__world :deep(.geo__state) {
     fill: none;
     stroke: rgba(201, 164, 106, 0.3);
+    opacity: var(--state-opacity);
 }
 
 .reel-map--quiet .reel-map__world :deep(.geo__realm) {

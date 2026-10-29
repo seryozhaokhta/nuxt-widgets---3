@@ -144,6 +144,17 @@ def pad(notes, length, cutoff=1400, attack=0.8):
     return x * e * 0.5
 
 
+def mallet(note, length=1.6, gain=1.0):
+    """A soft felt mallet: near-sine, a few low partials, no click, darkened."""
+    t = t_axis(length)
+    f = midi(note)
+    x = np.sin(2 * np.pi * f * t)
+    x += 0.16 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t / 0.22)
+    x += 0.05 * np.sin(2 * np.pi * 3 * f * t) * np.exp(-t / 0.1)
+    env = np.clip(t / 0.014, 0, 1) * np.exp(-t / 0.5)
+    return lowpass(x * env, 1800) * 0.2 * gain
+
+
 def bell(note, length=2.8, gain=1.0):
     """Two-operator FM bell."""
     t = t_axis(length)
@@ -208,8 +219,9 @@ def sfx(kind, note, scale):
         x += pad(scale[:3], length, cutoff=900, attack=0.6)[: len(t)] * 0.6
         return x * e
     if kind == "chime":
+        # Was an FM bell two octaves up, and too sharp on the ear; now a soft mallet an octave below the scale.
         degree = int(note or 0)
-        return bell(scale[degree % len(scale)] + 12 * (degree // len(scale)) + 12, 3.0)
+        return mallet(scale[degree % len(scale)] + 12 * (degree // len(scale)) - 12)
     raise ValueError(kind)
 
 

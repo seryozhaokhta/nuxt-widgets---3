@@ -209,12 +209,17 @@ function printStyle({ scene, start, end }: Timed<StillScene>) {
     }
 }
 
-/** Under the captions of a full-bleed picture. */
+/** Under the captions of a full-bleed picture or a flight. */
 const scrim = computed(() => {
-    const item = stills.find(({ scene, start, end }) => !scene.framed && scene.captions?.length && t.value >= start && t.value < end)
-    if (!item) return 0
-    const { scene, start, end } = item
-    return fade(t.value, start, scene.intoStory ? end - MORPH + 0.2 : end, start === 0 ? 0 : 0.25, 0.3)
+    const time = t.value
+    const still = stills.find(({ scene, start, end }) => !scene.framed && scene.captions?.length && time >= start && time < end)
+    if (still) {
+        const { scene, start, end } = still
+        return fade(time, start, scene.intoStory ? end - MORPH + 0.2 : end, start === 0 ? 0 : 0.25, 0.3)
+    }
+    // The map is dark already; a lighter touch keeps the places near the bottom visible.
+    const flying = flights.find(({ scene, start, end }) => scene.caption && time >= start && time < end)
+    return flying ? 0.75 * fade(time, flying.start, flying.end, 0.25, 0.3) : 0
 })
 
 // A print carries its note on its own margin.
@@ -265,7 +270,13 @@ const flight = computed(() => {
     // Close enough at both ends to read the states, even on a long flight.
     const near = Math.min(9, Math.max(2.2, fit * 1.35))
     const zoom = Math.exp(keys(time, [[start, Math.log(near)], [glideStart, Math.log(near)], [(glideStart + glideEnd) / 2, Math.log(fit)], [glideEnd, Math.log(near)]].map(([at, z]) => [at!, z!, ease.inOut])))
-    const year = Math.round(lerp(scene.years[0], scene.years[1], p))
+    // The borders don't run through every year in between: states would flicker, and a place's state
+    // could light up for a frame (Florence lies in the French Empire for a few years of the 1500s→1800s
+    // run). They show the start's era, fade out mid-flight, and come back as the end's era.
+    const middle = (glideStart + glideEnd) / 2
+    const year = time < middle ? scene.years[0] : scene.years[1]
+    const stateOpacity = 1 - 0.9 * Math.min(span(time, middle - 0.45, middle), 1 - span(time, middle, middle + 0.45))
+    const behind = span(time, start, start + 0.3) * (1 - tween(time, glideStart, glideStart + 0.7, ease.inOut))
     const arrived = span(time, glideEnd - 0.3, glideEnd + 0.1)
     const card = scene.card && {
         ...scene.card,
@@ -281,9 +292,11 @@ const flight = computed(() => {
             camera: { lon: lerp(scene.from.at[0], scene.to.at[0], p), lat: lerp(scene.from.at[1], scene.to.at[1], p), zoom },
             mode: 'quiet' as const,
             strokeZoom: 2.4,
+            stateOpacity,
             labelArea: 0,
             featureLabels: false,
-            highlight: [{ at: scene.from.at, opacity: span(time, start, start + 0.3) }, { at: scene.to.at, opacity: arrived }],
+            // The state left behind dims as the flight leaves, while the borders are still its era's.
+            highlight: [{ at: scene.from.at, opacity: behind }, { at: scene.to.at, opacity: arrived }],
             pins: [
                 { id: 'from', at: scene.from.at, label: scene.from.label, opacity: span(time, start, start + 0.3) },
                 { id: 'to', at: scene.to.at, label: scene.to.label, opacity: arrived },
@@ -791,7 +804,9 @@ const { touch } = useTouch(root, steps)
     font-weight: 600;
     line-height: 1.02;
     letter-spacing: -0.04em;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45), 0 2px 24px rgba(0, 0, 0, 0.7);
+    /* Tight on purpose: each line rises out of a mask, which would cut a wide shadow into a box.
+       Contrast comes from the scrim. */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .th__caption--bottom {
