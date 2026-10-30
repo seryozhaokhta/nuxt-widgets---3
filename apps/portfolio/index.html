@@ -3,647 +3,464 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Серёжа Охта</title>
+<title>Серёжа · моушн-дизайнер</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Моушн-дизайнер: образовательные видео, рилсы, реклама.">
+<meta name="description" content="Моушн-дизайн, 3D и типографика: видео-эссе, рилсы, плакаты, интерактив.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500&display=swap">
 <style>
-/* Layout: a Swiss grid on white paper, one grotesque pushed to the ends of its width and weight axes;
-   the film section turns the whole page black while it is on screen. */
+/* Layout: a twelve-column grid on the grey paper of the posters; one light grotesque in three weights,
+   hierarchy by size and position; small grey captions in columns, lots of air. */
 :root {
-  --bg: #ececea;
-  --fg: #101010;
-  --muted: #6a6a67;
-  --line: rgba(16, 16, 16, 0.17);
-  --display: "Roboto Flex", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --text: "Roboto Flex", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --gutter: clamp(16px, 3vw, 44px);
-  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --paper: #e7e7e5;
+  --ink: #111111;
+  --grey: #74746f;
+  --hair: rgba(17, 17, 17, 0.15);
+  --shade: #d8d8d5;
+  --font: "Inter Tight", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --gutter: clamp(16px, 2.6vw, 40px);
+  --gap: clamp(12px, 1.4vw, 20px);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   color-scheme: light;
 }
 
-/* Cinema: the film is on screen. */
-html.cinema {
-  --bg: #0b0b0b;
-  --fg: #ebebe8;
-  --muted: #8d8d89;
-  --line: rgba(235, 235, 232, 0.18);
-  color-scheme: dark;
-}
-
-html { background: var(--bg); scroll-behavior: smooth; transition: background-color 0.7s var(--ease); }
+html { background: var(--paper); scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--text);
-  font-size: 17px;
-  font-variation-settings: "wdth" 100, "opsz" 17;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 400;
   line-height: 1.45;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.7s var(--ease), color 0.7s var(--ease);
-  /* The name is fitted to the width by script; until then it may run long. */
   overflow-x: clip;
 }
-::selection { background: var(--fg); color: var(--bg); }
-a { color: inherit; }
-:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+::selection { background: var(--ink); color: var(--paper); }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
 img, video { display: block; max-width: 100%; }
+p, h1, h2, h3, dl, dd, ol, ul { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
 
 .band {
   padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
   padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
 }
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gap); }
+.small { font-size: 12.5px; line-height: 1.4; }
+.grey { color: var(--grey); }
+.num { font-variant-numeric: tabular-nums; }
+.link { border-bottom: 1px solid var(--hair); transition: border-color 0.3s; }
+.link:hover, .link:focus-visible { border-color: var(--ink); }
 
-.label {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
+/* A hairline that draws itself from the left the first time it comes into view. */
+.rule { display: block; height: 1px; background: var(--hair); transform-origin: 0 50%; transition: transform 1.4s var(--ease); }
+.rule.is-pending { transform: scaleX(0); }
 
-/* ── Bar: name, sections, and where you are on the page, as a timecode (one pixel, one frame). ── */
-.bar {
-  position: fixed;
-  z-index: 20;
-  inset: 0 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 16px;
-  padding-top: calc(14px + env(safe-area-inset-top, 0px));
-  padding-bottom: 14px;
-  background: var(--bg);
-  color: var(--fg);
-  border-bottom: 1px solid transparent;
-  transition: background-color 0.7s var(--ease), color 0.7s var(--ease), border-color 0.3s;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.bar.is-scrolled { border-bottom-color: var(--line); }
-.bar a { text-decoration: none; }
-.bar__nav { display: flex; gap: 22px; }
-.bar__nav a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.bar__tc { margin: 0; justify-self: end; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.bar__tc span:first-child { opacity: 0.55; margin-right: 6px; }
-
-/* ── Hero ── */
-.hero {
-  padding-top: calc(76px + env(safe-area-inset-top, 0px));
-  padding-bottom: clamp(48px, 8vw, 120px);
-}
-.hero__meta {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--line);
-  color: var(--muted);
-}
-.name {
-  overflow-x: clip;
-  /* Room above for the dots of Ё. */
-  margin: clamp(30px, 5.2vw, 84px) 0 0;
-  font-family: var(--display);
-  font-weight: 400;
-  line-height: 0.8;
-  letter-spacing: -0.035em;
-}
-.name__line { display: block; white-space: nowrap; }
-.name__fit { display: inline-block; transform-origin: 0 50%; }
-.name__line--name { font-size: clamp(48px, 14.6vw, 260px); font-variation-settings: "wdth" 72, "wght" 920, "opsz" 144; text-transform: uppercase; }
-.name__line--role { margin-top: 0.08em; font-size: clamp(42px, 12.6vw, 224px); font-variation-settings: "wdth" 108, "wght" 220, "opsz" 144; letter-spacing: -0.045em; }
-.name .ch { display: inline-block; }
-.hero__foot {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 16px;
-  align-items: end;
-  margin-top: clamp(28px, 4vw, 56px);
-}
-.lead {
-  grid-column: 1 / span 7;
-  max-width: 30ch;
-  margin: 0;
-  font-size: clamp(22px, 2.6vw, 38px);
-  font-variation-settings: "wdth" 92, "wght" 460, "opsz" 36;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
-  text-wrap: balance;
-}
-.hero__cta {
-  grid-column: 9 / -1;
-  justify-self: end;
-  padding: 14px 0 6px;
-  border-bottom: 2px solid currentColor;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
-/* ── Section heads: the title widens as it scrolls into place. ── */
-.sec-head {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 16px;
-  align-items: end;
-  padding-top: 18px;
-  border-top: 1px solid var(--line);
-}
-.sec-head .label { grid-column: 1 / -1; color: var(--muted); }
-.sec-title {
-  grid-column: 1 / span 8;
-  margin: 0.06em 0 0;
-  font-family: var(--display);
-  font-size: clamp(54px, 12vw, 200px);
-  font-weight: 400;
-  font-variation-settings: "wdth" 151, "wght" 900, "opsz" 144;
-  line-height: 0.82;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-}
-.sec-note {
-  grid-column: 9 / -1;
-  max-width: 34ch;
-  margin: 0;
-  color: var(--fg);
-  font-size: 16px;
-  text-wrap: pretty;
-}
-
-/* ── Film ── */
-.film {
-  padding-top: clamp(60px, 9vw, 140px);
-  padding-bottom: clamp(60px, 9vw, 140px);
-  background: #0b0b0b;
-  color: #ebebe8;
-}
-.film .label { color: #8d8d89; }
-.film__head {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 16px;
-  align-items: end;
-  margin-bottom: clamp(20px, 3vw, 36px);
-}
-.film__head .label { grid-column: 1 / span 4; }
-.film__title {
-  grid-column: 5 / -1;
-  margin: 0;
-  font-family: var(--display);
-  font-size: clamp(28px, 4.2vw, 68px);
-  font-weight: 400;
-  font-variation-settings: "wdth" 84, "wght" 700, "opsz" 72;
-  line-height: 0.98;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-.film__frame {
-  position: relative;
-  display: block;
-  overflow: hidden;
-  aspect-ratio: 16 / 9;
-  max-width: 100%;
-  background: #1c1c1c;
-  text-decoration: none;
-}
-.film__frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease), filter 0.6s; }
-.film__frame:hover img, .film__frame:focus-visible img { transform: scale(1.025); filter: contrast(1.08); }
-.guides { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.35s; }
-.film__frame:hover .guides, .film__frame:focus-visible .guides { opacity: 1; }
-.guides span { position: absolute; border: 1px solid rgba(255, 255, 255, 0.55); }
-.guides__action { inset: 3.5%; }
-.guides__title { inset: 5%; border-style: dashed !important; }
-.guides__cross { left: 50%; top: 50%; width: 28px; height: 28px; margin: -14px 0 0 -14px; border: 0 !important; }
-.guides__cross::before, .guides__cross::after { content: ""; position: absolute; background: rgba(255, 255, 255, 0.7); }
-.guides__cross::before { left: 0; right: 0; top: 50%; height: 1px; }
-.guides__cross::after { top: 0; bottom: 0; left: 50%; width: 1px; }
-.guides i {
-  position: absolute;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-style: normal;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.8);
-  text-transform: uppercase;
-}
-.guides__a-label { left: calc(3.5% + 8px); top: calc(3.5% + 6px); }
-.guides__t-label { left: calc(5% + 8px); top: calc(5% + 22px); }
-.film__play {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  padding: 12px 16px;
-  background: #ebebe8;
-  color: #0b0b0b;
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.film__stats {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: clamp(24px, 3.5vw, 48px);
-}
-.views { grid-column: 1 / -1; margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 0.4em; }
-.views__num {
-  font-family: var(--display);
-  font-size: clamp(64px, 15.5vw, 280px);
-  font-variation-settings: "wdth" 40, "wght" 900, "opsz" 144;
-  font-variant-numeric: tabular-nums;
-  line-height: 0.8;
-  letter-spacing: -0.03em;
-  white-space: nowrap;
-}
-.views__label { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #8d8d89; }
-.specs {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin: clamp(20px, 3vw, 36px) 0 0;
-}
-.specs div { padding-top: 10px; border-top: 1px solid rgba(235, 235, 232, 0.2); min-width: 0; }
-.specs dt { margin-bottom: 4px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: #8d8d89; }
-.specs dd { margin: 0; font-size: 16px; }
-
-/* ── Reels ── */
-.reels { padding-top: clamp(60px, 9vw, 140px); padding-bottom: clamp(60px, 9vw, 140px); }
-.reels__list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(16px, 2vw, 28px);
-  margin: clamp(28px, 4vw, 56px) 0 0;
-  padding: 0;
-  list-style: none;
-}
-.reel figure { margin: 0; }
-.reel__screen {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 9 / 16;
-  max-width: 100%;
-  background: #0b0b0b;
-  cursor: pointer;
-}
-.reel__screen video { width: 100%; height: 100%; object-fit: cover; }
-.reel__tc, .reel__sound {
-  position: absolute;
-  top: 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  font-variant-numeric: tabular-nums;
-}
-.reel__tc { left: 10px; padding: 3px 6px; background: rgba(0, 0, 0, 0.6); color: #ebebe8; }
-.reel__sound {
-  right: 10px;
-  padding: 4px 8px;
-  border: 1px solid rgba(235, 235, 232, 0.6);
-  background: rgba(0, 0, 0, 0.55);
-  color: #ebebe8;
-  cursor: pointer;
-  text-transform: uppercase;
-}
-.reel__sound[aria-pressed="true"] { background: #ebebe8; color: #0b0b0b; border-color: #ebebe8; }
-.reel__bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: #ebebe8; transform: scaleX(0); transform-origin: 0 50%; }
-.reel figcaption {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 4px 14px;
-  padding-top: 14px;
-}
-.reel__no {
-  grid-row: 1 / span 3;
-  font-family: var(--display);
-  font-size: 44px;
-  font-variation-settings: "wdth" 40, "wght" 900, "opsz" 144;
-  line-height: 0.82;
-  letter-spacing: -0.03em;
-}
-.reel__title { font-size: 21px; font-variation-settings: "wdth" 96, "wght" 700, "opsz" 24; line-height: 1.1; letter-spacing: -0.01em; }
-.reel__desc { color: var(--fg); font-size: 15px; line-height: 1.35; }
-.reel__spec { font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; color: var(--muted); }
-
-/* ── Experience and tools ── */
-.cv { padding-top: clamp(40px, 6vw, 90px); padding-bottom: clamp(60px, 9vw, 140px); }
-.jobs { margin: clamp(28px, 4vw, 56px) 0 0; padding: 0; list-style: none; border-bottom: 1px solid var(--line); }
-.job {
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 6px 16px;
+/* ── Header ── */
+.top {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
   align-items: baseline;
-  padding: 18px 0 20px;
-  border-top: 1px solid var(--line);
+  padding-block: 16px;
+  background: var(--paper);
+  font-size: 13px;
 }
-.job__years { grid-column: 1 / span 2; font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); }
-.job__place {
-  grid-column: 3 / span 5;
-  font-family: var(--display);
-  font-size: clamp(30px, 4.4vw, 72px);
-  font-variation-settings: "wdth" var(--w, 60), "wght" 860, "opsz" 96;
-  line-height: 0.9;
-  letter-spacing: -0.035em;
-  transition: font-variation-settings 0.55s var(--ease);
-}
-.job:hover .job__place { --w: 151; }
-.job__role { grid-column: 8 / span 2; font-size: 15px; font-variation-settings: "wdth" 100, "wght" 600; }
-.job__text { grid-column: 10 / -1; margin: 0; font-size: 15px; color: var(--fg); }
-.tools {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
-  margin-top: clamp(40px, 6vw, 80px);
-}
-.tools h3 { margin: 0 0 10px; padding-top: 10px; border-top: 2px solid var(--fg); }
-.tools ul { margin: 0; padding: 0; list-style: none; font-size: 17px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+.top__name { grid-column: 1 / span 3; font-weight: 500; }
+.top__nav { grid-column: 7 / span 4; display: flex; gap: 24px; }
+.top__nav a:hover { color: var(--grey); }
+.top__tc { grid-column: 11 / -1; justify-self: end; color: var(--grey); }
 
-/* ── Ads: empty frames with crop marks, ready for the next works. ── */
-.ads { padding-top: clamp(40px, 6vw, 90px); padding-bottom: clamp(60px, 9vw, 140px); }
-.slots {
-  display: grid;
-  grid-template-columns: 7fr 2.2fr 3fr;
-  gap: clamp(24px, 3vw, 44px);
-  align-items: end;
-  margin-top: clamp(36px, 5vw, 64px);
-  /* Room for the crop marks, which sit outside each frame. */
-  padding-inline: 20px;
+/* ── Opening ── */
+.hero { padding-block: clamp(56px, 9vw, 150px) clamp(48px, 7vw, 110px); }
+.display {
+  grid-column: 1 / -1;
+  font-size: clamp(44px, 8.2vw, 148px);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
 }
-/* An empty picture box as in a layout: a frame with its diagonals. */
+.mask { display: block; overflow: hidden; padding-bottom: 0.06em; margin-bottom: -0.06em; }
+.mask > span { display: block; animation: rise 1.2s var(--ease) both; }
+.mask:nth-child(2) > span { animation-delay: 0.09s; }
+@keyframes rise { from { transform: translateY(105%); } }
+.facts { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; margin-top: clamp(40px, 6vw, 96px); row-gap: 20px; }
+.facts > div { grid-column: span 3; padding-top: 10px; animation: appear 1s 0.35s var(--ease) both; }
+.facts dt { color: var(--grey); }
+@keyframes appear { from { opacity: 0; transform: translateY(8px); } }
+
+/* ── Index of works ── */
+.index { padding-bottom: clamp(56px, 8vw, 130px); }
+.index__head { padding-block: 10px 14px; }
+.index__head span:nth-child(1) { grid-column: 1 / span 2; }
+.index__head span:nth-child(2) { grid-column: 3 / span 4; }
+.index__head span:nth-child(3) { grid-column: 7 / span 3; }
+.index__head span:nth-child(4) { grid-column: 10 / -1; }
+.index__row a { padding-block: 12px 14px; align-items: baseline; transition: color 0.25s; }
+.index__row a:hover { color: var(--grey); }
+.index__year { grid-column: 1 / span 2; }
+.index__title { grid-column: 3 / span 4; font-size: clamp(20px, 2vw, 28px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
+.index__kind { grid-column: 7 / span 3; }
+.index__role { grid-column: 10 / -1; }
+
+/* ── A work ── */
+.work { padding-bottom: clamp(72px, 10vw, 170px); }
+.work__head { padding-top: 14px; align-items: baseline; row-gap: 8px; }
+.work__title { grid-column: 1 / span 6; font-size: clamp(30px, 3.6vw, 56px); font-weight: 300; letter-spacing: -0.035em; line-height: 1; }
+.work__lead { grid-column: 7 / span 5; max-width: 42ch; text-wrap: pretty; }
+.work__body { margin-top: clamp(24px, 3.4vw, 48px); }
+.meta { margin-top: 18px; row-gap: 14px; }
+.meta > div { grid-column: span 2; min-width: 0; }
+.meta > div.wide { grid-column: span 4; }
+.meta dt { color: var(--grey); }
+
+.frame { position: relative; display: block; overflow: hidden; background: var(--shade); }
+.frame img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease); }
+.frame:hover img, .frame:focus-visible img { transform: scale(1.02); }
+.film { aspect-ratio: 16 / 9; max-width: 100%; }
+.under { margin-top: 10px; display: flex; justify-content: space-between; gap: 16px; }
+
+/* Reels */
+.reels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+.reel__screen { position: relative; aspect-ratio: 9 / 16; max-width: 100%; overflow: hidden; background: #0d0d0d; cursor: pointer; }
+.reel__screen video { width: 100%; height: 100%; object-fit: cover; }
+.reel__bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--paper); transform: scaleX(0); transform-origin: 0 50%; }
+.reel__under { margin-top: 10px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 16px; align-items: baseline; }
+.reel__title { font-weight: 500; }
+.reel__tc { grid-row: 1; grid-column: 2; }
+.reel__text { grid-column: 1 / -1; color: var(--grey); }
+.reel__sound {
+  grid-column: 1 / -1;
+  justify-self: start;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1px solid var(--hair);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+}
+.reel__sound[aria-pressed="true"] { border-color: var(--ink); }
+
+/* Posters */
+.posters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); }
+/* Posters keep their own proportions: one height, standing on one line, as on a wall. */
+.posters .frame { aspect-ratio: 4 / 5; max-width: 100%; background: none; }
+.posters .frame img { object-fit: contain; object-position: 50% 100%; }
+
+/* Interactive: a list, one project per row. */
+.web__row { padding-block: 16px; align-items: start; row-gap: 10px; }
+.web__shot { grid-column: 1 / span 4; aspect-ratio: 16 / 10; max-width: 100%; }
+.web__name { grid-column: 6 / span 3; font-size: clamp(20px, 1.8vw, 26px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.15; }
+.web__text { grid-column: 9 / span 3; }
+.web__open { grid-column: 12 / -1; justify-self: end; }
+
+/* Ads: empty frames, as picture boxes in a layout. */
+.slots { display: grid; grid-template-columns: 6fr 2fr 3fr; gap: var(--gap); align-items: end; }
 .slot {
   position: relative;
   max-width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--hair);
   background:
-    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line) 50%, transparent calc(50% + 0.5px)),
-    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line) 50%, transparent calc(50% + 0.5px));
+    linear-gradient(to top right, transparent calc(50% - 0.5px), var(--hair) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--hair) 50%, transparent calc(50% + 0.5px));
 }
 .slot--wide { aspect-ratio: 16 / 9; }
 .slot--tall { aspect-ratio: 9 / 16; }
 .slot--square { aspect-ratio: 1 / 1; }
-.slot__label { position: absolute; left: 10px; bottom: 8px; padding: 2px 4px; background: var(--bg); color: var(--muted); }
-.crop { position: absolute; width: 14px; height: 14px; }
-.crop::before, .crop::after { content: ""; position: absolute; background: var(--fg); }
-.crop::before { width: 14px; height: 1px; }
-.crop::after { width: 1px; height: 14px; }
-.crop--tl { left: -20px; top: -20px; } .crop--tl::before { top: 19px; left: 0; } .crop--tl::after { left: 19px; top: 0; }
-.crop--tr { right: -20px; top: -20px; } .crop--tr::before { top: 19px; right: 0; } .crop--tr::after { left: 0; top: 0; }
-.crop--bl { left: -20px; bottom: -20px; } .crop--bl::before { bottom: 19px; left: 0; } .crop--bl::after { left: 19px; bottom: 0; }
-.crop--br { right: -20px; bottom: -20px; } .crop--br::before { bottom: 19px; right: 0; } .crop--br::after { left: 0; bottom: 0; }
+.slot span { position: absolute; left: 8px; bottom: 6px; padding: 1px 4px; background: var(--paper); }
+
+/* ── About ── */
+.about { padding-bottom: clamp(72px, 10vw, 170px); }
+.about__photo { grid-column: 1 / span 3; aspect-ratio: 4 / 5; max-width: 100%; background: #0d0d0d; }
+.about__photo img { width: 100%; height: 100%; object-fit: cover; }
+.about__text { grid-column: 5 / span 7; font-size: clamp(22px, 2.2vw, 32px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.2; text-wrap: pretty; }
+.jobs { margin-top: clamp(48px, 6vw, 96px); }
+.job { padding-block: 12px 14px; align-items: baseline; row-gap: 4px; }
+.job__years { grid-column: 1 / span 2; }
+.job__place { grid-column: 3 / span 4; font-size: clamp(20px, 2vw, 28px); font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
+.job__role { grid-column: 7 / span 2; }
+.job__text { grid-column: 9 / -1; }
+.tools { margin-top: clamp(40px, 5vw, 80px); row-gap: 24px; }
+.tools > div { grid-column: span 2; padding-top: 10px; border-top: 1px solid var(--ink); }
+.tools h3 { margin-bottom: 8px; font-size: 12.5px; font-weight: 400; color: var(--grey); }
 
 /* ── Contact ── */
-.contact { padding-top: clamp(40px, 6vw, 90px); padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
-.contact__links { display: grid; margin-top: clamp(20px, 3vw, 36px); }
-.contact__link {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 24px;
-  padding: 10px 0 14px;
-  border-top: 1px solid var(--line);
-  text-decoration: none;
-}
-.contact__link:last-child { border-bottom: 1px solid var(--line); }
-.contact__big {
-  font-family: var(--display);
-  font-size: clamp(44px, 9vw, 160px);
-  font-variation-settings: "wdth" var(--w, 52), "wght" 900, "opsz" 144;
-  line-height: 0.88;
-  letter-spacing: -0.04em;
-  transition: font-variation-settings 0.55s var(--ease);
-}
-.contact__link:hover .contact__big, .contact__link:focus-visible .contact__big { --w: 151; }
-.contact__link .label { color: var(--muted); overflow-wrap: anywhere; }
-.colophon { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; margin-top: clamp(36px, 5vw, 64px); color: var(--muted); }
+.contact { padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px)); }
+.contact__row a { padding-block: 12px 16px; align-items: baseline; transition: color 0.25s; }
+.contact__row a:hover { color: var(--grey); }
+.contact__big { grid-column: 1 / span 8; font-size: clamp(36px, 6.4vw, 112px); font-weight: 300; letter-spacing: -0.05em; line-height: 0.95; }
+.contact__handle { grid-column: 9 / -1; justify-self: end; }
+.colophon { margin-top: clamp(48px, 6vw, 96px); display: flex; justify-content: space-between; gap: 8px 24px; flex-wrap: wrap; }
 
 /* ── Narrow screens ── */
-@media (max-width: 860px) {
-  .bar__nav { display: none; }
-  .bar { grid-template-columns: 1fr auto; }
-  .hero__meta { grid-template-columns: 1fr 1fr; }
-  .hero__meta span:last-child { display: none; }
-  .lead, .hero__cta { grid-column: 1 / -1; justify-self: start; }
-  .sec-title { grid-column: 1 / -1; }
-  .sec-note { grid-column: 1 / -1; }
-  .film__head .label, .film__title { grid-column: 1 / -1; }
-  .specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .reels__list { grid-template-columns: minmax(0, 1fr); }
-  .reel { width: min(82%, 420px); }
+@media (max-width: 900px) {
+  .top__name { grid-column: 1 / span 6; }
+  .top__nav { display: none; }
+  .top__tc { grid-column: 7 / -1; }
+  .facts > div { grid-column: span 6; }
+  .index__head { display: none; }
+  .index__year { grid-column: 1 / span 3; }
+  .index__title { grid-column: 4 / -1; }
+  .index__kind, .index__role { grid-column: 4 / -1; }
+  .work__title, .work__lead { grid-column: 1 / -1; }
+  .meta > div, .meta > div.wide { grid-column: span 6; }
+  .reels { grid-template-columns: minmax(0, 1fr); row-gap: 36px; }
+  .reel { width: min(84%, 420px); }
   .reel:nth-child(2) { justify-self: end; }
-  .job__years, .job__place, .job__role, .job__text { grid-column: 1 / -1; }
-  .tools { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; }
+  .posters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .posters .frame:last-child { display: none; }
+  .web__shot { grid-column: 1 / -1; }
+  .web__name { grid-column: 1 / span 8; }
+  .web__open { grid-column: 9 / -1; }
+  .web__text { grid-column: 1 / -1; grid-row: 3; }
   .slots { grid-template-columns: 1fr 1fr; }
   .slot--wide { grid-column: 1 / -1; }
+  .about__photo { grid-column: 1 / span 7; }
+  .about__text { grid-column: 1 / -1; margin-top: 28px; }
+  .job__years { grid-column: 1 / span 4; }
+  .job__place { grid-column: 5 / -1; }
+  .job__role, .job__text { grid-column: 5 / -1; }
+  .tools > div { grid-column: span 6; }
+  .contact__big { grid-column: 1 / -1; }
+  .contact__handle { grid-column: 1 / -1; justify-self: start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { transition: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
 </head>
 <body>
-<header class="bar band">
-  <a href="#top">Серёжа Охта</a>
-  <nav class="bar__nav" aria-label="Разделы">
-    <a href="#sumer">Шумеры</a>
-    <a href="#reels">Рилсы</a>
-    <a href="#cv">Опыт</a>
+<header class="top band grid">
+  <a class="top__name" href="#top">Серёжа</a>
+  <nav class="top__nav" aria-label="Разделы">
+    <a href="#works">Работы</a>
+    <a href="#about">Обо мне</a>
     <a href="#contact">Контакт</a>
   </nav>
-  <p class="bar__tc" aria-hidden="true"><span>TC</span><span id="tc">00:00:00:00</span></p>
+  <span class="top__tc num" id="tc" title="Прокрутка как таймлайн: один пиксель — один кадр" aria-hidden="true">00:00:00:00</span>
 </header>
 
 <main id="top">
-  <section class="hero band">
-    <div class="hero__meta label">
-      <span>Портфолио · 2026</span>
-      <span>Моушн · 3D · типографика</span>
-      <span>Видео-эссе · рилсы · реклама</span>
-    </div>
-    <h1 class="name" id="name" aria-label="Серёжа Охта, моушн-дизайнер">
-      <span class="name__line name__line--name" data-wdth="72" data-wght="920" data-amp="70" aria-hidden="true"><span class="name__fit">Серёжа Охта</span></span>
-      <span class="name__line name__line--role" data-wdth="108" data-wght="220" data-amp="60" aria-hidden="true"><span class="name__fit">моушн-дизайнер</span></span>
+  <section class="hero band grid">
+    <h1 class="display">
+      <span class="mask"><span>Серёжа —</span></span>
+      <span class="mask"><span>моушн-дизайнер</span></span>
     </h1>
-    <div class="hero__foot">
-      <p class="lead">Делаю образовательные видео, рилсы и рекламу. Мой ролик о Шумере посмотрели три с половиной миллиона раз.</p>
-      <a class="hero__cta" href="#sumer">Смотреть работы ↓</a>
-    </div>
+    <dl class="facts small">
+      <div><dt>Делаю</dt><dd>Видео-эссе, рилсы и рекламу</dd></div>
+      <div><dt>Умею</dt><dd>Сценарий, анимация, 3D, типографика</dd></div>
+      <div><dt>Канал</dt><dd>«Охта Студия» на YouTube, 40 тыс. подписчиков</dd></div>
+      <div><dt>Сейчас</dt><dd>Открыт к работе в студии или продакшене</dd></div>
+    </dl>
   </section>
 
-  <section class="film band" id="sumer">
-    <div class="film__head">
-      <p class="label">Видео-эссе · YouTube · 2020</p>
-      <h2 class="film__title">Шумеры: история первой цивилизации за&nbsp;20&nbsp;минут</h2>
-    </div>
-    <a class="film__frame" href="https://youtu.be/UydIPVDlZIY" target="_blank" rel="noopener">
-      <img src="media/sumer.jpg" alt="Превью ролика: бронзовая голова аккадского правителя и надпись «История Шумера за 20 минут»" width="1280" height="720">
-      <span class="guides" aria-hidden="true">
-        <span class="guides__action"></span><span class="guides__title"></span><span class="guides__cross"></span>
-        <i class="guides__a-label">Action safe 93%</i><i class="guides__t-label">Title safe 90%</i>
-      </span>
-      <span class="film__play">Смотреть на YouTube ↗</span>
-    </a>
-    <div class="film__stats">
-      <p class="views"><span class="views__num" id="views" data-count="3490612">3&nbsp;490&nbsp;612</span><span class="views__label">просмотров на&nbsp;октябрь 2026</span></p>
-      <dl class="specs">
-        <div><dt>Канал</dt><dd>Охта Студия, 40 тыс. подписчиков</dd></div>
-        <div><dt>Опубликован</dt><dd>23 ноября 2020</dd></div>
+  <section class="index band" id="works" aria-label="Список работ">
+    <span class="rule"></span>
+    <div class="index__head grid small grey"><span>Год</span><span>Работа</span><span>Формат</span><span>Что делал</span></div>
+    <ol>
+      <li class="index__row"><span class="rule"></span><a class="grid" href="#sumer"><span class="index__year small num">2020</span><span class="index__title">Шумеры</span><span class="index__kind small">Видео-эссе, YouTube</span><span class="index__role small">Сценарий, анимация, моушн-дизайн</span></a></li>
+      <li class="index__row"><span class="rule"></span><a class="grid" href="#threads"><span class="index__year small num">2026</span><span class="index__title">Threads</span><span class="index__kind small">Серия рилсов</span><span class="index__role small">Дизайн, анимация</span></a></li>
+      <li class="index__row"><span class="rule"></span><a class="grid" href="#posters"><span class="index__year small num">—</span><span class="index__title">Плакаты и 3D</span><span class="index__kind small">Серия плакатов</span><span class="index__role small">3D, типографика</span></a></li>
+      <li class="index__row"><span class="rule"></span><a class="grid" href="#web"><span class="index__year small num">—</span><span class="index__title">Интерактив</span><span class="index__kind small">Сайты и веб-приложения</span><span class="index__role small">Дизайн, код</span></a></li>
+      <li class="index__row"><span class="rule"></span><a class="grid" href="#ads"><span class="index__year small num">—</span><span class="index__title">Реклама</span><span class="index__kind small">Скоро</span><span class="index__role small">Моушн-дизайн</span></a></li>
+    </ol>
+    <span class="rule"></span>
+  </section>
+
+  <article class="work band" id="sumer">
+    <span class="rule"></span>
+    <header class="work__head grid">
+      <h2 class="work__title">Шумеры</h2>
+      <p class="work__lead">История первой цивилизации за двадцать минут: видео-эссе для моего канала.</p>
+    </header>
+    <div class="work__body">
+      <a class="frame film" href="https://youtu.be/UydIPVDlZIY" target="_blank" rel="noopener">
+        <img src="media/sumer.jpg" alt="Кадр-обложка: бронзовая голова аккадского правителя и надпись «История Шумера за 20 минут»" width="1280" height="720">
+      </a>
+      <div class="under small"><span class="grey">YouTube</span><a class="link" href="https://youtu.be/UydIPVDlZIY" target="_blank" rel="noopener">Смотреть ролик ↗</a></div>
+      <dl class="meta grid small">
+        <div><dt>Год</dt><dd class="num">2020</dd></div>
         <div><dt>Формат</dt><dd>16:9, около 20 минут</dd></div>
-        <div><dt>Работа</dt><dd>Анимация и моушн-дизайн</dd></div>
+        <div class="wide"><dt>Что делал</dt><dd>Сценарий, анимация, моушн-дизайн</dd></div>
+        <div><dt>Канал</dt><dd>Охта Студия</dd></div>
+        <div><dt>Просмотры</dt><dd class="num" id="views" data-count="3490612">3&nbsp;490&nbsp;612</dd></div>
       </dl>
     </div>
-  </section>
+  </article>
 
-  <section class="reels band" id="reels">
-    <header class="sec-head">
-      <p class="label">Вертикальные ролики · 9:16</p>
-      <h2 class="sec-title" data-stretch>Рилсы</h2>
-      <p class="sec-note">Серия «Threads» об истории искусства: как одна картина отвечает другой. Детали обведены прямо на картинах, путь показан на карте.</p>
+  <article class="work band" id="threads">
+    <span class="rule"></span>
+    <header class="work__head grid">
+      <h2 class="work__title">Threads</h2>
+      <p class="work__lead">Серия рилсов об истории искусства: как одна картина отвечает другой. Заимствованные детали обведены на обеих картинах, путь показан на карте.</p>
     </header>
-    <ol class="reels__list">
-      <li class="reel">
-        <figure>
+    <div class="work__body">
+      <ol class="reels">
+        <li class="reel">
           <div class="reel__screen" tabindex="0" role="button" aria-label="Пауза или воспроизведение">
             <video src="media/japan.mp4" poster="media/japan.jpg" muted playsinline loop preload="none" aria-label="Рилс «Japan → Van Gogh»"></video>
-            <span class="reel__tc" aria-hidden="true">00:00:00:00</span>
-            <button class="reel__sound" type="button" aria-pressed="false">Звук</button>
             <span class="reel__bar" aria-hidden="true"></span>
           </div>
-          <figcaption>
-            <span class="reel__no">01</span>
-            <span class="reel__title">Japan → Van&nbsp;Gogh</span>
-            <span class="reel__desc">Ван Гог копирует гравюры Хиросигэ, Дебюсси берёт «Волну» Хокусая на обложку «Моря».</span>
-            <span class="reel__spec">1080×1920 · 30 fps · 0:38</span>
-          </figcaption>
-        </figure>
-      </li>
-      <li class="reel">
-        <figure>
+          <div class="reel__under small">
+            <span class="reel__title">Japan → Van Gogh</span>
+            <span class="reel__tc num grey" aria-hidden="true">00:00:00:00</span>
+            <span class="reel__text">Ван Гог копирует Хиросигэ, Дебюсси ставит «Волну» Хокусая на обложку «Моря».</span>
+            <button class="reel__sound" type="button" aria-pressed="false">Со звуком</button>
+          </div>
+        </li>
+        <li class="reel">
           <div class="reel__screen" tabindex="0" role="button" aria-label="Пауза или воспроизведение">
             <video src="media/supper.mp4" poster="media/supper.jpg" muted playsinline loop preload="none" aria-label="Рилс «Where Judas sits»"></video>
-            <span class="reel__tc" aria-hidden="true">00:00:00:00</span>
-            <button class="reel__sound" type="button" aria-pressed="false">Звук</button>
             <span class="reel__bar" aria-hidden="true"></span>
           </div>
-          <figcaption>
-            <span class="reel__no">02</span>
+          <div class="reel__under small">
             <span class="reel__title">Where Judas sits</span>
-            <span class="reel__desc">До Леонардо Иуда сидел один по нашу сторону стола. Леонардо посадил его вместе со всеми.</span>
-            <span class="reel__spec">1080×1920 · 30 fps · 0:32</span>
-          </figcaption>
-        </figure>
-      </li>
-      <li class="reel">
-        <figure>
+            <span class="reel__tc num grey" aria-hidden="true">00:00:00:00</span>
+            <span class="reel__text">До Леонардо Иуда сидел один по нашу сторону стола. Леонардо посадил его со всеми.</span>
+            <button class="reel__sound" type="button" aria-pressed="false">Со звуком</button>
+          </div>
+        </li>
+        <li class="reel">
           <div class="reel__screen" tabindex="0" role="button" aria-label="Пауза или воспроизведение">
             <video src="media/mona-lisa.mp4" poster="media/mona-lisa.jpg" muted playsinline loop preload="none" aria-label="Рилс «Mona Lisa’s hands»"></video>
-            <span class="reel__tc" aria-hidden="true">00:00:00:00</span>
-            <button class="reel__sound" type="button" aria-pressed="false">Звук</button>
             <span class="reel__bar" aria-hidden="true"></span>
           </div>
-          <figcaption>
-            <span class="reel__no">03</span>
+          <div class="reel__under small">
             <span class="reel__title">Mona Lisa’s hands</span>
-            <span class="reel__desc">Рафаэль берёт её позу, Коро — руки, а кража 1911 года делает её самой известной картиной.</span>
-            <span class="reel__spec">1080×1920 · 30 fps · 0:35</span>
-          </figcaption>
-        </figure>
-      </li>
-    </ol>
-  </section>
-
-  <section class="cv band" id="cv">
-    <header class="sec-head">
-      <p class="label">Где работал</p>
-      <h2 class="sec-title" data-stretch>Опыт</h2>
-      <p class="sec-note">Образовательные проекты, интерфейсы и айдентика. С 2020 года снимаю видео-эссе для своего канала.</p>
-    </header>
-    <ol class="jobs">
-      <li class="job">
-        <span class="job__years">2020 — сейчас</span>
-        <span class="job__place">Фриланс</span>
-        <span class="job__role">Графический дизайнер</span>
-        <p class="job__text">Айдентика, брендированные и маркетинговые материалы для клиентов.</p>
-      </li>
-      <li class="job">
-        <span class="job__years">2020 — 2023</span>
-        <span class="job__place">Arzamas</span>
-        <span class="job__role">Дизайнер</span>
-        <p class="job__text">Интерфейсы образовательных проектов, мобильный UX, визуальные концепты спецпроектов.</p>
-      </li>
-      <li class="job">
-        <span class="job__years">2019 — 2020</span>
-        <span class="job__place">Синхронизация</span>
-        <span class="job__role">Дизайнер</span>
-        <p class="job__text">Интерфейсы веб-курсов, интерактивные элементы, визуальные сценарии.</p>
-      </li>
-      <li class="job">
-        <span class="job__years">2017 — 2019</span>
-        <span class="job__place">Level One</span>
-        <span class="job__role">Дизайнер</span>
-        <p class="job__text">Адаптивные интерфейсы образовательной платформы, пользовательские тесты.</p>
-      </li>
-    </ol>
-    <div class="tools">
-      <div><h3 class="label">Анимация</h3><ul><li>After Effects</li><li>Cavalry</li><li>TouchDesigner</li></ul></div>
-      <div><h3 class="label">3D</h3><ul><li>Cinema 4D, Octane</li><li>Substance Designer</li><li>Substance Painter</li></ul></div>
-      <div><h3 class="label">Дизайн</h3><ul><li>Figma</li><li>Photoshop</li><li>Illustrator</li></ul></div>
-      <div><h3 class="label">Звук</h3><ul><li>Ableton Live 12</li></ul></div>
-      <div><h3 class="label">Код</h3><ul><li>TypeScript</li><li>Vue</li><li>Three.js</li></ul></div>
+            <span class="reel__tc num grey" aria-hidden="true">00:00:00:00</span>
+            <span class="reel__text">Рафаэль берёт её позу, Коро — руки, а кража 1911 года делает её знаменитой.</span>
+            <button class="reel__sound" type="button" aria-pressed="false">Со звуком</button>
+          </div>
+        </li>
+      </ol>
+      <dl class="meta grid small">
+        <div><dt>Год</dt><dd class="num">2026</dd></div>
+        <div><dt>Формат</dt><dd>9:16, 1080×1920, 30 fps</dd></div>
+        <div class="wide"><dt>Что делал</dt><dd>Дизайн, анимация</dd></div>
+      </dl>
     </div>
-  </section>
+  </article>
 
-  <section class="ads band" id="ads">
-    <header class="sec-head">
-      <p class="label">Коммерческие работы</p>
-      <h2 class="sec-title" data-stretch>Реклама</h2>
-      <p class="sec-note">Раздел пополняется: здесь будут рекламные ролики в трёх форматах.</p>
+  <article class="work band" id="posters">
+    <span class="rule"></span>
+    <header class="work__head grid">
+      <h2 class="work__title">Плакаты и 3D</h2>
+      <p class="work__lead">Типографика и 3D: плакаты к стихам Тура Ульвена и Гуннара Экелёфа, «Ниневия», «Ланиакея».</p>
     </header>
-    <div class="slots">
-      <div class="slot slot--wide"><span class="crop crop--tl"></span><span class="crop crop--tr"></span><span class="crop crop--bl"></span><span class="crop crop--br"></span><span class="slot__label label">16:9</span></div>
-      <div class="slot slot--tall"><span class="crop crop--tl"></span><span class="crop crop--tr"></span><span class="crop crop--bl"></span><span class="crop crop--br"></span><span class="slot__label label">9:16</span></div>
-      <div class="slot slot--square"><span class="crop crop--tl"></span><span class="crop crop--tr"></span><span class="crop crop--bl"></span><span class="crop crop--br"></span><span class="slot__label label">1:1</span></div>
+    <div class="work__body">
+      <div class="posters">
+        <div class="frame"><img src="media/poster-01.jpg" alt="Плакат: тонкое кольцо на светлом фоне, строки Тура Ульвена по-норвежски и по-русски" loading="lazy" width="900" height="1125"></div>
+        <div class="frame"><img src="media/poster-02.jpg" alt="3D: светящийся белый цветок" loading="lazy" width="900" height="1125"></div>
+        <div class="frame"><img src="media/poster-03.jpg" alt="3D: белая рука с цветком" loading="lazy" width="750" height="1125"></div>
+        <div class="frame"><img src="media/poster-04.jpg" alt="Плакат «Гуннар Экелёф»: зернистый портрет и строка «Утренний свет бесшумно толчёт наркотик сна»" loading="lazy" width="794" height="1125"></div>
+        <div class="frame"><img src="media/poster-05.jpg" alt="Плакат «Я падаю» по стихотворению Тура Ульвена" loading="lazy" width="760" height="1125"></div>
+        <div class="frame"><img src="media/poster-06.jpg" alt="Плакат «Nineveh»: 3D-кольцо и крупная надпись" loading="lazy" width="844" height="1125"></div>
+        <div class="frame"><img src="media/poster-07.jpg" alt="3D: цветок из точек" loading="lazy" width="902" height="1125"></div>
+        <div class="frame"><img src="media/poster-08.jpg" alt="Плакат XIII: тонкий круг и строки Тура Ульвена" loading="lazy" width="900" height="1125"></div>
+        <div class="frame"><img src="media/poster-09.jpg" alt="Плакат «Ланиакея»: белые нити и надпись 10h 32m" loading="lazy" width="826" height="1125"></div>
+      </div>
+      <div class="under small"><span class="grey">Остальное в Инстаграме</span><a class="link" href="https://www.instagram.com/seryozha_okhta/" target="_blank" rel="noopener">@seryozha_okhta ↗</a></div>
+    </div>
+  </article>
+
+  <article class="work band" id="web">
+    <span class="rule"></span>
+    <header class="work__head grid">
+      <h2 class="work__title">Интерактив</h2>
+      <p class="work__lead">Сайты и веб-приложения о литературе и истории. Дизайн и код.</p>
+    </header>
+    <ol class="work__body">
+      <li><span class="rule"></span><div class="web__row grid">
+        <a class="frame web__shot" href="https://tor-ulven-stein-og-speil.vercel.app/" target="_blank" rel="noopener"><img src="media/web-stein-og-speil.jpg" alt="Сайт «Stein og speil»: тёмный экран, название и 3D-камень" loading="lazy"></a>
+        <h3 class="web__name">Stein og speil</h3>
+        <p class="web__text small">Приложение к книге Тура Ульвена: оригинал и перевод, 3D.</p>
+        <a class="web__open small link" href="https://tor-ulven-stein-og-speil.vercel.app/" target="_blank" rel="noopener">Открыть ↗</a>
+      </div></li>
+      <li><span class="rule"></span><div class="web__row grid">
+        <a class="frame web__shot" href="https://ars-poetica.vercel.app/" target="_blank" rel="noopener"><img src="media/web-ars-poetica.jpg" alt="Сайт «Ars poetica»: стихотворение на тёмном фоне среди светящихся линий" loading="lazy"></a>
+        <h3 class="web__name">Ars poetica</h3>
+        <p class="web__text small">Стихотворение Тура Ульвена с анимацией и визуальными эффектами.</p>
+        <a class="web__open small link" href="https://ars-poetica.vercel.app/" target="_blank" rel="noopener">Открыть ↗</a>
+      </div></li>
+      <li><span class="rule"></span><div class="web__row grid">
+        <a class="frame web__shot" href="https://enheduanna.vercel.app/" target="_blank" rel="noopener"><img src="media/web-enheduanna.jpg" alt="Сайт «Enheduanna»: крупное название и разделы" loading="lazy"></a>
+        <h3 class="web__name">Энхедуанна</h3>
+        <p class="web__text small">Сайт о первом известном по имени авторе в истории, с 3D-визуализацией.</p>
+        <a class="web__open small link" href="https://enheduanna.vercel.app/" target="_blank" rel="noopener">Открыть ↗</a>
+      </div></li>
+      <li><span class="rule"></span><div class="web__row grid">
+        <a class="frame web__shot" href="https://the-knight-in-the-panther-s-skin.vercel.app/" target="_blank" rel="noopener"><img src="media/web-knight.jpg" alt="Сайт «The Knight in the Panther’s Skin» на экране ноутбука" loading="lazy"></a>
+        <h3 class="web__name">Витязь в тигровой шкуре</h3>
+        <p class="web__text small">Сайт о грузинской поэме Шота Руставели.</p>
+        <a class="web__open small link" href="https://the-knight-in-the-panther-s-skin.vercel.app/" target="_blank" rel="noopener">Открыть ↗</a>
+      </div></li>
+      <li><span class="rule"></span><div class="web__row grid">
+        <a class="frame web__shot" href="https://openprocessing.org/sketch/1950042" target="_blank" rel="noopener"><img src="media/web-flower.jpg" alt="Генеративный цветок из частиц" loading="lazy"></a>
+        <h3 class="web__name">Flower of particles</h3>
+        <p class="web__text small">Генеративный скетч на p5.js: система частиц.</p>
+        <a class="web__open small link" href="https://openprocessing.org/sketch/1950042" target="_blank" rel="noopener">Открыть ↗</a>
+      </div></li>
+    </ol>
+  </article>
+
+  <article class="work band" id="ads">
+    <span class="rule"></span>
+    <header class="work__head grid">
+      <h2 class="work__title">Реклама</h2>
+      <p class="work__lead">Скоро здесь будут рекламные ролики.</p>
+    </header>
+    <div class="work__body slots small grey">
+      <div class="slot slot--wide"><span class="num">16:9</span></div>
+      <div class="slot slot--tall"><span class="num">9:16</span></div>
+      <div class="slot slot--square"><span class="num">1:1</span></div>
+    </div>
+  </article>
+
+  <section class="about band" id="about">
+    <span class="rule"></span>
+    <div class="work__head grid"><h2 class="work__title">Обо мне</h2></div>
+    <div class="grid work__body">
+      <div class="about__photo"><img src="media/portrait.jpg" alt="Портрет Серёжи" loading="lazy" width="800" height="1000"></div>
+      <p class="about__text">Моушн-дизайнер и фронтенд-разработчик. Пишу сценарии и делаю образовательные видео для своего канала. До этого шесть лет работал дизайнером в образовательных проектах.</p>
+    </div>
+    <ol class="jobs">
+      <li><span class="rule"></span><div class="job grid"><span class="job__years small num grey">2020 — сейчас</span><span class="job__place">Фриланс</span><span class="job__role small">Графический дизайнер</span><span class="job__text small">Айдентика, брендированные и маркетинговые материалы.</span></div></li>
+      <li><span class="rule"></span><div class="job grid"><span class="job__years small num grey">2020 — 2023</span><span class="job__place">Arzamas</span><span class="job__role small">Дизайнер</span><span class="job__text small">Интерфейсы образовательных проектов, мобильный UX, концепты спецпроектов.</span></div></li>
+      <li><span class="rule"></span><div class="job grid"><span class="job__years small num grey">2019 — 2020</span><span class="job__place">Синхронизация</span><span class="job__role small">Дизайнер</span><span class="job__text small">Интерфейсы веб-курсов, интерактивные элементы, визуальные сценарии.</span></div></li>
+      <li><span class="rule"></span><div class="job grid"><span class="job__years small num grey">2017 — 2019</span><span class="job__place">Level One</span><span class="job__role small">Дизайнер</span><span class="job__text small">Адаптивные интерфейсы образовательной платформы, пользовательские тесты.</span></div></li>
+    </ol>
+    <span class="rule"></span>
+    <div class="tools grid small">
+      <div><h3>Анимация</h3><ul><li>After Effects</li><li>Cavalry</li><li>TouchDesigner</li></ul></div>
+      <div><h3>3D</h3><ul><li>Cinema 4D, Octane</li><li>Substance Designer</li><li>Substance Painter</li></ul></div>
+      <div><h3>Дизайн</h3><ul><li>Figma</li><li>Photoshop</li><li>Illustrator</li></ul></div>
+      <div><h3>Звук</h3><ul><li>Ableton Live 12</li></ul></div>
+      <div><h3>Код</h3><ul><li>TypeScript</li><li>Vue</li><li>Three.js</li></ul></div>
     </div>
   </section>
 </main>
 
 <footer class="contact band" id="contact">
-  <p class="label">Контакт</p>
-  <div class="contact__links">
-    <a class="contact__link" href="https://www.youtube.com/@OkhtaStudio" target="_blank" rel="noopener">
-      <span class="contact__big">YouTube</span><span class="label">@OkhtaStudio ↗</span>
-    </a>
-    <a class="contact__link" href="https://seryozha-okhta-portfolio-8rmy.vercel.app/cv" target="_blank" rel="noopener">
-      <span class="contact__big">Резюме</span><span class="label">Дизайнер и разработчик ↗</span>
-    </a>
-  </div>
-  <div class="colophon label">
-    <span>© 2026 Серёжа Охта</span>
-    <span>Набрано Roboto Flex и IBM Plex Mono</span>
-  </div>
+  <span class="rule"></span>
+  <div class="work__head grid"><h2 class="work__title">Контакт</h2></div>
+  <ol class="work__body">
+    <li class="contact__row"><span class="rule"></span><a class="grid" href="https://www.youtube.com/@OkhtaStudio" target="_blank" rel="noopener"><span class="contact__big">YouTube</span><span class="contact__handle small">@OkhtaStudio ↗</span></a></li>
+    <li class="contact__row"><span class="rule"></span><a class="grid" href="https://www.instagram.com/seryozha_okhta/" target="_blank" rel="noopener"><span class="contact__big">Instagram</span><span class="contact__handle small">@seryozha_okhta ↗</span></a></li>
+  </ol>
+  <span class="rule"></span>
+  <div class="colophon small grey"><span>© 2026 Серёжа</span><span>Набрано Inter Tight</span></div>
 </footer>
 
 <script>
 (() => {
-  const root = document.documentElement
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
   const timecode = (frames, fps) => {
     const s = Math.floor(frames / fps)
@@ -652,22 +469,29 @@ img, video { display: block; max-width: 100%; }
 
   // The page as a timeline: one pixel of scroll is one frame at 25 fps.
   const tc = document.getElementById('tc')
-  let tcQueued = false
+  let queued = false
   addEventListener('scroll', () => {
-    if (tcQueued) return
-    tcQueued = true
+    if (queued) return
+    queued = true
     requestAnimationFrame(() => {
       tc.textContent = timecode(Math.max(0, Math.round(scrollY)), 25)
-      tcQueued = false
+      queued = false
     })
   }, { passive: true })
 
-  const bar = document.querySelector('.bar')
-  addEventListener('scroll', () => bar.classList.toggle('is-scrolled', scrollY > 8), { passive: true })
-
-  // Cinema: while the film fills the middle of the screen, the whole page goes black.
-  const film = document.getElementById('sumer')
-  new IntersectionObserver(([entry]) => root.classList.toggle('cinema', entry.isIntersecting), { rootMargin: '-45% 0px -45% 0px' }).observe(film)
+  // Hairlines below the first screen wait, then draw as they come into view.
+  if (!reduce && 'IntersectionObserver' in window) {
+    const rules = [...document.querySelectorAll('.rule')].filter((rule) => rule.getBoundingClientRect().top > innerHeight)
+    rules.forEach((rule) => rule.classList.add('is-pending'))
+    const drawer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.classList.remove('is-pending')
+        drawer.unobserve(entry.target)
+      }
+    }, { rootMargin: '0px 0px -8% 0px' })
+    rules.forEach((rule) => drawer.observe(rule))
+  }
 
   // Views count up once, the first time they come into view.
   const views = document.getElementById('views')
@@ -678,46 +502,22 @@ img, video { display: block; max-width: 100%; }
       counter.disconnect()
       const start = performance.now()
       const step = (now) => {
-        const p = Math.min(1, (now - start) / 1800)
+        const p = Math.min(1, (now - start) / 1600)
         views.textContent = Math.round(target * (1 - (1 - p) ** 4)).toLocaleString('ru-RU')
         if (p < 1) requestAnimationFrame(step)
       }
       requestAnimationFrame(step)
-    }, { threshold: 0.8 })
+    }, { threshold: 1 })
     counter.observe(views)
-  }
-
-  // Section titles widen from condensed to extended as they scroll into place.
-  const stretchers = [...document.querySelectorAll('[data-stretch]')]
-  let stretchQueued = false
-  const stretch = () => {
-    stretchQueued = false
-    const vh = innerHeight
-    for (const el of stretchers) {
-      const top = el.getBoundingClientRect().top
-      const p = Math.min(1, Math.max(0, (vh - top) / (vh * 0.65)))
-      const eased = 1 - (1 - p) ** 3
-      el.style.fontVariationSettings = `"wdth" ${(25 + 126 * eased).toFixed(1)}, "wght" 900, "opsz" 144`
-    }
-  }
-  if (!reduce) {
-    addEventListener('scroll', () => {
-      if (!stretchQueued) { stretchQueued = true; requestAnimationFrame(stretch) }
-    }, { passive: true })
-    addEventListener('resize', stretch)
-    stretch()
   }
 
   // Reels play while on screen; one at a time can have sound.
   const reels = [...document.querySelectorAll('.reel')]
   const videos = reels.map((reel) => reel.querySelector('video'))
-  const setSound = (index) => {
-    reels.forEach((reel, i) => {
-      const on = i === index
-      videos[i].muted = !on
-      reel.querySelector('.reel__sound').setAttribute('aria-pressed', String(on))
-    })
-  }
+  const setSound = (index) => reels.forEach((reel, i) => {
+    videos[i].muted = i !== index
+    reel.querySelector('.reel__sound').setAttribute('aria-pressed', String(i === index))
+  })
   reels.forEach((reel, i) => {
     const video = videos[i]
     const tcEl = reel.querySelector('.reel__tc')
@@ -729,20 +529,16 @@ img, video { display: block; max-width: 100%; }
     }
     video.addEventListener('play', () => requestAnimationFrame(tick))
     video.addEventListener('seeked', tick)
-    reel.querySelector('.reel__sound').addEventListener('click', (event) => {
-      event.stopPropagation()
+    reel.querySelector('.reel__sound').addEventListener('click', () => {
       const on = video.muted
       setSound(on ? i : -1)
       if (on) video.play().catch(() => {})
     })
     const screen = reel.querySelector('.reel__screen')
-    const toggle = () => {
-      if (video.paused) video.play().catch(() => {})
-      else video.pause()
-    }
+    const toggle = () => (video.paused ? video.play().catch(() => {}) : video.pause())
     screen.addEventListener('click', toggle)
     screen.addEventListener('keydown', (event) => {
-      if (event.target !== screen || (event.key !== 'Enter' && event.key !== ' ')) return
+      if (event.key !== 'Enter' && event.key !== ' ') return
       event.preventDefault()
       toggle()
     })
@@ -750,97 +546,12 @@ img, video { display: block; max-width: 100%; }
   if (!reduce) {
     const player = new IntersectionObserver((entries) => {
       for (const entry of entries) {
-        const video = entry.target
-        if (entry.isIntersecting) video.play().catch(() => {})
-        else video.pause()
+        if (entry.isIntersecting) entry.target.play().catch(() => {})
+        else entry.target.pause()
       }
     }, { threshold: 0.55 })
     videos.forEach((video) => player.observe(video))
   }
-
-  // The name: each line fills the width; letters widen near the pointer while the others narrow,
-  // so the line keeps its length. Without a pointer, a slow wave runs through it.
-  const name = document.getElementById('name')
-  const lines = [...name.querySelectorAll('.name__line')].map((line) => {
-    const fit = line.querySelector('.name__fit')
-    const text = fit.textContent
-    fit.textContent = ''
-    const chars = [...text].map((ch) => {
-      const el = document.createElement('span')
-      el.className = 'ch'
-      el.textContent = ch === ' ' ? ' ' : ch
-      fit.append(el)
-      return { el, w: Number(line.dataset.wdth), cx: 0 }
-    })
-    return { line, fit, chars, wdth: Number(line.dataset.wdth), wght: Number(line.dataset.wght), amp: Number(line.dataset.amp), size: 0 }
-  })
-  const paint = (l) => {
-    for (const c of l.chars) c.el.style.fontVariationSettings = `"wdth" ${c.w.toFixed(1)}, "wght" ${l.wght}, "opsz" 144`
-  }
-  let width = 0
-  const fitLines = () => {
-    width = name.clientWidth
-    for (const l of lines) {
-      for (const c of l.chars) c.w = l.wdth
-      paint(l)
-      l.fit.style.transform = ''
-      l.line.style.fontSize = '100px'
-      l.size = 100 * width / l.fit.offsetWidth
-      l.line.style.fontSize = l.size + 'px'
-      const left = l.fit.getBoundingClientRect().left
-      for (const c of l.chars) {
-        const r = c.el.getBoundingClientRect()
-        c.cx = r.left - left + r.width / 2
-      }
-    }
-  }
-  const ready = document.fonts ? document.fonts.ready : Promise.resolve()
-  ready.then(() => {
-    fitLines()
-    addEventListener('resize', fitLines)
-    if (reduce) return
-
-    let pointer = null
-    const born = performance.now()
-    name.parentElement.addEventListener('pointermove', (e) => {
-      if (e.pointerType !== 'mouse') return
-      pointer = e.clientX - name.getBoundingClientRect().left
-    })
-    name.parentElement.addEventListener('pointerleave', () => { pointer = null })
-
-    let visible = true
-    new IntersectionObserver(([entry]) => {
-      const was = visible
-      visible = entry.isIntersecting
-      if (visible && !was) requestAnimationFrame(frame)
-    }).observe(name)
-
-    function frame(now) {
-      if (!visible) return
-      const t = (now - born) / 1000
-      // First a sweep across the name, then the pointer, or a slow wave when there is none.
-      const x = t < 1.8
-        ? width * (-0.15 + 1.3 * (t / 1.8))
-        : pointer ?? width * (0.5 + 0.45 * Math.sin((t - 1.8) * 0.9 - Math.PI / 2))
-      for (const l of lines) {
-        const sigma = width * 0.11
-        const influence = l.chars.map((c) => Math.exp(-(((c.cx - x) / sigma) ** 2)))
-        const mean = influence.reduce((a, b) => a + b, 0) / influence.length
-        l.chars.forEach((c, i) => {
-          const target = Math.min(151, Math.max(25, l.wdth + l.amp * (influence[i] - mean) * 2.2))
-          c.w += (target - c.w) * 0.12
-        })
-        paint(l)
-      }
-      // Clamping at the axis ends can leave a line a little long or short; a slight stretch evens it.
-      for (const l of lines) {
-        const k = width / l.fit.offsetWidth
-        l.fit.style.transform = `scaleX(${Math.min(1.06, Math.max(0.94, k)).toFixed(4)})`
-      }
-      requestAnimationFrame(frame)
-    }
-    requestAnimationFrame(frame)
-  })
 })()
 </script>
 </body>
