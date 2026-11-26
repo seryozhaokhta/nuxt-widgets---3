@@ -8,6 +8,9 @@
             <li v-if="kinds.has('state')" class="legend__item">
                 <span class="legend__swatch legend__swatch--state" />{{ t('legendState') }}
             </li>
+            <li v-if="showOccupation" class="legend__item">
+                <span class="legend__swatch legend__swatch--occupation" />{{ t('legendOccupation') }}
+            </li>
             <li v-if="kinds.has('culture')" class="legend__item">
                 <span class="legend__swatch legend__swatch--culture" />{{ t('legendCulture') }}
             </li>
@@ -47,6 +50,8 @@ defineProps<{
     kinds: Set<TimeMapFeatureKind>
     showCoast: boolean
     showBorders?: boolean
+    /** Occupied land is on the map now. */
+    showOccupation?: boolean
     credits?: string
     sources?: TimeMapSource[]
 }>()
@@ -93,6 +98,11 @@ const { t, l } = useI18n()
 .legend__swatch--state {
     background-color: var(--aw-map-state);
     box-shadow: inset 0 0 0 1px var(--aw-map-state-edge);
+}
+
+.legend__swatch--occupation {
+    background: repeating-linear-gradient(45deg, var(--aw-map-occupation) 0 1px, transparent 1px 4px);
+    box-shadow: inset 0 0 0 1px var(--aw-map-occupation);
 }
 
 .legend__swatch--culture {

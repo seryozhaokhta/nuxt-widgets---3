@@ -6,6 +6,11 @@
             <clipPath :id="clipId">
                 <path :d="landPath" />
             </clipPath>
+            <!-- Hatching keeps its spacing on screen at any zoom. -->
+            <pattern :id="hatchId" patternUnits="userSpaceOnUse" :width="5 / zoom" :height="5 / zoom"
+                patternTransform="rotate(45)">
+                <line class="geo__hatch-line" x1="0" y1="0" x2="0" :y2="5 / zoom" />
+            </pattern>
         </defs>
 
         <path class="geo__sea" :d="spherePath" />
@@ -36,6 +41,8 @@
                  place in the list: a new span of years redraws the path in place
                  instead of fading it in again. -->
             <path v-for="(shape, i) in highlightShapes" :key="i" class="geo__highlight" :d="shape.d" />
+            <path v-for="shape in occupationShapes" :key="shape.key" class="geo__occupation" :d="shape.d"
+                :fill="'url(#' + hatchId + ')'" />
         </g>
 
         <path v-if="bordersPath" :class="['geo__borders', 'geo__feature', { 'geo__feature--visible': showBorders }]"
@@ -65,9 +72,12 @@ const props = defineProps<{
     polities?: Polity[]
     /** Keys of states drawn brighter: what the panel is about. */
     highlight?: string[]
+    /** Land held in war while it stayed another state's: drawn hatched. */
+    occupations?: Polity[]
 }>()
 
 const clipId = 'time-map-land-' + useId()
+const hatchId = 'time-map-hatch-' + useId()
 
 const path = computed(() => createPath(props.projection))
 const draw = (layer: GeoJson | null | undefined) => (layer ? path.value(layer) ?? '' : '')
@@ -111,6 +121,7 @@ const polityShapes = computed(() => (props.polities ?? []).map((polity) => {
     }
     return { key: polity.key, d, realm: polity.realm }
 }))
+const occupationShapes = computed(() => (props.occupations ?? []).map((polity) => ({ key: polity.key, d: draw(polity.geometry) })))
 const highlightShapes = computed(() => {
     const keys = new Set(props.highlight)
     return keys.size ? polityShapes.value.filter((shape) => keys.has(shape.key)) : []
@@ -213,6 +224,17 @@ function classes(shape: Shape, base: string) {
     from {
         opacity: 0;
     }
+}
+
+.geo__occupation {
+    stroke: var(--aw-map-occupation);
+    stroke-width: calc(0.8px / var(--zoom));
+    stroke-dasharray: calc(3px / var(--zoom)) calc(2px / var(--zoom));
+}
+
+.geo__hatch-line {
+    stroke: var(--aw-map-occupation);
+    stroke-width: calc(1px / var(--zoom));
 }
 
 .geo__borders {

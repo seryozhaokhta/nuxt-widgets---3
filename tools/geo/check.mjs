@@ -8,7 +8,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { bounds, distanceToPolygon, pointInPolygon } from './geometry.mjs'
+import { bounds, distanceToPolygon, pointInPolygon, rasterize } from './geometry.mjs'
 import { OUT_DIR } from './config.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
@@ -29,7 +29,7 @@ const PLACES = [
   [1800, [-0.13, 51.51], 'Kingdom of Great Britain'],
   [1915, [-99.13, 19.43], 'Mexico'],
   [1915, [20.46, 44.82], 'Kingdom of Serbia'],
-  [1990, [47.98, 29.37], 'State of Kuwait', ['Iraqi Republic']],
+  [1990, [47.6, 29.2], 'State of Kuwait', ['Iraqi Republic']],
   [2000, [37.62, 55.75], 'Russian Federation'],
   [2000, [45.7, 43.3], 'Russian Federation'],
   [2000, [3.0, 33.0], "People's Democratic Republic of Algeria", ['French Fifth Republic']],
@@ -41,7 +41,7 @@ const PLACES = [
   [2020, [43.96, 42.23], 'Georgia'],
   [2020, [46.75, 39.82], 'Republic of Azerbaijan', ['Republic of Armenia']],
   [2020, [33.32, 35.33], 'Republic of Cyprus'],
-  [2020, [35.75, 33.0], 'Syria', ['State of Israel']],
+  [2020, [35.75, 33.0], 'Syrian Arab Republic', ['State of Israel']],
   [2020, [35.1, 31.53], 'Palestinian territories', ['State of Israel']],
   [2020, [-13.2, 27.15], 'Western Sahara'],
   [1980, [17.08, -22.56], 'South West Africa', ['South Africa']],
@@ -49,10 +49,52 @@ const PLACES = [
   [1970, [33.8, 29.5], 'United Arab Republic', ['State of Israel']],
   [-325, [52.89, 29.93], 'Macedonian Empire', ['Ptolemaic Kingdom']],
   [380, [118.78, 32.06], 'Eastern Jin', ['Western Jin']],
-  [1455, [28.6, 41.2], 'Ottoman Empire', ['Byzantine Empire', 'Despotate of the Morea']],
-  [1458, [22.4, 37.5], 'Despotate of the Morea'],
+  [1455, [28.6, 41.2], 'Ottoman Empire', ['Byzantine Empire']],
   [1896, [51.39, 35.69], 'Qajar Dynasty', ['Dutch East Indies']],
   [1896, [110.4, -7.3], 'Dutch East Indies', ['Qajar Dynasty']],
+  // Land Cliopatria leaves to no one (FILLS): Chukotka beyond 180°.
+  [2024, [-171, 65.6], 'Russian Federation'],
+  [1970, [-171, 65.6], 'Union of Soviet Socialist Republics'],
+  // Wrong names and colonies inside others' records (CORRECTIONS).
+  [1500, [21.01, 52.23], 'Poland–Lithuania'],
+  [1500, [16.37, 48.21], 'Habsburg lands'],
+  [1830, [13.4, 52.52], 'Kingdom of Prussia'],
+  [1830, [20.5, 54.7], 'Kingdom of Prussia'],
+  [1830, [9.73, 52.37], 'Kingdom of Hanover', ['British Empire']],
+  [1920, [116.4, 39.9], 'Republic of China', ['Kuomintang']],
+  [1930, [3.38, 6.6], 'Colony and Protectorate of Nigeria', ['British Gold Coast']],
+  [1914, [-75.7, 45.42], 'Canada', ['British Colonial Empire']],
+  [1902, [149.13, -35.28], 'Commonwealth of Australia', ['British Colonial Empire']],
+  [1930, [175.5, -39.5], 'New Zealand', ['British Colonial Empire']],
+  [1930, [-55.5, 48.5], 'Dominion of Newfoundland', ['British Colonial Empire']],
+  [1930, [35.21, 31.77], 'British mandates', ['British Africa']],
+  [1980, [69.18, 34.53], 'Democratic Republic of Afghanistan', ['Union of Soviet Socialist Republics']],
+  [1990, [69.18, 34.53], 'Republic of Afghanistan', ['Afghanistan Mujahideen']],
+  [2003, [69.18, 34.53], 'Islamic Republic of Afghanistan', ['Taliban']],
+  // Occupations: the land stays its owner's, the occupier is hatched over it (DE_JURE).
+  [1916, [4.35, 50.85], 'Kingdom of Belgium', ['German Empire']],
+  [1939, [38.74, 9.03], 'Ethiopian Empire', ['Italian Africa']],
+  [1940, [116.4, 39.9], 'Republic of China', ['Empire of Japan']],
+  [1942, [21.01, 52.23], 'Second Polish Republic', ['Nazi Germany']],
+  [1942, [2.35, 48.86], 'Vichy France', ['Nazi Germany']],
+  [1942, [10.75, 59.91], 'Kingdom of Norway', ['Nazi Germany']],
+  [1942, [30.52, 50.45], 'Union of Soviet Socialist Republics', ['Nazi Germany']],
+  [1943, [51.39, 35.69], 'Pahlavi Dynasty', ['British Empire', 'British Colonial Empire']],
+  [1943, [-21.9, 64.15], 'Kingdom of Iceland', ['United States of America']],
+  [1947, [10.0, 51.0], 'Germany', ['Union of Soviet Socialist Republics', 'French Fourth Republic']],
+  [1946, [16.37, 48.21], 'Second Republic of Austria', ['Union of Soviet Socialist Republics']],
+  [1948, [139.69, 35.69], 'Japan', ['United States of America']],
+  [1950, [21.01, 52.23], 'Republic of Poland', ['Union of Soviet Socialist Republics']],
+  [1960, [24.75, 59.44], 'Estonia', ['Union of Soviet Socialist Republics']],
+  [1970, [13.3, 52.5], 'West Berlin'],
+  [1970, [13.45, 52.52], 'German Democratic Republic'],
+  [1970, [106.7, 10.85], 'Republic of Vietnam', ['United States of America']],
+  [1900, [31.24, 30.04], 'Khedivate of Egypt', ['British Africa']],
+  [1920, [31.24, 30.04], 'Sultanate of Egypt', ['British Africa']],
+  [1920, [28.05, -26.2], 'Union of South Africa', ['British Africa']],
+  [1944, [12.49, 41.9], 'Kingdom of Italy', ['Nazi Germany']],
+  [1944, [14.8, 40.9], 'Kingdom of Italy'],
+  [1933, [116.03, 25.89], 'Republic of China', ['Chinese Soviet Republic']],
 ]
 
 /** Russian names that are a topic, not a state: the Wikipedia link went astray. */
@@ -92,7 +134,7 @@ async function main() {
     expected = chunk.to + 1
     const data = JSON.parse(await readFile(join(DIR, chunk.file), 'utf8'))
     const rings = data.rings.map(decode)
-    for (const [entity, from, to, polygons, label, area, umbrella] of data.records) {
+    for (const [entity, from, to, polygons, label, area, kind] of data.records) {
       if (from < chunk.from && records.some((r) => r.entity === entity && r.from === from && r.to === to)) continue
       records.push({
         entity,
@@ -100,7 +142,8 @@ async function main() {
         to,
         label,
         area,
-        outline: !!index.entities[entity].realm || umbrella === 1,
+        // Umbrellas and occupations are drawn over states, not as states.
+        outline: !!index.entities[entity].realm || kind >= 1,
         polygons: polygons.map((polygon) => polygon.map((ring) => rings[ring])),
       })
     }
@@ -127,6 +170,7 @@ async function main() {
     }
   }
 
+  checkOverlaps(index, records, problems)
   const map = JSON.parse(await readFile(join(ROOT, 'apps', 'playground', 'app', 'data', 'map-ancient.json'), 'utf8'))
   checkCivilizations(map.points, index, records, problems)
 
@@ -136,6 +180,68 @@ async function main() {
     process.exit(1)
   }
   console.log(`ok: ${index.entities.length} states, ${records.length} records, ${PLACES.length} places`)
+}
+
+/** Pairs of states one of which lies in the other on purpose (English names). */
+const NESTED = [
+  // Federates settled on Roman land in 443.
+  ['Burgundian Kingdom', 'Western Roman Empire'],
+]
+
+/**
+ * In sample years: no two filled states share much land (the map would fill
+ * it twice, a sign of a duplicate or a stale record), and no two states shown
+ * at once carry one Russian name.
+ */
+function checkOverlaps(index, records, problems) {
+  const CELL = 0.5
+  const cells = new Map()
+  const cellsOf = (record) => {
+    if (!cells.has(record)) cells.set(record, new Set(record.polygons.flatMap((polygon) => [...rasterize(polygon, CELL)])))
+    return cells.get(record)
+  }
+  const nameOf = (record) => index.entities[record.entity].en
+  const nested = (a, b) => NESTED.some(([x, y]) => (x === a && y === b) || (x === b && y === a))
+  const seen = new Set()
+  for (let year = -3400; year <= 2024; year += year < 0 ? 50 : year < 1500 ? 25 : 5) {
+    const shown = records.filter((record) => !record.outline && record.from <= year && record.to >= year)
+    const owner = new Map()
+    for (const record of shown) {
+      for (const cell of cellsOf(record)) {
+        if (!owner.has(cell)) owner.set(cell, [])
+        owner.get(cell).push(record)
+      }
+    }
+    const shared = new Map()
+    for (const list of owner.values()) {
+      for (let i = 0; i < list.length; i++) {
+        for (let j = i + 1; j < list.length; j++) {
+          if (list[i].entity === list[j].entity) continue
+          const key = [list[i], list[j]]
+          const id = key.map(nameOf).sort().join(' and ')
+          shared.set(id, { pair: key, count: (shared.get(id)?.count ?? 0) + 1 })
+        }
+      }
+    }
+    for (const [id, { pair: [a, b], count }] of shared) {
+      const share = count / Math.min(cellsOf(a).size, cellsOf(b).size)
+      if (count < 20 || share < 0.5 || nested(nameOf(a), nameOf(b)) || seen.has(id)) continue
+      seen.add(id)
+      problems.push(`overlap: ${id} fill the same land in ${year} (${Math.round(share * 100)}% of the smaller)`)
+    }
+    const byRussian = new Map()
+    for (const record of shown) {
+      const { en, ru } = index.entities[record.entity]
+      if (!byRussian.has(ru)) byRussian.set(ru, new Set())
+      byRussian.get(ru).add(en)
+    }
+    for (const [ru, names] of byRussian) {
+      const id = 'ru:' + ru
+      if (names.size < 2 || seen.has(id)) continue
+      seen.add(id)
+      problems.push(`name: "${ru}" names ${[...names].join(' and ')} at once in ${year}`)
+    }
+  }
 }
 
 /** Cliopatria may start or end a state a few years off the history books. */

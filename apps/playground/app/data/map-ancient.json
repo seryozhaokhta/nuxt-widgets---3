@@ -132,8 +132,8 @@
     "zoom": 2.5
   },
   "credits": {
-    "en": "States: Cliopatria v0.2.1 (Seshat Global History Databank), CC BY 4.0, modified: simplified, with corrections of names and borders listed in tools/geo/config.mjs; modern borders follow international law (UN resolutions), with disputed areas from Natural Earth. Relief: NOAA ETOPO1. Rivers and lakes: Natural Earth. Sea level after Lambeck et al. 2014. Cultures, ice sheets and lost lands are drawn by hand and approximate.",
-    "ru": "Государства: Cliopatria v0.2.1 (Seshat Global History Databank), CC BY 4.0, с изменениями: упрощено, исправлены названия и границы (список — в tools/geo/config.mjs); современные границы — по международному праву (резолюции ООН), спорные территории — по Natural Earth. Рельеф: NOAA ETOPO1. Реки и озёра: Natural Earth. Уровень моря по Lambeck et al. 2014. Культуры, ледники и исчезнувшие земли нарисованы вручную и приблизительны."
+    "en": "States: Cliopatria v0.2.2 (Seshat Global History Databank), CC BY 4.0, modified: simplified, with corrections of names and borders listed in tools/geo/config.mjs. Borders follow international law: annexations and occupations, from the world wars to today, leave the land its owner's and are drawn hatched over it; disputed areas from Natural Earth. Relief: NOAA ETOPO1. Rivers and lakes: Natural Earth. Sea level after Lambeck et al. 2014. Cultures, ice sheets and lost lands are drawn by hand and approximate.",
+    "ru": "Государства: Cliopatria v0.2.2 (Seshat Global History Databank), CC BY 4.0, с изменениями: упрощено, исправлены названия и границы (список — в tools/geo/config.mjs). Границы — по международному праву: аннексии и оккупации, от мировых войн до наших дней, не меняют принадлежности земли и показаны штриховкой; спорные территории — по Natural Earth. Рельеф: NOAA ETOPO1. Реки и озёра: Natural Earth. Уровень моря по Lambeck et al. 2014. Культуры, ледники и исчезнувшие земли нарисованы вручную и приблизительны."
   },
   "sources": [
     {
@@ -1820,6 +1820,731 @@
           ]
         ]
       ]
+    },
+    {
+      "id": "aboriginal-australians",
+      "kind": "culture",
+      "name": {
+        "en": "Aboriginal Australians",
+        "ru": "Аборигены Австралии"
+      },
+      "from": -10000,
+      "to": 1900,
+      "shape": [
+        [
+          [
+            113,
+            -22
+          ],
+          [
+            114,
+            -26
+          ],
+          [
+            115,
+            -34
+          ],
+          [
+            118,
+            -35.5
+          ],
+          [
+            124,
+            -34
+          ],
+          [
+            129,
+            -31.6
+          ],
+          [
+            135,
+            -34.5
+          ],
+          [
+            138,
+            -35.6
+          ],
+          [
+            140,
+            -38
+          ],
+          [
+            144,
+            -38.5
+          ],
+          [
+            147,
+            -38.5
+          ],
+          [
+            150,
+            -37.5
+          ],
+          [
+            153.5,
+            -28
+          ],
+          [
+            153,
+            -25
+          ],
+          [
+            150,
+            -22
+          ],
+          [
+            146,
+            -19
+          ],
+          [
+            145.5,
+            -15
+          ],
+          [
+            143,
+            -10.5
+          ],
+          [
+            141.5,
+            -13
+          ],
+          [
+            141,
+            -17
+          ],
+          [
+            139.5,
+            -17.5
+          ],
+          [
+            136.5,
+            -15
+          ],
+          [
+            137,
+            -12
+          ],
+          [
+            133,
+            -11
+          ],
+          [
+            130,
+            -11.5
+          ],
+          [
+            129,
+            -15
+          ],
+          [
+            125,
+            -14
+          ],
+          [
+            122,
+            -17
+          ],
+          [
+            119,
+            -20
+          ]
+        ]
+      ],
+      "label": [
+        134,
+        -25
+      ]
+    },
+    {
+      "id": "aboriginal-tasmanians",
+      "kind": "culture",
+      "name": {
+        "en": "Aboriginal Tasmanians",
+        "ru": "Аборигены Тасмании"
+      },
+      "from": -10000,
+      "to": 1850,
+      "shape": [
+        [
+          [
+            144.5,
+            -40.5
+          ],
+          [
+            148.5,
+            -40.5
+          ],
+          [
+            148.3,
+            -43.5
+          ],
+          [
+            146,
+            -43.7
+          ],
+          [
+            144.5,
+            -41.5
+          ]
+        ]
+      ],
+      "hideLabel": true
+    },
+    {
+      "id": "inuit",
+      "kind": "culture",
+      "name": {
+        "en": "Inuit",
+        "ru": "Инуиты"
+      },
+      "from": 1000,
+      "to": 1950,
+      "shape": [
+        [
+          [
+            -168,
+            66
+          ],
+          [
+            -156,
+            71.5
+          ],
+          [
+            -140,
+            70
+          ],
+          [
+            -125,
+            70
+          ],
+          [
+            -110,
+            68
+          ],
+          [
+            -95,
+            68
+          ],
+          [
+            -85,
+            63
+          ],
+          [
+            -78,
+            58
+          ],
+          [
+            -65,
+            59
+          ],
+          [
+            -62,
+            66
+          ],
+          [
+            -55,
+            70
+          ],
+          [
+            -45,
+            60
+          ],
+          [
+            -40,
+            65
+          ],
+          [
+            -20,
+            70
+          ],
+          [
+            -20,
+            82
+          ],
+          [
+            -60,
+            83
+          ],
+          [
+            -90,
+            81
+          ],
+          [
+            -120,
+            77
+          ],
+          [
+            -130,
+            72
+          ],
+          [
+            -160,
+            72.5
+          ],
+          [
+            -168,
+            69
+          ]
+        ]
+      ],
+      "label": [
+        -95,
+        72
+      ]
+    },
+    {
+      "id": "subarctic-peoples",
+      "kind": "culture",
+      "name": {
+        "en": "Subarctic peoples",
+        "ru": "Народы Субарктики"
+      },
+      "from": 1000,
+      "to": 1870,
+      "shape": [
+        [
+          [
+            -165,
+            62
+          ],
+          [
+            -150,
+            67
+          ],
+          [
+            -130,
+            67
+          ],
+          [
+            -110,
+            64
+          ],
+          [
+            -95,
+            60
+          ],
+          [
+            -80,
+            55
+          ],
+          [
+            -65,
+            55
+          ],
+          [
+            -58,
+            52
+          ],
+          [
+            -70,
+            47
+          ],
+          [
+            -80,
+            47
+          ],
+          [
+            -95,
+            49
+          ],
+          [
+            -114,
+            52
+          ],
+          [
+            -125,
+            55
+          ],
+          [
+            -140,
+            60
+          ],
+          [
+            -150,
+            58
+          ]
+        ]
+      ],
+      "label": [
+        -110,
+        58
+      ]
+    },
+    {
+      "id": "plains-peoples",
+      "kind": "culture",
+      "name": {
+        "en": "Plains Indians",
+        "ru": "Народы Великих равнин"
+      },
+      "from": 1000,
+      "to": 1880,
+      "shape": [
+        [
+          [
+            -114,
+            52
+          ],
+          [
+            -97,
+            52
+          ],
+          [
+            -95,
+            45
+          ],
+          [
+            -94,
+            37
+          ],
+          [
+            -97,
+            30
+          ],
+          [
+            -103,
+            29.5
+          ],
+          [
+            -105,
+            33
+          ],
+          [
+            -106,
+            38
+          ],
+          [
+            -111,
+            45
+          ],
+          [
+            -114,
+            49
+          ]
+        ]
+      ],
+      "label": [
+        -102,
+        42
+      ]
+    },
+    {
+      "id": "amazon-peoples",
+      "kind": "culture",
+      "name": {
+        "en": "Peoples of the Amazon",
+        "ru": "Народы Амазонии"
+      },
+      "from": 1000,
+      "to": 1900,
+      "shape": [
+        [
+          [
+            -79,
+            -2
+          ],
+          [
+            -76,
+            2
+          ],
+          [
+            -70,
+            4
+          ],
+          [
+            -60,
+            3
+          ],
+          [
+            -52,
+            1
+          ],
+          [
+            -50,
+            -2
+          ],
+          [
+            -48,
+            -6
+          ],
+          [
+            -52,
+            -10
+          ],
+          [
+            -60,
+            -13
+          ],
+          [
+            -68,
+            -13
+          ],
+          [
+            -74,
+            -10
+          ],
+          [
+            -77,
+            -6
+          ]
+        ]
+      ],
+      "label": [
+        -63,
+        -4
+      ]
+    },
+    {
+      "id": "mapuche-tehuelche",
+      "kind": "culture",
+      "name": {
+        "en": "Mapuche and Tehuelche",
+        "ru": "Мапуче и теуэльче"
+      },
+      "from": 1000,
+      "to": 1883,
+      "shape": [
+        [
+          [
+            -74,
+            -37
+          ],
+          [
+            -66,
+            -37
+          ],
+          [
+            -62,
+            -40
+          ],
+          [
+            -65,
+            -45
+          ],
+          [
+            -68,
+            -50
+          ],
+          [
+            -66,
+            -55
+          ],
+          [
+            -74,
+            -55
+          ],
+          [
+            -76,
+            -46
+          ],
+          [
+            -74,
+            -41
+          ]
+        ]
+      ],
+      "label": [
+        -69,
+        -44
+      ]
+    },
+    {
+      "id": "tuareg",
+      "kind": "culture",
+      "name": {
+        "en": "Tuareg",
+        "ru": "Туареги"
+      },
+      "from": 1000,
+      "to": 1900,
+      "shape": [
+        [
+          [
+            -5,
+            25
+          ],
+          [
+            3,
+            27.5
+          ],
+          [
+            10,
+            27
+          ],
+          [
+            13,
+            23
+          ],
+          [
+            11,
+            17
+          ],
+          [
+            5,
+            14.5
+          ],
+          [
+            0,
+            15
+          ],
+          [
+            -4,
+            17
+          ],
+          [
+            -6,
+            21
+          ]
+        ]
+      ],
+      "label": [
+        4,
+        21
+      ]
+    },
+    {
+      "id": "khoisan",
+      "kind": "culture",
+      "name": {
+        "en": "Khoisan",
+        "ru": "Койсанские народы"
+      },
+      "from": -10000,
+      "to": 1800,
+      "shape": [
+        [
+          [
+            12,
+            -17
+          ],
+          [
+            20,
+            -17
+          ],
+          [
+            25,
+            -20
+          ],
+          [
+            26,
+            -25
+          ],
+          [
+            28,
+            -30
+          ],
+          [
+            26,
+            -34
+          ],
+          [
+            18.5,
+            -34.5
+          ],
+          [
+            16.5,
+            -28.6
+          ],
+          [
+            14.5,
+            -23
+          ],
+          [
+            12,
+            -18
+          ]
+        ]
+      ],
+      "label": [
+        20,
+        -26
+      ]
+    },
+    {
+      "id": "siberian-peoples",
+      "kind": "culture",
+      "name": {
+        "en": "Peoples of Siberia",
+        "ru": "Народы Сибири"
+      },
+      "from": 1000,
+      "to": 1650,
+      "shape": [
+        [
+          [
+            60,
+            60
+          ],
+          [
+            65,
+            70
+          ],
+          [
+            80,
+            73
+          ],
+          [
+            100,
+            77
+          ],
+          [
+            120,
+            73
+          ],
+          [
+            140,
+            72
+          ],
+          [
+            160,
+            70
+          ],
+          [
+            180,
+            68
+          ],
+          [
+            180,
+            62
+          ],
+          [
+            160,
+            60
+          ],
+          [
+            140,
+            55
+          ],
+          [
+            130,
+            55
+          ],
+          [
+            120,
+            52
+          ],
+          [
+            105,
+            52
+          ],
+          [
+            90,
+            52
+          ],
+          [
+            75,
+            54
+          ],
+          [
+            60,
+            56
+          ]
+        ]
+      ],
+      "label": [
+        110,
+        64
+      ]
     }
   ],
   "points": [
@@ -1837,20 +2562,20 @@
         45.64,
         31.32
       ],
-      "founded": -6500,
+      "founded": -4500,
       "approx": true,
       "periods": [
         {
           "title": {
-            "en": "Ubaid Period",
-            "ru": "Убейдский период"
+            "en": "Late Ubaid Period",
+            "ru": "Поздний убейдский период"
           },
-          "start": -6500,
+          "start": -4500,
           "end": -4000,
           "approx": true,
           "description": {
-            "en": "Early settlement and development of agriculture.",
-            "ru": "Ранние поселения и развитие земледелия."
+            "en": "The first temples of Eridu; villages grow into towns.",
+            "ru": "Первые храмы Эреду; деревни вырастают в поселения городского типа."
           }
         },
         {
@@ -2091,6 +2816,7 @@
           },
           "states": [
             "New Kingdom of Egypt",
+            "Twenty-first Dynasty of Egypt",
             "Twenty-second Dynasty of Egypt",
             "Twenty-third Dynasty of Egypt"
           ],
@@ -2267,7 +2993,10 @@
           "description": {
             "en": "Earliest traditional dynasty.",
             "ru": "Первая династия по традиционной историографии."
-          }
+          },
+          "states": [
+            "Xia Dynasty"
+          ]
         },
         {
           "title": {
@@ -2409,15 +3138,14 @@
             "Hán",
             "Western Chu",
             "Yong",
-            "Zhai",
             "Dai",
-            "Jibei",
             "Linjiang",
             "Jiujiang",
             "Liaodong",
-            "Jiaodong",
-            "Xin Dynasty",
-            "Cao Cao"
+            "Jiaodong Kingdom",
+            "Kingdom of Henan",
+            "Changshan",
+            "Xin Dynasty"
           ]
         },
         {
@@ -2618,7 +3346,7 @@
           ],
           "states": [
             "Ming Dynasty",
-            "Li Zicheng"
+            "Shun Dynasty"
           ]
         },
         {
@@ -3259,7 +3987,7 @@
       "approx": true,
       "description": {
         "en": "The largest state of the pre-Columbian Americas, run without writing, with knotted cords.",
-        "ru": "Крупнейшее государство доколумбовой Америки, управлявшееся без письменности — узелковым письмом кипу."
+        "ru": "Крупнейшее государство доколумбовой Америки; письменности не знало — учёт вели узелками кипу."
       },
       "periods": [
         {

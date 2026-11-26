@@ -45,6 +45,8 @@
   --aw-map-culture-edge: rgba(242, 238, 230, 0.4);
   --aw-map-state: rgba(201, 164, 106, 0.16);
   --aw-map-state-edge: rgba(201, 164, 106, 0.75);
+  /* Occupied land: hatching over the state it belongs to. */
+  --aw-map-occupation: rgba(228, 199, 146, 0.55);
   --aw-map-grid: rgba(242, 238, 230, 0.05);
   --aw-map-coast: rgba(242, 238, 230, 0.3);
   --aw-map-border: rgba(242, 238, 230, 0.45);

@@ -9,33 +9,147 @@ international law (DE_JURE in tools/geo/config.mjs).
 
 | State | Years | Change | Basis |
 | --- | --- | --- | --- |
+| British Africa | 1885…1914 | loses | Anglo-Egyptian War (1882); Ottoman suzerainty until 1914 |
+| Khedivate of Egypt | 1885…1914 | drawn | Anglo-Egyptian War (1882); Ottoman suzerainty until 1914 |
+| British Africa | 1910…1931 | loses | South Africa Act (1909) |
+| Union of South Africa | 1910…1931 | drawn | South Africa Act (1909) |
+| British Africa | 1915…1921 | loses | British protectorate (1914–1922) |
+| Sultanate of Egypt | 1915…1921 | drawn | British protectorate (1914–1922) |
+| German Empire | 1915…1918 | loses | Treaty of London (1839); Hague Convention IV (1907) |
+| Kingdom of Belgium | 1915…1918 | gains | Treaty of London (1839); Hague Convention IV (1907) |
+| Kingdom of Bulgaria | 1915…1918 | loses | Hague Convention IV (1907); Treaty of Versailles (1919) |
+| Austria-Hungary | 1916…1918 | loses | Hague Convention IV (1907); Treaty of Versailles (1919) |
+| Kingdom of Serbia | 1916…1917 | drawn | Hague Convention IV (1907); Treaty of Versailles (1919) |
+| Kingdom of Bulgaria | 1917…1918 | loses | Hague Convention IV (1907); the Treaty of Bucharest (1918) was never ratified |
+| Austria-Hungary | 1917…1918 | loses | Hague Convention IV (1907); the Treaty of Bucharest (1918) was never ratified |
+| Kingdom of Romania | 1917…1918 | drawn | Hague Convention IV (1907); the Treaty of Bucharest (1918) was never ratified |
+| Kingdom of Serbia | 1918…1918 | gains | Hague Convention IV (1907); Treaty of Versailles (1919) |
+| Empire of Japan | 1931…1945 | loses | Lytton Report (1932); Cairo Declaration (1943) |
+| Republic of China | 1932…1945 | gains | Lytton Report (1932); Cairo Declaration (1943) |
+| Italian Africa | 1936…1941 | loses | League of Nations Covenant, article 10; Anglo-Ethiopian Agreement (1942) |
+| Ethiopian Empire | 1936…1941 | drawn | League of Nations Covenant, article 10; Anglo-Ethiopian Agreement (1942) |
+| Nazi Germany | 1938…1944 | loses | Moscow Declaration (1943); Austrian State Treaty (1955) |
+| Republic of Austria | 1938…1944 | drawn | Moscow Declaration (1943); Austrian State Treaty (1955) |
+| Nazi Germany | 1939…1944 | loses | Munich Agreement and Vienna Award held void by the Allies (1942–1973) |
+| Second Polish Republic | 1939…1939 | loses | Munich Agreement and Vienna Award held void by the Allies (1942–1973) |
+| Kingdom of Hungary | 1939…1943 | loses | Munich Agreement and Vienna Award held void by the Allies (1942–1973) |
+| Czechoslovakia | 1939…1944 | drawn | Munich Agreement and Vienna Award held void by the Allies (1942–1973) |
+| Kingdom of Italy | 1939…1943 | loses | Hague Convention IV (1907); Paris Peace Treaty with Italy (1947) |
+| Albania | 1939…1943 | drawn | Hague Convention IV (1907); Paris Peace Treaty with Italy (1947) |
+| Second Polish Republic | 1939…1939 | gains | The 1939 partition unrecognised by the Allies; Atlantic Charter (1941) |
+| Union of Soviet Socialist Republics | 1940…1941 | loses | The 1939 partition unrecognised by the Allies; Atlantic Charter (1941) |
+| Nazi Germany | 1940…1944 | loses | The 1939 partition unrecognised by the Allies; Atlantic Charter (1941) |
+| Second Polish Republic | 1940…1944 | drawn | The 1939 partition unrecognised by the Allies; Atlantic Charter (1941) |
+| Union of Soviet Socialist Republics | 1940…1941 | loses | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983); independence restored in 1991 |
+| Estonia | 1940…1991 | drawn | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983); independence restored in 1991 |
+| Republic of Latvia | 1940…1991 | drawn | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983); independence restored in 1991 |
+| Union of Soviet Socialist Republics | 1940…1941 | loses | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983) |
+| Republic of Lithuania | 1940…1944 | drawn | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983) |
+| Denmark | 1940…1940 | gains | Hague Convention IV (1907) |
+| Nazi Germany | 1940…1944 | loses | Hague Convention IV (1907) |
+| Kingdom of Norway | 1940…1944 | gains | Hague Convention IV (1907) |
+| Kingdom of Belgium | 1940…1944 | drawn | Hague Convention IV (1907) |
+| Luxembourg | 1940…1944 | drawn | Hague Convention IV (1907) |
+| Netherlands | 1940…1944 | drawn | Hague Convention IV (1907) |
+| Vichy France | 1940…1943 | gains | Armistice of 22 June 1940; Hague Convention IV (1907) |
+| Nazi Germany | 1940…1944 | loses | Armistice of 22 June 1940; Hague Convention IV (1907) |
+| Kingdom of Italy | 1940…1943 | loses | Armistice of 22 June 1940; Hague Convention IV (1907) |
+| British Empire | 1940…1941 | loses | British invasion (1940); defence agreement with the United States (1941) |
+| Kingdom of Iceland | 1940…1945 | drawn | British invasion (1940); defence agreement with the United States (1941) |
+| Denmark | 1941…1944 | drawn | Hague Convention IV (1907) |
+| Kingdom of Bulgaria | 1941…1944 | loses | Hague Convention IV (1907) |
+| Kingdom of Italy | 1941…1944 | loses | Hague Convention IV (1907) |
+| Kingdom of Greece | 1941…1944 | drawn | Hague Convention IV (1907) |
+| Independent State of Croatia | 1941…1944 | loses | Hague Convention IV (1907) |
+| Kingdom of Hungary | 1941…1943 | loses | Hague Convention IV (1907) |
+| Kingdom of Yugoslavia | 1941…1944 | drawn | Hague Convention IV (1907) |
+| Union of Soviet Socialist Republics | 1941…1944 | gains | Hague Convention IV (1907) |
+| Union of Soviet Socialist Republics | 1941…1946 | loses | Anglo-Soviet invasion (1941); Tripartite Treaty of Alliance (1942) |
+| Nazi Germany | 1942…1944 | loses | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983); independence restored in 1991 |
+| Nazi Germany | 1942…1944 | loses | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983) |
+| Kingdom of Romania | 1942…1943 | loses | Hague Convention IV (1907) |
+| Empire of Japan | 1942…1945 | loses | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| United States of America | 1942…1945 | gains | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| British Colonial Empire | 1942…1945 | gains | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| Dutch East Indies | 1942…1942 | gains | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| Pahlavi Dynasty | 1942…1946 | gains | Anglo-Soviet invasion (1941); Tripartite Treaty of Alliance (1942) |
+| British Colonial Empire | 1942…1942 | loses | Anglo-Soviet invasion (1941); Tripartite Treaty of Alliance (1942) |
+| British Empire | 1942…1946 | loses | Anglo-Soviet invasion (1941); Tripartite Treaty of Alliance (1942) |
+| United States of America | 1942…1945 | loses | British invasion (1940); defence agreement with the United States (1941) |
+| British Raj | 1943…1944 | gains | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| Dutch East Indies | 1943…1945 | drawn | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| British Empire | 1943…1946 | loses | Anglo-Iraqi Treaty (1930); British occupation 1941–1947 |
+| Kingdom of Iraq | 1943…1946 | drawn | Anglo-Iraqi Treaty (1930); British occupation 1941–1947 |
+| Albania | 1944…1944 | gains | Hague Convention IV (1907); Paris Peace Treaty with Italy (1947) |
+| Union of Soviet Socialist Republics | 1944…1944 | loses | The 1939 partition unrecognised by the Allies; Atlantic Charter (1941) |
+| Vichy France | 1944…1944 | drawn | Armistice of 22 June 1940; Hague Convention IV (1907) |
+| Nazi Germany | 1944…1944 | loses | Armistice of Cassibile (1943); Hague Convention IV (1907) |
+| Kingdom of Italy | 1944…1945 | gains | Armistice of Cassibile (1943); Hague Convention IV (1907) |
+| Union of Soviet Socialist Republics | 1945…1991 | loses | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983); independence restored in 1991 |
+| Republic of Lithuania | 1945…1989 | drawn | The 1940 annexation unrecognised (Welles Declaration, 1940; European Parliament, 1983); independence restored in 1991 |
+| French Indochina | 1945…1945 | gains | Hague Convention IV (1907); Instrument of Surrender of Japan (1945) |
+| British Empire | 1945…1946 | loses | Berlin Declaration (1945); Potsdam Agreement (1945) |
+| United States of America | 1945…1949 | loses | Berlin Declaration (1945); Potsdam Agreement (1945) |
+| French Fourth Republic | 1945…1949 | loses | Berlin Declaration (1945); Potsdam Agreement (1945) |
+| Union of Soviet Socialist Republics | 1945…1948 | loses | Berlin Declaration (1945); Potsdam Agreement (1945) |
+| Germany | 1945…1949 | drawn | Berlin Declaration (1945); Potsdam Agreement (1945) |
+| British Empire | 1945…1945 | loses | Allied Control Agreements for Austria (1945, 1946); Austrian State Treaty (1955) |
+| United States of America | 1945…1945 | loses | Allied Control Agreements for Austria (1945, 1946); Austrian State Treaty (1955) |
+| French Fourth Republic | 1945…1945 | loses | Allied Control Agreements for Austria (1945, 1946); Austrian State Treaty (1955) |
+| Union of Soviet Socialist Republics | 1945…1946 | loses | Allied Control Agreements for Austria (1945, 1946); Austrian State Treaty (1955) |
+| Second Republic of Austria | 1945…1945 | drawn | Allied Control Agreements for Austria (1945, 1946); Austrian State Treaty (1955) |
+| Union of Soviet Socialist Republics | 1945…1946 | loses | Armistice agreements (1944–1945); Paris Peace Treaties (1947) |
+| Hungary | 1945…1946 | drawn | Armistice agreements (1944–1945); Paris Peace Treaties (1947) |
+| Kingdom of Romania | 1945…1946 | drawn | Armistice agreements (1944–1945); Paris Peace Treaties (1947) |
+| Kingdom of Bulgaria | 1945…1946 | drawn | Armistice agreements (1944–1945); Paris Peace Treaties (1947) |
+| Union of Soviet Socialist Republics | 1945…1946 | loses | Restored in its borders before 1938, less Carpathian Ruthenia ceded to the USSR by the treaty of 1945 |
+| Czechoslovakia | 1945…1946 | drawn | Restored in its borders before 1938, less Carpathian Ruthenia ceded to the USSR by the treaty of 1945 |
+| Union of Soviet Socialist Republics | 1945…1952 | loses | Potsdam Agreement (1945); Polish–Soviet border agreement (1945) |
+| Republic of Poland | 1945…1952 | drawn | Potsdam Agreement (1945); Polish–Soviet border agreement (1945) |
+| Republic of China | 1946…1946 | gains | Sino-Soviet Treaty of Friendship and Alliance (1945) |
+| Union of Soviet Socialist Republics | 1946…1946 | loses | Sino-Soviet Treaty of Friendship and Alliance (1945) |
+| Second Republic of Austria | 1946…1946 | gains | Allied Control Agreements for Austria (1945, 1946); Austrian State Treaty (1955) |
+| United States of America | 1946…1952 | loses | Potsdam Declaration (1945); Treaty of San Francisco (1951, in force 1952) |
+| Japan | 1946…1952 | drawn | Potsdam Declaration (1945); Treaty of San Francisco (1951, in force 1952) |
 | Kingdom of Egypt | 1949…1952 | gains | Egypt–Israel armistice agreement (1949) |
-| State of Israel | 1949…1966 | loses | Egypt–Israel armistice agreement (1949) |
+| State of Israel | 1949…1952 | loses | Egypt–Israel armistice agreement (1949) |
+| German Democratic Republic | 1949…1949 | loses | Berlin Declaration (1945); Potsdam Agreement (1945) |
+| Germany | 1949…1949 | loses | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| West Berlin | 1949…1949 | drawn | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| British Empire | 1950…1990 | loses | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| French Fourth Republic | 1950…1957 | loses | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| United States of America | 1950…1990 | loses | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| German Democratic Republic | 1950…1990 | loses | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| West Berlin | 1950…1990 | gains | Four-power status; Quadripartite Agreement on Berlin (1971) |
+| German Democratic Republic | 1950…1972 | gains | Capital of the GDR; Quadripartite Agreement on Berlin (1971) |
+| West Berlin | 1950…1990 | loses | Capital of the GDR; Quadripartite Agreement on Berlin (1971) |
+| Union of Soviet Socialist Republics | 1950…1972 | loses | Capital of the GDR; Quadripartite Agreement on Berlin (1971) |
 | Republic of Egypt | 1953…1957 | gains | Egypt–Israel armistice agreement (1949) |
-| Kingdom of Libya | 1956…1957 | loses | UN GA resolution 997 (1956) |
 | Republic of Egypt | 1956…1957 | gains | UN GA resolution 997 (1956) |
-| British Africa | 1956…1957 | loses | UN GA resolution 997 (1956) |
 | State of Israel | 1956…1957 | loses | UN GA resolution 997 (1956) |
-| British Empire | 1956…1957 | loses | UN GA resolution 997 (1956) |
+| State of Israel | 1956…1957 | loses | Egypt–Israel armistice agreement (1949) |
 | United Arab Republic | 1958…1966 | gains | Egypt–Israel armistice agreement (1949) |
 | South Africa | 1966…1989 | loses | UN GA resolution 2145 (1966); UN SC resolution 276 (1970); ICJ advisory opinion (1971) |
 | South West Africa | 1966…1989 | drawn | UN GA resolution 2145 (1966); UN SC resolution 276 (1970); ICJ advisory opinion (1971) |
-| State of Israel | 1967…1982 | loses | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
+| State of Israel | 1967…1972 | loses | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
 | United Arab Republic | 1967…1972 | gains | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
-| Kingdom of Libya | 1967…1968 | loses | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
 | State of Israel | 1967…2024 | loses | UN SC resolutions 242 (1967), 478 (1980) and 2334 (2016) |
 | Palestinian territories | 1967…2024 | drawn | UN SC resolutions 242 (1967), 478 (1980) and 2334 (2016) |
 | State of Israel | 1967…2024 | loses | UN SC resolutions 242 (1967) and 497 (1981) |
-| Ba'athist Syria | 1967…1972 | gains | UN SC resolutions 242 (1967) and 497 (1981) |
-| Libyan Arab Republic | 1969…1982 | loses | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
-| Syria | 1973…2024 | gains | UN SC resolutions 242 (1967) and 497 (1981) |
+| Syrian Arab Republic | 1967…2024 | gains | UN SC resolutions 242 (1967) and 497 (1981) |
+| United States of America | 1967…1972 | loses | Paris Peace Accords (1973) |
+| Arab Republic of Egypt | 1973…1982 | gains | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
+| Republic of Cyprus | 1974…2024 | gains | UN SC resolutions 353 (1974), 541 (1983) and 550 (1984) |
 | Turkish Republic of Northern Cyprus | 1976…2024 | loses | UN SC resolutions 353 (1974), 541 (1983) and 550 (1984) |
-| Republic of Cyprus | 1976…2024 | gains | UN SC resolutions 353 (1974), 541 (1983) and 550 (1984) |
-| Arab Republic of Egypt | 1976…1982 | gains | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
+| State of Israel | 1976…1982 | loses | UN SC resolution 242 (1967); Egypt–Israel peace treaty (1979) |
 | Mauritania | 1976…2024 | loses | UN list of Non-Self-Governing Territories; UN GA resolution 34/37 (1979) |
 | Western Sahara | 1976…2024 | drawn | UN list of Non-Self-Governing Territories; UN GA resolution 34/37 (1979) |
 | Republic of Indonesia | 1976…2005 | loses | UN SC resolutions 384 (1975) and 389 (1976); independent from 2002 |
 | East Timor | 1976…2005 | drawn | UN SC resolutions 384 (1975) and 389 (1976); independent from 2002 |
+| Union of Soviet Socialist Republics | 1976…1990 | loses | Capital of the GDR; Quadripartite Agreement on Berlin (1971) |
+| German Democratic Republic | 1976…1990 | gains | Capital of the GDR; Quadripartite Agreement on Berlin (1971) |
+| Union of Soviet Socialist Republics | 1979…1982 | loses | UN GA resolution ES-6/2 (1980); Geneva Accords (1988) |
+| Democratic Republic of Afghanistan | 1979…1982 | gains | UN GA resolution ES-6/2 (1980); Geneva Accords (1988) |
 | Iraqi Republic | 1990…1990 | loses | UN SC resolution 662 (1990) |
 | State of Kuwait | 1990…1990 | drawn | UN SC resolution 662 (1990) |
 | Russian-occupied territories | 1992…2024 | loses | UN GA resolution 72/282 (2018) |
@@ -45,8 +159,10 @@ international law (DE_JURE in tools/geo/config.mjs).
 | Georgia | 1992…2024 | gains | UN SC resolution 876 (1993); UN GA resolution 62/249 (2008) |
 | Russian-occupied territories | 1992…2024 | loses | UN SC resolution 876 (1993); UN GA resolution 62/249 (2008) |
 | Russian Federation | 1992…2024 | loses | UN SC resolution 876 (1993); UN GA resolution 62/249 (2008) |
+| Georgia | 1992…2007 | gains | UN SC resolution 876 (1993) |
 | Republic of Armenia | 1992…2024 | loses | UN SC resolutions 822, 853, 874 and 884 (1993) |
 | Republic of Azerbaijan | 1992…2024 | gains | UN SC resolutions 822, 853, 874 and 884 (1993) |
+| Georgia | 2008…2024 | gains | UN GA resolution 62/249 (2008); European Parliament resolution (2011) |
 | Ukraine | 2014…2024 | gains | UN GA resolutions 68/262 (2014) and ES-11/4 (2022) |
 | Russian Federation | 2014…2024 | loses | UN GA resolutions 68/262 (2014) and ES-11/4 (2022) |
 
@@ -57,9 +173,6 @@ an overlord over its vassals); they are drawn as an outline, like the realms Cli
 
 | State | Years |
 | --- | --- |
-| Kievan Rus' | 1056…1235 |
-| Emirate of Nejd | 1842…1845 |
-| British East Africa | 1967…1968 |
 
 ## Overseas parts dropped
 
@@ -69,323 +182,139 @@ Places are [lon, lat] of each dropped part.
 
 | State | Years | Places |
 | --- | --- | --- |
-| Phoenicia | -700…-676 | [-5,36] |
-| Neo-Assyrian Empire | -650…-616 | [33,35] |
-| Phoenicia | -630…-616 | [11,36] [10,37] |
-| Macedonian Empire | -315…-308 | [25,37] [25,38] [21,38] [25,38] [25,39] [25,40] [25,41] |
-| Carthage | -212…-211 | [15,37] |
-| Ptolemaic Kingdom | -203…-203 | [28,36] |
-| Antigonid Macedonia | -203…-203 | [25,41] [28,40] |
-| Ptolemaic Kingdom | -202…-198 | [26,38] |
-| Antigonid Macedonia | -188…-171 | [28,37] |
-| Kingdom of Pergamon | -188…-171 | [26,38] |
+| Greek City-States | -170…-145 | [67,31] |
 | Seleucid Empire | -144…-127 | [35,32] |
-| Greek City-States | -66…-64 | [29,41] |
-| Roman Republic | -66…-64 | [25,35] |
-| Roman Republic | -50…-42 | [33,35] |
-| Greek City-States | -48…-43 | [5,43] |
-| Roman Republic | -41…-32 | [33,35] [25,40] |
-| Ptolemaic Kingdom | -31…-31 | [24,38] [25,40] |
-| Roman Empire | -30…8 | [25,40] |
-| Roman Empire | 9…13 | [24,38] [25,40] |
-| Roman Empire | 14…42 | [25,40] |
-| Roman Empire | 43…77 | [24,38] [25,40] |
-| Greek City-States | 68…77 | [30,46] |
-| Kingdom of Axum | 247…352 | [43,16] |
-| Huns | 402…406 | [42,39] |
+| Greek City-States | -126…-111 | [67,31] |
 | Western Roman Empire | 451…451 | [12,49] |
-| Vandal Kingdom | 459…468 | [14,41] |
-| Kingdom of Axum | 577…601 | [44,15] |
-| Brythons | 602…611 | [-4,51] |
-| Brythons | 628…632 | [-2,53] |
-| Karkota Dynasty | 644…655 | [66,37] |
-| Byzantine Empire | 644…646 | [10,43] [7,44] |
-| Byzantine Empire | 710…717 | [-6,36] |
-| Byzantine Empire | 755…767 | [14,42] |
-| Dál Riata | 825…839 | [-3,59] |
-| Papal States | 825…849 | [11,43] |
-| Viking settlements | 876…877 | [-4,51] |
-| Viking settlements | 880…881 | [39,57] [40,58] |
-| Byzantine Empire | 884…885 | [33,35] |
-| Viking settlements | 887…891 | [3,49] |
-| Abbasid Caliphate | 888…891 | [44,42] |
-| Viking settlements | 896…910 | [1,51] [0,51] |
-| Brythons | 911…935 | [-5,52] |
-| Kingdom of Germany | 961…961 | [10,43] |
-| Holy Roman Empire | 962…969 | [10,43] |
-| Kingdom of Denmark | 980…989 | [11,60] |
-| Viking settlements | 990…999 | [19,54] |
-| Old Kingdom of Norway | 990…999 | [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] |
-| Taifa of Dénia | 1018…1039 | [9,40] |
-| Old Kingdom of Norway | 1018…1027 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] |
-| Old Kingdom of Norway | 1028…1039 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] [-7,58] |
-| North Sea Empire | 1028…1039 | [9,61] |
-| Kingdom of France | 1034…1055 | [5,47] |
-| County of Blôis | 1040…1045 | [4,49] |
-| Old Kingdom of Norway | 1040…1045 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] [-7,58] [-7,62] |
-| Norway-Denmark | 1046…1055 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] [-7,58] [-7,62] |
-| Taifa of Seville | 1056…1065 | [-6,36] |
-| Old Kingdom of Norway | 1056…1071 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] [-7,58] [-7,62] |
-| Viking settlements | 1072…1084 | [-49,62] [-51,63] |
-| Chola Empire | 1072…1093 | [81,8] |
-| Old Kingdom of Norway | 1072…1168 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] [-7,58] [-7,62] [-1,54] |
-| Hamdanid Emirates | 1072…1125 | [46,39] |
-| Viking settlements | 1085…1093 | [-7,57] [-7,58] [-49,62] [-51,63] [-6,56] [-6,56] [-6,57] |
-| Holy Roman Empire | 1085…1093 | [9,42] |
-| Taifa of Tortosa | 1085…1098 | [0,39] |
-| Viking settlements | 1094…1168 | [-7,57] [-7,58] [-49,62] [-51,63] [-6,56] [-5,56] [-6,56] [-6,57] |
-| Fatimid Caliphate | 1094…1098 | [14,36] |
-| Brythons | 1094…1098 | [-4,52] |
-| County of Blôis | 1094…1110 | [4,49] |
-| Kingdom of the Isles | 1099…1168 | [-5,56] |
-| Holy Roman Empire | 1139…1146 | [9,42] |
-| Almohad Caliphate | 1147…1151 | [-6,39] |
-| Viking settlements | 1169…1271 | [-7,58] [-49,62] [-51,63] [-5,56] [-6,57] |
-| Old Kingdom of Norway | 1169…1187 | [-6,56] [-6,56] [-5,56] [-6,56] [-7,57] [-6,57] [-7,58] [-7,58] [-7,62] |
-| Old Kingdom of Norway | 1188…1271 | [-7,62] |
-| Byzantine Empire | 1210…1226 | [24,38] [25,38] |
-| Republic of Venice | 1210…1215 | [25,38] [21,38] [21,38] |
-| Latin Empire | 1210…1226 | [25,39] |
-| Brythons | 1216…1226 | [-4,52] |
-| Republic of Venice | 1216…1226 | [20,41] [25,38] [21,38] [21,38] |
-| Kingdom of France | 1220…1226 | [9,41] |
-| Republic of Venice | 1227…1240 | [20,41] |
-| Kingdom of France | 1236…1240 | [2,44] |
-| Hamdanid Emirates | 1241…1249 | [48,42] |
-| Duchy of Athens | 1260…1271 | [23,38] |
-| Viking settlements | 1272…1325 | [-6,56] [-5,56] [-6,56] [-6,57] |
-| Kingdom of Alba | 1272…1293 | [-7,57] [-7,58] [-7,58] |
-| Old Kingdom of Norway | 1272…1325 | [-49,62] [-7,62] [-51,63] [-51,64] |
+| Tang Dynasty | 623…625 | [121,32] |
+| Scandinavian minor kingdoms | 870…1002 | [18,69] |
+| Viking settlements | 876…877 | [-3,51] |
+| Kingdom of the Iberians | 888…969 | [39,44] |
+| Viking settlements | 1003…1027 | [18,69] |
+| Viking settlements | 1040…1045 | [18,69] |
+| Viking settlements | 1056…1332 | [18,69] |
+| Republic of Venice | 1206…1332 | [18,43] |
+| Almohad Caliphate | 1236…1249 | [5,36] |
+| Tibetans | 1250…1259 | [85,28] |
+| Marinid Sultanate | 1250…1343 | [5,36] |
 | Kingdom of Jerusalem | 1272…1293 | [36,34] |
-| Byzantine Empire | 1279…1304 | [24,38] |
-| Republic of Pisa | 1285…1313 | [9,42] |
-| County of Flanders | 1285…1304 | [3,47] |
-| Capetian House of Anjou | 1294…1325 | [0,48] |
 | Duchy of Bavaria | 1294…1325 | [8,49] |
-| Kingdom of Scotland | 1294…1304 | [-7,57] [-7,58] [-7,58] |
-| House of Habsburg | 1294…1332 | [8,47] |
+| Habsburg lands | 1294…1304 | [8,47] |
 | County of Brabant | 1294…1414 | [6,51] |
-| Crown of Aragon | 1294…1304 | [1,39] [3,40] |
-| Kingdom of England | 1305…1313 | [-7,57] [-7,58] [-7,58] |
-| Republic of Genoa | 1314…1351 | [9,42] |
-| Kingdom of Scotland | 1314…1325 | [-7,57] [-7,58] [-7,58] |
-| Kingdom of Denmark | 1326…1332 | [13,54] |
-| Crown of Aragon | 1326…1351 | [9,41] |
+| Habsburg lands | 1305…1332 | [8,47] [10,48] |
 | Margraviate of Brandenburg | 1326…1332 | [8,49] |
-| Capetian House of Anjou | 1326…1374 | [8,45] |
-| House of Habsburg | 1333…1362 | [8,47] [8,48] |
-| Republic of Pisa | 1352…1374 | [9,42] |
-| Kingdom of Sweden | 1363…1374 | [19,57] [-48,62] |
-| House of Habsburg | 1363…1394 | [8,48] |
-| Republic of Pisa | 1375…1384 | [9,39] |
-| Duchy of Bavaria | 1375…1384 | [13,53] |
-| Crown of Aragon | 1375…1384 | [9,39] [9,42] |
-| Republic of Pisa | 1385…1394 | [9,39] [9,42] |
-| Serbian Despots | 1385…1394 | [18,43] |
-| Crown of Aragon | 1385…1394 | [9,39] |
-| Kingdom of Sweden | 1395…1401 | [12,54] |
-| Germiyanids | 1402…1406 | [40,37] [33,40] |
-| Republic of Florence | 1415…1421 | [22,39] |
+| Capetian House of Anjou | 1326…1343 | [8,45] |
+| Habsburg lands | 1333…1362 | [8,47] [8,48] [10,48] |
+| Kingdom of Georgia | 1333…1401 | [39,44] |
+| Republic of Venice | 1352…1362 | [18,43] |
+| Marinid Sultanate | 1363…1467 | [5,36] |
+| Serbian Empire | 1363…1371 | [22,45] |
+| Kingdom of Hungary | 1363…1374 | [18,43] |
+| Habsburg lands | 1363…1384 | [8,48] [10,48] |
+| Serbian Despotate | 1372…1374 | [22,45] |
+| Byzantine Empire | 1375…1384 | [22,38] |
+| Moravian Serbia | 1375…1401 | [22,45] |
+| Habsburg lands | 1385…1394 | [8,48] [8,48] [9,49] [10,48] |
+| Kingdom of Denmark | 1395…1401 | [18,69] |
+| Habsburg lands | 1395…1401 | [8,48] [9,49] [10,48] |
+| Kingdom of Denmark | 1402…1406 | [26,66] |
+| Habsburg lands | 1402…1452 | [8,48] [9,49] [9,48] [10,48] |
+| Republic of Venice | 1422…1428 | [19,42] |
 | County of Brabant | 1422…1428 | [6,51] |
 | Duchy of Bavaria | 1422…1428 | [6,50] |
-| Republic of Florence | 1429…1486 | [22,39] |
-| Electorate of Brandenburg | 1440…1449 | [11,49] |
-| Electorate of Brandenburg | 1450…1458 | [11,49] [12,50] |
-| Kingdom of England | 1450…1452 | [-1,49] |
-| Kingdom of England | 1453…1458 | [-1,44] [-1,49] |
-| Republic of Genoa | 1453…1460 | [25,40] |
-| Majapahit | 1459…1474 | [108,-3] [106,-3] [104,1] |
-| Kingdom of France | 1459…1462 | [8,44] |
-| Ottoman Empire | 1463…1474 | [26,39] |
-| House of Valois-Anjou | 1475…1481 | [6,48] |
-| Ottoman Empire | 1475…1481 | [26,39] [36,45] [39,47] |
-| Republic of Venice | 1475…1481 | [25,40] |
-| Ottoman Empire | 1482…1486 | [25,40] [26,39] [36,45] [39,47] |
-| Ottoman Empire | 1487…1525 | [26,39] [25,40] [36,45] [39,47] |
-| County of Nevers | 1497…1518 | [4,50] |
-| Duchy of Milan | 1497…1501 | [8,44] |
-| Kingdom of Portugal | 1502…1506 | [-24,15] [-23,15] [-24,17] [-25,17] [6,0] [9,3] [-2,5] [-1,5] [-23,16] [-9,32] [-6,36] |
-| Kingdom of France | 1502…1525 | [8,44] |
-| Sultanate of Brunei | 1502…1506 | [121,15] |
-| County of Foix | 1507…1511 | [3,43] |
-| Kingdom of Spain | 1519…1520 | [-87,20] |
-| Sultanate of Malacca | 1521…1528 | [104,1] |
-| Spanish Empire | 1521…1525 | [-87,20] |
-| Sultanate of Brunei | 1529…1581 | [120,5] [121,6] [122,7] |
-| Kingdom of Spain | 1529…1539 | [8,45] |
-| Kingdom of Portugal | 1540…1546 | [45,13] |
+| Habsburg lands | 1453…1458 | [9,48] [8,48] [9,49] [10,48] |
+| Habsburg lands | 1459…1515 | [8,48] [9,49] [9,48] [10,48] |
+| Habsburg Monarchy | 1516…1631 | [9,49] [9,48] [10,48] |
 | Kingdom of Spain | 1540…1563 | [4,46] |
 | County of Foix | 1540…1555 | [1,45] |
-| Ottoman Empire | 1540…1551 | [25,37] [25,38] [25,39] |
-| Holy Roman Empire Minor States | 1547…1551 | [13,51] |
-| Kingdom of Portugal | 1552…1555 | [45,13] [51,25] |
-| Ottoman Empire | 1552…1555 | [25,37] [25,38] [25,39] [59,23] |
-| Ottoman Empire | 1556…1563 | [25,37] [25,38] [25,39] |
-| Holy Roman Empire Minor States | 1556…1625 | [13,51] |
-| Kingdom of France | 1556…1563 | [9,42] |
-| Portuguese Empire | 1564…1571 | [76,11] [75,12] [74,15] [73,19] [56,27] [124,-9] [125,-9] [128,-4] [102,3] [80,8] [76,10] [80,13] |
-| Sultanate of Malacca | 1609…1639 | [102,6] |
-| Ottoman Empire | 1609…1611 | [26,38] |
-| Blambangan Kingdom | 1626…1740 | [112,-7] |
-| Ottoman Empire | 1626…1631 | [26,38] |
-| Spanish Empire | 1642…1658 | [121,25] |
-| Dutch Republic | 1645…1647 | [102,3] |
-| Kingdom of Portugal | 1653…1705 | [59,23] |
-| Dutch Republic | 1659…1661 | [80,6] [82,8] [81,8] [80,10] |
-| Kingdom of Spain | 1662…1669 | [4,46] |
-| Dutch Republic | 1662…1795 | [119,-9] |
-| Swedish Empire | 1662…1669 | [-1,5] [8,63] |
-| English Colonial Empire | 1670…1672 | [-1,5] |
-| Swedish Empire | 1670…1717 | [8,63] |
-| New France | 1677…1682 | [-17,15] |
-| New France | 1683…1690 | [-63,18] |
-| English Colonial Empire | 1683…1686 | [-1,5] |
-| Kingdom of Spain | 1687…1690 | [6,50] |
+| Holy Roman Empire Minor States | 1547…1587 | [13,51] |
+| Duchy of Lorraine | 1552…1631 | [7,49] |
+| Union of Utrecht | 1579…1581 | [5,44] |
+| Dutch Republic | 1582…1672 | [5,44] |
+| Portuguese Colonies | 1600…1910 | [73,20] |
+| Habsburg Monarchy | 1632…1635 | [9,48] [9,48] |
+| Iberian Union | 1632…1639 | [6,51] |
+| Habsburg Monarchy | 1636…1644 | [9,49] [9,48] [10,48] |
+| Kingdom of Spain | 1640…1647 | [6,51] |
+| Habsburg Monarchy | 1645…1647 | [9,48] [10,48] |
+| Habsburg Monarchy | 1648…1740 | [9,49] [9,48] [10,48] |
+| English Colonial Empire | 1653…1669 | [80,13] |
+| Swedish Empire | 1662…1717 | [8,63] |
+| French India | 1673…1756 | [88,23] |
+| Dutch Republic | 1677…1701 | [5,44] |
+| Maratha Empire | 1677…1690 | [80,11] |
 | Duchy of Lorraine | 1700…1701 | [7,49] [5,49] |
-| English Colonial Empire | 1700…1708 | [-1,5] |
-| Brandenburg-Prussia | 1702…1712 | [7,51] [11,52] [6,52] [8,52] [8,52] [22,55] |
-| Spanish Empire | 1706…1708 | [-81,30] |
-| English Colonial Empire | 1709…1712 | [-89,17] [-77,18] [-73,21] [-74,22] [-75,23] [-78,24] [-74,24] [-75,24] [-78,25] [-76,25] [-77,27] [-79,27] [-80,33] [-78,34] [-82,52] [-2,5] [-3,5] [-1,5] [-1,5] [73,19] [88,22] [-70,44] [-70,44] [-53,47] [-53,49] |
-| Kingdom of Prussia | 1709…1712 | [11,52] |
+| Holy Roman Empire Minor States | 1700…1701 | [7,49] |
+| English Colonial Empire | 1700…1708 | [-1,5] [80,13] |
+| Kingdom of England | 1706…1708 | [2,41] |
+| Kingdom of Prussia | 1709…1740 | [11,52] |
 | Electorate of Hanover | 1709…1740 | [10,52] |
-| British Colonial Empire | 1709…1717 | [-1,5] |
-| Brandenburg-Prussia | 1713…1717 | [11,52] |
+| British Colonial Empire | 1709…1712 | [-1,5] [2,41] |
+| British Colonial Empire | 1713…1787 | [-1,5] |
 | Duchy of Lorraine | 1713…1733 | [7,49] [5,49] |
-| Kingdom of Prussia | 1713…1717 | [7,51] [11,52] [8,52] [8,52] [22,55] |
-| Kingdom of Prussia | 1718…1740 | [11,52] |
-| British Colonial Empire | 1718…1720 | [-1,5] [-1,5] [73,19] |
-| Habsburg Monarchy | 1718…1720 | [15,38] |
-| Kingdom of Spain | 1721…1733 | [9,40] |
-| Swedish Empire | 1721…1721 | [8,63] |
-| British Colonial Empire | 1721…1756 | [-1,5] [73,19] |
-| Kingdom of Sweden | 1722…1808 | [8,63] |
-| Afsharid Iran | 1738…1740 | [51,26] |
-| Kingdom of Spain | 1741…1747 | [10,45] |
+| Holy Roman Empire Minor States | 1713…1733 | [7,49] |
+| Maratha Empire | 1718…1798 | [80,11] |
+| Kingdom of Sweden | 1721…1808 | [8,63] |
+| Habsburg Monarchy | 1741…1743 | [9,48] |
+| Habsburg Monarchy | 1744…1779 | [9,49] [9,48] [10,48] |
 | Duchy of Lorraine | 1748…1756 | [7,49] [5,49] |
-| Republic of Genoa | 1757…1768 | [9,42] |
-| British Colonial Empire | 1757…1768 | [-1,5] |
-| Holy Roman Empire Minor States | 1757…1762 | [7,49] |
-| Electorate of Hanover | 1757…1761 | [11,52] |
-| British Empire | 1757…1761 | [73,19] |
-| Sultanate of Malacca | 1762…1799 | [102,6] |
-| Kingdom of Spain | 1762…1777 | [16,41] [10,43] |
+| Holy Roman Empire Minor States | 1748…1756 | [7,49] |
+| British East India Company | 1757…1761 | [88,22] |
+| Holy Roman Empire Minor States | 1763…1768 | [7,49] |
 | Duchy of Lorraine | 1763…1768 | [7,49] [5,49] |
-| Spanish Empire | 1769…1779 | [-90,30] [-92,34] |
-| British Colonial Empire | 1769…1779 | [-91,38] [-1,5] |
-| Kingdom of France | 1769…1791 | [9,42] |
-| Holy Roman Empire Minor States | 1769…1790 | [7,49] |
-| Habsburg Monarchy | 1778…1790 | [94,7] [93,8] |
-| British Colonial Empire | 1780…1787 | [-1,5] |
-| New France | 1788…1790 | [-58,6] |
-| Kingdom of Spain | 1792…1795 | [-1,36] |
-| Tây Sơn dynasty | 1792…1793 | [106,10] [105,10] [107,11] [107,11] |
-| French First Republic | 1792…1793 | [9,42] |
-| French First Republic | 1794…1795 | [55,-21] |
-| House of Khalifa | 1796…1799 | [51,26] |
-| Batavian Republic | 1796…1799 | [119,-9] |
-| French Directory | 1796…1796 | [55,-21] |
-| Kingdom of Great Britain | 1797…1798 | [10,43] |
-| British Colonial Empire | 1799…1799 | [-69,12] |
-| Batavian Republic | 1800…1802 | [124,-10] [119,-9] [123,-8] [124,-8] [126,-8] [112,-8] [122,-5] [119,-5] [123,-5] [127,-3] [126,-2] [124,-2] [125,1] [131,-8] [130,-8] [131,-8] [131,-7] [128,-7] [134,-6] [133,-6] [128,-4] [129,-3] [130,-2] [128,-2] |
-| Dutch East Indies | 1800…1813 | [119,-9] |
-| French Consulate | 1800…1804 | [55,-21] [57,-20] |
-| Electorate of Saxony | 1803…1804 | [11,51] |
-| Kingdom of Spain | 1803…1808 | [4,40] |
-| Electorate of Hesse | 1803…1804 | [9,50] |
-| Kingdom of Great Britain | 1809…1811 | [4,40] |
-| British Colonial Empire | 1811…1811 | [57,-20] [119,-9] [119,-5] [124,-10] [123,-8] [124,-8] [131,-8] [130,-8] [126,-8] [131,-8] [131,-7] [128,-7] [134,-6] [133,-6] [123,-5] [128,-4] [127,-3] [129,-3] [126,-2] [130,-2] [124,-2] [128,-2] [125,1] |
-| Kingdom of Sweden | 1812…1813 | [11,54] |
-| First French Empire | 1812…1813 | [13,54] |
-| British Colonial Empire | 1812…1813 | [57,-20] [119,-9] [112,-8] [119,-5] [108,-3] [106,-3] [-63,18] [124,-10] [123,-8] [124,-8] [131,-8] [130,-8] [126,-8] [131,-8] [131,-7] [128,-7] [134,-6] [133,-6] [123,-5] [128,-4] [127,-3] [129,-3] [126,-2] [130,-2] [124,-2] [128,-2] [125,1] |
-| Kingdom of Spain | 1812…1819 | [4,40] |
-| Sultanate of Oman | 1814…1814 | [40,-8] [39,-6] [39,-6] [40,-5] |
-| British Colonial Empire | 1814…1814 | [57,-20] [108,-3] |
-| Dutch East Indies | 1814…1819 | [119,-9] [106,-3] |
-| British Colonial Empire | 1815…1819 | [108,-3] |
-| Mughal Empire | 1820…1856 | [73,27] |
-| Dutch East Indies | 1820…1865 | [119,-9] |
-| German Confederation | 1820…1865 | [8,51] |
+| French India | 1763…1790 | [88,23] |
+| Holy Roman Empire Minor States | 1780…1793 | [6,51] |
+| Habsburg Monarchy | 1780…1795 | [9,49] [10,48] |
+| Kingdom of France | 1791…1791 | [88,23] |
+| French First Republic | 1792…1793 | [88,23] |
+| Habsburg Monarchy | 1796…1796 | [8,48] [10,48] |
+| Duchy of Bavaria | 1796…1796 | [9,49] |
+| Holy Roman Empire Minor States | 1796…1796 | [8,49] |
+| Habsburg Monarchy | 1797…1802 | [9,49] [10,48] |
+| British East India Company | 1799…1799 | [80,11] |
+| Electorate of Hesse | 1803…1804 | [9,52] |
+| Holy Roman Empire Minor States | 1803…1804 | [9,49] [11,50] |
+| Holy Roman Empire Minor States | 1805…1805 | [9,49] |
+| Grand Duchy of Hesse | 1806…1806 | [9,52] |
+| Grand Duchy of Berg | 1806…1806 | [8,52] |
+| Russian Empire | 1811…1829 | [41,43] |
+| Electorate of Hesse | 1814…1819 | [9,52] |
+| Saxe-Altenburg | 1815…1819 | [10,51] |
+| French India | 1820…1845 | [88,23] |
+| Kingdom of Prussia | 1820…1865 | [8,51] |
 | Electorate of Hesse | 1820…1865 | [10,51] |
-| Riau-Lingga Sultanate | 1824…1852 | [108,4] |
-| Gran Colombia | 1825…1829 | [-64,-18] |
-| Spanish Empire | 1825…1827 | [-68,-16] |
-| Spanish Empire | 1828…1852 | [-74,-43] [-68,-16] [-77,-12] |
-| Sultanate of Malacca | 1830…1860 | [108,-7] |
-| Grand Duchy of Saxe-Weimar-Eisenach | 1836…1839 | [12,51] |
-| Kingdom of Prussia | 1836…1847 | [11,53] |
-| Saxe-Altenburg | 1836…1839 | [12,51] |
-| Bourbon Kingdom of France | 1842…1845 | [43,-12] |
-| British Colonial Empire | 1849…1852 | [76,32] |
+| Saxe-Altenburg | 1828…1835 | [11,50] |
+| Saxe-Altenburg | 1840…1870 | [11,50] |
+| French Algeria | 1840…1845 | [8,37] |
 | United States of America | 1862…1864 | [-81,32] |
-| Kingdom of Great Britain | 1864…1869 | [21,38] [21,38] |
-| Second French Empire | 1864…1869 | [-97,19] [-90,20] |
-| Spanish Empire | 1865…1872 | [-70,19] |
-| Saxe-Altenburg | 1868…1870 | [11,50] |
-| British Raj | 1868…1872 | [94,7] [93,8] |
-| Netherlands | 1890…1916 | [6,50] |
-| Kingdom of Belgium | 1890…1899 | [13,-5] |
-| Kingdom of Italy | 1890…1894 | [39,16] |
-| British Colonial Empire | 1895…1897 | [162,-11] [160,-10] [161,-9] [157,-8] [156,-7] |
-| Ottoman Empire | 1898…1899 | [25,35] |
+| Qing Dynasty | 1862…1864 | [121,32] |
+| Duchy of Oldenburg | 1866…1870 | [7,50] |
+| Grand Duchy of Saxe-Weimar-Eisenach | 1866…1867 | [10,51] |
+| British Africa | 1895…1917 | [35,-14] |
 | Empire of Japan | 1898…1899 | [117,40] |
-| German Empire | 1900…1904 | [117,39] |
-| British Colonial Empire | 1913…1913 | [40,-8] [39,-6] [40,-5] |
-| Empire of Japan | 1917…1919 | [118,39] |
-| Kingdom of Denmark | 1918…1921 | [-18,65] |
-| British Colonial Empire | 1919…1919 | [46,32] |
-| French Third Republic | 1920…1923 | [36,34] [35,37] |
+| Russian Empire | 1900…1904 | [117,40] |
+| Portuguese Republic | 1911…1925 | [73,20] |
+| British Africa | 1919…1942 | [35,-14] |
+| Kingdom of Greece | 1919…1919 | [27,38] |
+| Empire of Japan | 1922…1923 | [117,40] |
 | French Indochina | 1922…1923 | [117,39] |
 | British Colonial Empire | 1922…1923 | [117,39] |
-| Empire of Japan | 1922…1923 | [117,40] |
-| Kingdom of Italy | 1924…1931 | [28,37] [31,37] |
-| Free City of Danzig | 1924…1935 | [21,55] |
+| Weimar Republic | 1922…1923 | [6,52] |
+| Estado Novo | 1926…1946 | [73,20] |
 | French Indochina | 1928…1931 | [117,39] |
-| British Colonial Empire | 1928…1928 | [117,39] |
+| British Colonial Empire | 1928…1931 | [117,39] |
 | Empire of Japan | 1928…1931 | [117,40] |
-| British Colonial Empire | 1929…1931 | [122,37] [117,39] |
-| Kingdom of Belgium | 1932…1935 | [118,39] |
-| Communist Party of China | 1940…1945 | [86,41] |
-| Nazi Germany | 1940…1940 | [14,68] [9,61] |
-| United States of America | 1942…1942 | [-18,65] |
-| United States of America | 1943…1943 | [120,15] [-18,65] |
-| Empire of Japan | 1943…1943 | [98,13] [146,-5] [160,-12] [162,-11] [160,-10] [161,-9] [157,-8] [159,-8] [157,-8] [156,-7] [157,-7] [155,-6] [148,-6] [151,-5] [153,-4] [150,-3] [147,-2] |
-| Commonwealth of Australia | 1943…1943 | [142,-8] [153,-11] [153,-11] [150,-9] [153,-9] |
-| French Africa | 1943…1943 | [42,11] |
-| Empire of Japan | 1944…1944 | [98,13] [160,-12] [162,-11] [160,-10] [161,-9] [159,-8] [157,-8] [156,-7] [157,-7] [155,-6] [150,-6] [153,-4] [150,-3] [147,-2] |
-| Commonwealth of Australia | 1944…1944 | [142,-8] [146,-5] [153,-11] [151,-11] [150,-9] [153,-9] [148,-6] [148,-6] |
-| United States of America | 1944…1944 | [-18,65] |
-| Empire of Japan | 1945…1945 | [160,-12] [162,-11] [160,-10] [161,-9] [157,-8] [159,-8] [157,-8] [156,-7] [157,-7] [155,-5] [152,-4] [153,-4] [150,-3] [147,-2] |
-| United States of America | 1945…1945 | [155,-6] |
-| Commonwealth of Australia | 1945…1945 | [142,-8] [146,-5] [153,-11] [151,-11] [150,-9] [153,-9] [148,-6] [151,-5] |
-| Kingdom of Great Britain | 1946…1946 | [15,47] |
-| United States of America | 1948…1949 | [127,33] [128,36] |
-| British Colonial Empire | 1948…1957 | [98,13] [166,-51] [168,-47] [169,-45] [174,-41] [175,-39] |
-| Canada | 1949…1957 | [-56,49] |
-| United States of America | 1950…1952 | [127,33] [128,36] [8,52] |
-| United States of America | 1953…1966 | [124,24] [125,25] [129,33] [127,33] [128,36] [8,52] [131,30] [131,31] [138,36] [138,38] [143,43] [141,45] |
-| Francoist Spain | 1956…1957 | [-6,35] |
-| Kingdom of Great Britain | 1961…1966 | [47,29] [33,35] |
-| United Arab Republic | 1961…1966 | [38,35] |
-| Estado Novo | 1961…1966 | [74,15] |
-| British East Africa | 1963…1966 | [40,-8] [39,-6] [40,-5] |
-| French Fifth Republic | 1963…1975 | [3,28] |
-| Kingdom of Great Britain | 1967…1968 | [47,29] [33,35] [14,36] |
-| British East Africa | 1967…1968 | [28,-30] [28,-19] [-17,13] [40,-8] [39,-6] [40,-5] |
-| Francoist Spain | 1969…1972 | [10,2] [9,3] [-10,30] |
-| Estado Novo | 1973…1974 | [-15,12] |
-| United States of America | 1973…1999 | [109,13] [128,26] |
-| Kingdom of Great Britain | 1973…2023 | [59,20] [58,22] [51,25] [51,26] |
-| British Colonial Empire | 1973…1975 | [-73,21] [-72,22] [-74,22] [-75,23] [-78,24] [-74,24] [-75,24] [-78,25] [-77,27] [-79,27] [178,-18] [179,-17] |
-| Portugal | 1975…1975 | [-15,12] |
-| Netherlands Antilles | 1976…2023 | [-56,4] |
-| Commonwealth of Australia | 1976…2023 | [155,-6] |
-| French Fifth Republic | 1976…1978 | [3,28] [44,-12] |
-| British Colonial Empire | 1976…1978 | [-62,12] [-73,21] [-72,22] [-74,22] [-75,23] [-78,24] [-74,24] [-75,24] [-78,25] [-77,27] [-79,27] [178,-18] [179,-17] |
-| French Fifth Republic | 1979…2023 | [42,11] [3,28] [44,-12] |
-| British Colonial Empire | 1979…1986 | [-62,12] [-61,14] [-61,15] [-73,21] [-72,22] [-74,22] [-75,23] [-78,24] [-74,24] [-75,24] [-78,25] [-77,27] [-79,27] [178,-18] [179,-17] [160,-12] [162,-11] [160,-10] [161,-9] [157,-9] [157,-8] [156,-7] [157,-7] |
-| British Colonial Empire | 1987…1995 | [-62,12] [-61,14] [-61,15] [-73,21] [-72,22] [-74,22] [-75,23] [-78,24] [-74,24] [-75,24] [-78,25] [-77,27] [-79,27] [178,-18] [179,-17] [160,-12] [162,-11] [160,-10] [161,-9] [157,-9] [157,-8] [156,-7] [157,-7] [115,5] |
-| United States of America | 2000…2005 | [-80,9] [109,13] [128,26] |
-| United States of America | 2014…2023 | [43,34] |
+| Nazi Germany | 1936…1939 | [27,40] [36,33] |
+| Nazi Germany | 1940…1940 | [27,40] [28,47] [36,33] |
+| Nazi Germany | 1941…1941 | [15,46] [27,40] [28,47] [36,33] |
+| Nazi Germany | 1942…1943 | [15,46] [27,40] [36,33] |
+| Nazi Germany | 1944…1944 | [27,40] |
+| British Africa | 1946…1960 | [35,-14] |
+| East Africa Protectorate | 1961…1962 | [35,-14] |
+| British Empire | 1973…1975 | [13,53] |
+| Union of Soviet Socialist Republics | 1973…1975 | [14,53] |
+| Malawi | 1976…2024 | [35,-14] |
+| Republic of Croatia | 1992…2024 | [18,43] |
 
 ## Gaps bridged
 
@@ -395,18 +324,15 @@ half of its land; the borders of the nearest record are kept.
 | State | Years |
 | --- | --- |
 | Elam | -630…-616 |
+| Babylonia | -630…-616 |
 | Peloponnesian League | -480…-451 |
+| Han Dynasty | 14…21 |
 | Yenisei Kyrgyz | 763…777 |
-| Principality of Capua | 866…874 |
-| Principality of Capua | 1010…1014 |
-| Duchy of Naples | 1028…1033 |
-| Principality of Capua | 1048…1055 |
-| New France | 1631…1631 |
+| Duchy of Naples | 1031…1033 |
 | Bamana Empire | 1757…1768 |
-| Danish India | 1800…1802 |
 | Mexico | 1913…1919 |
 | Great Mongol State | 1920…1921 |
-| Republic of China | 1926…1926 |
+| Republic of Vietnam | 1967…1972 |
 | Republic of El Salvador | 1979…1991 |
 
 ## Records outside the lifespan on Wikidata
@@ -416,36 +342,30 @@ inception–dissolution dates of its Wikipedia article’s Wikidata item. Some a
 (a wrong name for a later state), some are differences of definition. Confirmed errors go
 into CORRECTIONS in tools/geo/config.mjs.
 
-106 states.
+58 states.
 
 | Cliopatria name | Records | Wikidata lifespan | Wikipedia |
 | --- | --- | --- | --- |
-| Middle Kingdom of Egypt | -1700…-1601 | -2039…-1781 | Middle Kingdom of Egypt |
-| Hittites | -1600…-1151 | 1500…? | Hittites |
-| Kingdom of Israel | -900…-701 | -1049…-929 | Kingdom of Israel (united monarchy) |
-| Tabal Kingdom | -750…-701 | -1000…-800 | Tabal (state) |
+| Sumerian City-States | -1800…-1761 | -5500…-1900 | Sumer |
+| Janapada of Kuru | -600…-405 | -1200…-900 | Kuru kingdom |
 | Janapada of Kamboja | -600…-501 | -300…? | Kambojas |
-| Janapada of Kāśī | -480…-451 | -1000…-600 | Kāśī (kingdom) |
-| Xu | -450…-285 | ?…-511 | Xu (state) |
-| Janapada of Aśmaka | -366…-351 | -700…-424 | Asmaka |
+| Xu | -480…-285 | ?…-511 | Xu (state) |
+| Minaeans | -383…-26 | -1000…-1000 | Ma'in |
 | Early Cheras | -291…305 | 800…1102 | Chera dynasty |
-| Kingdom of Sophene | -256…113 | -201…-93 | Kingdom of Sophene |
+| Kingdom of Sophene | -256…-240 | -201…-93 | Kingdom of Sophene |
+| Kalinga | -225…-189 | -300…-260 | Kalinga (region) |
+| Gothia | 207…382 | -59…106 | Dacia |
 | Caucasian Albania | 490…509 | -1…461 | Caucasian Albania |
-| Byeonhan | 534…566 | -200…400 | Byeonhan confederacy |
 | Vakataka Kingdom | 546…554 | 250…500 | Vakataka dynasty |
-| Kingdom of Italy | 587…969 | 1861…1946 | Kingdom of Italy |
-| Burgundian Kingdom | 602…660 | 411…534 | Kingdom of the Burgundians |
+| Georgia | 567…1921 | 1991…? | Georgia (country) |
 | Kingdom of Northumbria | 612…625 | 653…954 | Northumbria |
+| Funan | 617…627 | 68…550 | Funan |
 | Aquitaine | 629…895 | 1960…2015 | Aquitaine |
 | Lakhmid Kingdom | 629…633 | 268…602 | Lakhmid kingdom |
-| Funan | 638…640 | 68…550 | Funan |
 | Kingdom of Armenia | 638…646 | -552…428 | Kingdom of Armenia (antiquity) |
 | Lavo Kingdom | 638…660 | 700…1388 | Lavo Kingdom |
-| Strathclyde | 644…1033 | 1975…1996 | Strathclyde |
 | Cyprus Condominium | 692…959 | 1960…? | Cyprus |
 | Kingdom of Lazica | 741…777 | -100…700 | Lazica |
-| Principality of Serbia | 768…961 | 1815…1882 | Principality of Serbia |
-| Magna Frisia | 768…771 | 500…734 | Frisian Kingdom |
 | Water Chenla | 800…805 | 550…706 | Chenla |
 | Land Chenla | 800…805 | 550…706 | Chenla |
 | Kingdom of the Iberians | 814…839 | 888…1008 | Kingdom of the Iberians |
@@ -454,75 +374,33 @@ into CORRECTIONS in tools/geo/config.mjs.
 | Giudicato of Cagliari | 866…910 | 1000…1258 | Judicate of Cagliari |
 | Old Kingdom of Norway | 866…874 | 900…? | Norway |
 | County of Ribagorza | 866…874 | 900…1598 | County of Ribagorza |
-| Dál Riata | 875…899 | 498…843 | Dál Riata |
+| Kingdoms of the Lombards | 887…969 | 843…855 | Middle Francia |
 | County of Rosellón | 896…1176 | 1659…1790 | Roussillon |
 | County of Besalú | 898…960 | 988…1111 | County of Besalú |
 | (Holy Roman Empire) | 922…935 | 962…1806 | Holy Roman Empire |
-| Unified Silla | 926…935 | 668…892 | Unified Silla |
-| Kingdom of Seisyllwg | 947…959 | 680…920 | Seisyllwg |
-| Hamdanid Emirates | 1034…1259 | 890…1004 | Hamdanid dynasty |
-| Kingdom of Gwent | 1046…1055 | 430…950 | Kingdom of Gwent |
+| Đại Việt | 970…979 | 1054…1805 | Đại Việt |
 | Principality of Rostov-Suzdal | 1056…1093 | 1125…1389 | Vladimir-Suzdal |
-| Novgorod Republic | 1056…1110 | 1136…1478 | Novgorod Republic |
 | Kingdom of Brycheiniog | 1072…1084 | 450…1045 | Brycheiniog |
-| Taifa of Algeciras | 1085…1168 | 1035…1058 | Taifa of Algeciras |
-| Duchy of Łęczyca | 1139…1146 | 1339…1793 | Łęczyca Voivodeship |
-| Taifa of Córdoba | 1147…1249 | 1031…1070 | Taifa of Córdoba |
-| Taifa of Saltés and Huelva | 1147…1151 | 1012…1051 | Taifa of Saltés and Huelva |
-| Taifa of Silves | 1147…1168 | 1027…1063 | Taifa of Silves |
+| Taifa of Córdoba | 1147…1151 | 1031…1070 | Taifa of Córdoba |
+| Taifa of Silves | 1147…1151 | 1027…1063 | Taifa of Silves |
 | Taifa of Niebla | 1147…1249 | 1023…1053 | Taifa of Niebla |
-| Taifa of Valencia | 1147…1249 | 1010…1094 | Taifa of Valencia |
-| Kingdom of Serbia | 1188…1351 | 1882…1918 | Kingdom of Serbia |
-| Almoravid Dynasty | 1202…1205 | 1040…1147 | Almoravid dynasty |
+| Taifa of Valencia | 1147…1240 | 1010…1094 | Taifa of Valencia |
 | County of Touraine | 1206…1491 | 1584…1790 | Touraine |
-| Taifa of Almería | 1236…1249 | 1010…1147 | Taifa of Almería |
-| Ceylon | 1236…1506 | 1972…? | Sri Lanka |
-| Dauphiné | 1260…1313 | 1349…1790 | Dauphiné |
-| County of Brabant | 1260…1430 | 1085…1183 | Landgraviate of Brabant |
-| Kingdom of Gwynedd | 1279…1284 | 401…1216 | Kingdom of Gwynedd |
 | Grand Duchy of Kraków | 1279…1293 | 1846…1918 | Grand Duchy of Kraków |
-| Swiss Confederation | 1294…1798 | 1848…? | Switzerland |
-| Michoacán | 1305…1533 | 1823…? | Michoacán |
-| Shunten Dynasty | 1305…1313 | 1187…1259 | Shunten dynasty |
-| Almohad Caliphate | 1333…1343 | 1121…1269 | Almohad Caliphate |
 | Isle of Man | 1344…1401 | 1765…? | Isle of Man |
 | County of Béarn | 1385…1452 | 1620…1790 | Béarn |
-| Principality of Vladimir-Suzdal | 1415…1486 | 1125…1389 | Vladimir-Suzdal |
 | Khanate of Sibir | 1429…1449 | 1490…1598 | Khanate of Sibir |
-| Tahirid Sultanate | 1459…1515 | 821…873 | Tahirid dynasty |
-| Kingdom of Georgia | 1507…1802 | 1008…1466 | Kingdom of Georgia |
-| County of Urgell | 1516…1808 | 785…1413 | County of Urgell |
-| Golden Horde | 1547…1695 | 1243…1502 | Golden Horde |
-| Sultanate of Malacca | 1552…1861 | 1400…1511 | Malacca Sultanate |
-| Khoshut Khanate | 1582…1608 | 1650…1724 | Khoshut Khanate |
-| Sur Empire | 1588…1594 | 1540…1556 | Sur Empire |
-| Western Moghulistan | 1609…1635 | 1347…1570 | Moghulistan |
-| Eastern Moghulistan | 1609…1686 | 1347…1570 | Moghulistan |
+| Swiss Confederation | 1459…1798 | 1848…? | Switzerland |
 | Kingdom of Bhutan | 1636…1913 | 1949…? | Bhutan |
-| Oirat Confederation | 1659…1676 | 1399…1628 | Oirat Confederation |
-| Small Horde | 1670…1737 | 1440…1634 | Nogai Horde |
-| Bali | 1687…1907 | 1958…? | Bali |
-| New Netherland | 1702…1802 | 1609…1667 | New Netherland |
+| Nogai Horde | 1662…1737 | 1440…1634 | Nogai Horde |
 | Sultanate of Oman | 1744…1899 | 1970…? | Oman |
-| Kuwait | 1757…1872 | 1991…? | Kuwait |
-| Bahrain | 1757…1845 | 1971…? | Bahrain |
-| Nepal | 1775…1889 | 2008…? | Nepal |
-| French Colony of Guiana | 1791…1791 | 1946…? | French Guiana |
-| New France | 1791…1791 | 1534…1763 | New France |
-| Duchy of Mecklenburg | 1806…1870 | 1471…1701 | Duchy of Mecklenburg |
 | Duchy of Anhalt | 1806…1819 | 1863…1918 | Duchy of Anhalt |
-| Free City of Danzig | 1809…1811 | 1920…1939 | Free City of Danzig |
-| Netherlands Antilles | 1815…1876 | 1954…2010 | Netherlands Antilles |
+| Netherlands Antilles | 1815…1870 | 1954…2010 | Netherlands Antilles |
 | Burma | 1820…1884 | 1948…? | Myanmar |
-| Republic of Baden | 1849…1852 | 1918…1945 | Republic of Baden |
-| Pahang Sultanate | 1853…1889 | 1470…1623 | Pahang Sultanate |
-| Montenegro | 1853…1915 | 2006…? | Montenegro |
+| Duchy of Mecklenburg | 1863…1870 | 1701…1815 | Duchy of Mecklenburg-Strelitz |
 | Swaziland | 1885…1907 | 1968…? | Eswatini |
-| Azerbaijan Democratic Republic | 1918…1919 | 1991…? | Azerbaijan |
-| Armenia | 1918…1919 | 1991…? | Armenia |
-| Serbia | 1918…1918 | 2006…? | Serbia |
-| Great Mongol State | 1925…1925 | 1271…1368 | Yuan dynasty |
+| Republic of Lithuania | 1919…1939 | 1990…? | Lithuania |
 | Ethiopia | 1942…1959 | 1995…? | Ethiopia |
-| Sultanate of Aceh | 1946…1959 | 1496…1903 | Aceh Sultanate |
-| Hungarian Nationalists | 1956…1957 | 1867…1918 | Austria-Hungary |
-| British East Africa | 1961…1968 | 1895…1920 | East Africa Protectorate |
+| Hungarian Nationalists | 1956…1957 | 1849…1849 | Hungarian State |
+| Republic of Sudan | 1956…1957 | 1985…2019 | Republic of the Sudan (1985–2019) |
+| East Africa Protectorate | 1961…1972 | 1895…1920 | East Africa Protectorate |

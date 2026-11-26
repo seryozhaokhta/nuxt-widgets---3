@@ -9,14 +9,18 @@
 //
 // Rings are kept as integer hundredths of a degree, delta-encoded:
 // [x0, y0, dx1, dy1, ...]. Each record: [entity, fromYear, toYear,
-// [[outerRing, ...holes], ...polygons], [labelLon, labelLat], areaKm2, umbrella?].
-// `umbrella` (1) marks a record drawn as an outline over the states inside it.
+// [[outerRing, ...holes], ...polygons], [labelLon, labelLat], areaKm2, kind?, owner?].
+// `kind` 1 marks a record drawn as an outline over the states inside it (an
+// umbrella); 2 marks land the record's state held in war while, under
+// international law, it stayed `owner`'s (an occupation, drawn hatched).
 //
 // On top of Cliopatria, the build:
 //   - renames and trims records listed in CORRECTIONS (tools/geo/config.mjs);
 //   - drops an overseas part of a state for the years another state holds it
 //     (Algeria in France's record after 1962), and outlines a state whose land
 //     is all held by others (Kievan Rus' over its principalities);
+//   - gives land back to its owner under international law (DE_JURE), and
+//     keeps an occupier's hold on it as a hatched record;
 //   - bridges short gaps where Cliopatria leaves a state's land empty (Mexico
 //     in 1913–1919);
 //   - puts each label inside the part of the state that holds its capital.
@@ -32,14 +36,20 @@ import { fileURLToPath } from 'node:url'
 import { geoArea } from 'd3-geo'
 import polygonClipping from 'polygon-clipping'
 import { bounds, cleanRing, depth, distanceToPolygon, orient, pointInPolygon, polylabel, rasterize, ringArea } from './geometry.mjs'
-import { CAPITALS, CORRECTIONS, DE_JURE, DISPUTED, OUT_DIR, RUSSIAN_NAMES, WIKIPEDIA } from './config.mjs'
+import { CAPITALS, CORRECTIONS, DE_JURE, DISPUTED, FILLS, OUT_DIR, RUSSIAN_NAMES, WIKIPEDIA } from './config.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const CACHE = join(tmpdir(), 'art-widgets-geo')
-const ZIP_URL = 'https://raw.githubusercontent.com/Seshat-Global-History-Databank/cliopatria/main/cliopatria.geojson.zip'
+/** Cliopatria release the layer is built from; a new one may rename or redraw states. */
+const CLIOPATRIA_VERSION = 'v0.2.2'
+const ZIP_URL = `https://raw.githubusercontent.com/Seshat-Global-History-Databank/cliopatria/${CLIOPATRIA_VERSION}/cliopatria.geojson.zip`
 const DISPUTED_URL = 'https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_10m_admin_0_disputed_areas.geojson'
 const TOLERANCE = 0.1 // degrees, Douglas–Peucker
 const MIN_RING_AREA = 0.02 // square degrees
+/** Islands down to this size stay on the map, drawn with a finer outline (~40 km²). */
+const SMALL_RING_AREA = 0.004 // square degrees
+/** A state this small keeps every island it has (the Maldives, the Bahamas). */
+const SMALL_STATE_AREA = 1 // square degrees
 const CHUNK_BYTES = 400 * 1024
 const EARTH_RADIUS = 6371.0088 // km
 /** Grid for comparing land between states, in degrees. */
@@ -80,9 +90,9 @@ function unzipSingle(zip) {
 }
 
 async function loadCliopatria() {
-  const zipPath = join(CACHE, 'cliopatria.geojson.zip')
+  const zipPath = join(CACHE, `cliopatria-${CLIOPATRIA_VERSION}.geojson.zip`)
   if (!(await exists(zipPath))) {
-    console.log('downloading cliopatria.geojson.zip')
+    console.log(`downloading cliopatria.geojson.zip ${CLIOPATRIA_VERSION}`)
     const response = await fetch(ZIP_URL)
     if (!response.ok) throw new Error(`${ZIP_URL}: ${response.status}`)
     await writeFile(zipPath, Buffer.from(await response.arrayBuffer()))
@@ -222,12 +232,15 @@ async function capitals(ids) {
 /** Polygons simplified for display, specks dropped, wound for d3-geo. */
 function polygonsOf(geometry) {
   const polygons = geometry.type === 'Polygon' ? [geometry.coordinates] : geometry.coordinates
+  const total = polygons.reduce((sum, polygon) => sum + ringArea(polygon[0]), 0)
+  const smallest = total < SMALL_STATE_AREA ? 0 : SMALL_RING_AREA
   const result = []
   for (const polygon of polygons) {
     const rings = []
     for (const [index, ring] of polygon.entries()) {
-      const cleaned = cleanRing(ring, TOLERANCE)
-      if (!cleaned || ringArea(cleaned) < MIN_RING_AREA) {
+      // A small island simplified at the full tolerance would collapse to nothing.
+      const cleaned = cleanRing(ring, ringArea(ring) < 0.1 ? 0.01 : TOLERANCE)
+      if (!cleaned || ringArea(cleaned) < (index === 0 ? smallest : MIN_RING_AREA)) {
         if (index === 0) break
         continue
       }
@@ -273,13 +286,16 @@ function correct(record) {
       const inside = clip(piece, fix.from, fix.to)
       if (!inside) return [piece]
       if (fix.at && !piece.polygons.some((polygon) => pointInPolygon(fix.at, polygon))) return [piece]
+      usedFixes.add(fix)
+      if (fix.split) return splitPiece(piece, inside, fix)
       const kept = fix.dropAt
         ? piece.polygons.filter((polygon) => !fix.dropAt.some((point) => pointInPolygon(point, polygon)))
         : piece.polygons
-      if (kept.length === piece.polygons.length && !fix.en && !fix.remove) return [piece]
+      if (kept.length === piece.polygons.length && !fix.en && !fix.remove && !fix.control) return [piece]
       const rest = [clip(piece, -Infinity, fix.from - 1), clip(piece, fix.to + 1, Infinity)].filter(Boolean)
       if (fix.remove || !kept.length) return rest
       if (fix.en) Object.assign(inside, { name: fix.en, ru: fix.ru })
+      if (fix.control) inside.control = fix.control
       if (kept.length < piece.polygons.length) {
         inside.polygons = kept
         inside.area = Math.round(kept.reduce((sum, polygon) => sum + polygonArea(polygon), 0))
@@ -289,6 +305,32 @@ function correct(record) {
     })
   }
   return pieces
+}
+
+/** Corrections that met a record; the rest are stale after a Cliopatria update. */
+const usedFixes = new Set()
+
+/**
+ * A CORRECTIONS `split`: the parts of a record whose bounding-box centre lies
+ * in one of the boxes become a record of their own under the fix's name (one
+ * colony in a record of many); the other parts keep the old name.
+ */
+function splitPiece(piece, inside, fix) {
+  const centreIn = (polygon) => {
+    const [west, south, east, north] = bounds([polygon])
+    const [x, y] = [(west + east) / 2, (south + north) / 2]
+    return fix.split.some(([w, s, e, n]) => x >= w && x <= e && y >= s && y <= n)
+  }
+  const chosen = piece.polygons.filter(centreIn)
+  if (!chosen.length) return [piece]
+  const others = piece.polygons.filter((polygon) => !centreIn(polygon))
+  const size = (polygons) => Math.round(polygons.reduce((sum, polygon) => sum + polygonArea(polygon), 0))
+  const rest = [clip(piece, -Infinity, fix.from - 1), clip(piece, fix.to + 1, Infinity)].filter(Boolean)
+  return [
+    ...rest,
+    { ...inside, name: fix.en, ru: fix.ru, polygons: chosen, area: size(chosen), fixed: true },
+    ...(others.length ? [{ ...inside, polygons: others, area: size(others) }] : []),
+  ]
 }
 
 /** Sorted cell ids of a record's land, all polygons together. */
@@ -326,7 +368,7 @@ const boxesMeet = (a, b) => a[0] <= b[2] && b[0] <= a[2] && a[1] <= b[3] && b[1]
 function rivals(record, records, capitalsOf) {
   const cells = cellsOf(record)
   return records.flatMap((other) => {
-    if (other === record || other.entity === record.entity || other.realm) return []
+    if (other === record || other.entity === record.entity || other.realm || other.occupation !== undefined) return []
     if (other.from > record.to || other.to < record.from) return []
     cellsOf(other)
     if (!boxesMeet(record.box, other.box)) return []
@@ -393,7 +435,8 @@ const fresh = (record, changes) => ({ ...record, ...changes, cells: null, coreCe
  * borders are left as Cliopatria draws them.
  */
 function resolveClaims(records, capitalsOf, log) {
-  const settled = (record) => record.realm || DISPUTED.includes(record.name)
+  // Land under a rival's control stays where it is, over the state it lies in.
+  const settled = (record) => record.realm || record.occupation !== undefined || DISPUTED.includes(record.name)
 
   const trimmed = records.flatMap((record) => {
     if (settled(record)) return [record]
@@ -451,13 +494,26 @@ function tidy(multipolygon) {
 /**
  * Borders under international law (DE_JURE in tools/geo/config.mjs): for each
  * rule's years, its land is cut from every other record and joined to the
- * owner's; an owner without a record in some of those years gets one.
+ * owner's; an owner without a record in some of those years gets one. Under an
+ * `occupied` rule, what a state held of that land stays on the map as an
+ * occupation record (drawn hatched over the owner), named after the holder or
+ * the rule's `by`.
  */
 function applyDeJure(records, disputed, entityOf, log) {
+  const occupations = []
   for (const rule of DE_JURE) {
     const parts = rule.areas.flatMap((area) => {
+      const found = areaParts(area)
+      if (!area.clip) return found
+      const [w, s, e, n] = area.clip
+      const box = [[[w, s], [e, s], [e, n], [w, n], [w, s]]]
+      return found.flatMap((polygon) => polygonClipping.intersection([polygon], box).map(orient))
+    })
+    function areaParts(area) {
+      if (area.polygon) return [orient([area.polygon])]
       if (area.ne) {
-        const features = disputed.features.filter((feature) => feature.properties.BRK_NAME === area.ne)
+        const features = disputed.features.filter((feature) => feature.properties.BRK_NAME === area.ne
+          && (!area.note || feature.properties.NOTE_BRK === area.note))
         if (!features.length) throw new Error(`DE_JURE: no Natural Earth area "${area.ne}"`)
         return features.flatMap((feature) => finePolygons(feature.geometry))
       }
@@ -470,12 +526,15 @@ function applyDeJure(records, disputed, entityOf, log) {
         const [west, south, east, north] = bounds([polygon])
         return west >= area.within[0] && south >= area.within[1] && east <= area.within[2] && north <= area.within[3]
       })
-    })
+    }
     // Clipping output winds the other way from d3-geo, hence orient() before any area.
     const land = polygonClipping.union(...parts.map((polygon) => [polygon])).map(orient)
     const landArea = land.reduce((sum, polygon) => sum + polygonArea(polygon), 0)
     const box = bounds(land)
     const owned = (record) => rule.owner.includes(record.name) && !record.realm
+    // Without `held`, the land is taken from whoever has it; with it, only from those.
+    const affected = (record) => !rule.held || rule.held.includes(record.name)
+    const hatched = rule.occupied || rule.controlled
     // Only the parts of a record that reach the land are clipped; the rest
     // (other islands, other coasts) stays exactly as it was.
     const reaches = (polygon) => boxesMeet(bounds([polygon]), box)
@@ -489,20 +548,24 @@ function applyDeJure(records, disputed, entityOf, log) {
         const delta = sizeOf(joined) - sizeOf(near)
         return delta > 1 ? { polygons: [...far, ...joined], delta } : null
       }
+      if (!affected(record)) return null
       let delta = 0
+      const taken = []
       const kept = near.flatMap((polygon) => {
         const left = polygonClipping.difference([polygon], land).map(orient)
         const cut = polygonArea(polygon) - sizeOf(left)
         if (cut < 1) return [polygon]
         const tidied = tidy(left)
         delta -= polygonArea(polygon) - sizeOf(tidied)
+        if (hatched && rule.hatch !== 'all' && !record.realm) taken.push(...tidy(polygonClipping.intersection([polygon], land).map(orient)))
         return tidied
       })
-      return delta < 0 ? { polygons: [...far, ...kept], delta } : null
+      return delta < 0 ? { polygons: [...far, ...kept], delta, taken } : null
     }
     records = records.flatMap((record) => {
       const inside = clip(record, rule.from, rule.to)
-      if (!inside || !boxesMeet(bounds(record.polygons), box)) return [record]
+      // An owner's record far from the land (all that is left of it) still takes it in.
+      if (!inside || (!owned(record) && !boxesMeet(bounds(record.polygons), box))) return [record]
       let change
       try {
         change = changeOf(record)
@@ -518,8 +581,31 @@ function applyDeJure(records, disputed, entityOf, log) {
       }
       const rest = [clip(record, -Infinity, rule.from - 1), clip(record, rule.to + 1, Infinity)].filter(Boolean)
       const area = Math.max(0, Math.round(record.area + change.delta))
+      if (change.taken?.length) {
+        const holder = rule.by ? { name: rule.by, entity: entityOf(rule.by, rule.byRu) } : { name: record.name, entity: record.entity }
+        occupations.push(fresh(inside, {
+          ...holder,
+          polygons: change.taken,
+          area: Math.round(sizeOf(change.taken)),
+          occupation: entityOf(rule.owner[0], rule.ru),
+          controlled: !!rule.controlled,
+          ruleLand: landArea,
+          umbrella: false,
+          fixed: true,
+          wiki: null,
+        }))
+      }
       return change.polygons.length ? [...rest, fresh(inside, { polygons: change.polygons, area, fixed: true })] : rest
     })
+    // The whole land hatched under one name, whoever Cliopatria says holds it
+    // (Crimea is Russia's there, Abkhazia nobody's).
+    if (rule.hatch === 'all') {
+      occupations.push({
+        name: rule.by, entity: entityOf(rule.by, rule.byRu), from: rule.from, to: rule.to,
+        polygons: land, area: Math.round(landArea), realm: false, umbrella: false, fixed: true, item: null, wiki: null,
+        occupation: entityOf(rule.owner[0], rule.ru), controlled: !!rule.controlled, ruleLand: landArea,
+      })
+    }
     if (rule.create) {
       const held = new Set()
       for (const record of records) {
@@ -539,6 +625,64 @@ function applyDeJure(records, disputed, entityOf, log) {
       }
     }
   }
+  return [...records, ...joinOccupations(occupations)]
+}
+
+/** Smaller held land is a border two sources draw differently, not an occupation (km²). */
+const MIN_OCCUPATION = 2000
+
+/**
+ * One occupation record per holder, owner and span of years: the rules'
+ * pieces joined. A piece small both in itself and next to the rule's land is
+ * a sliver along a border, dropped.
+ */
+function joinOccupations(pieces) {
+  const groups = new Map()
+  for (const piece of pieces) {
+    const key = [piece.entity, piece.occupation, piece.from, piece.to].join('|')
+    if (!groups.has(key)) groups.set(key, [])
+    groups.get(key).push(piece)
+  }
+  return [...groups.values()].flatMap((group) => {
+    const area = group.reduce((sum, piece) => sum + piece.area, 0)
+    if (area < MIN_OCCUPATION && area < group[0].ruleLand / 2) return []
+    if (group.length === 1) return group
+    const polygons = polygonClipping.union(...group.map((piece) => piece.polygons)).map(orient)
+    return [{ ...group[0], polygons, area }]
+  })
+}
+
+/**
+ * Land Cliopatria leaves to no one although everything around it is held
+ * (Istanbul between its two shores, Chukotka beyond 180°, small islands):
+ * each FILLS patch, today's land inside the fill's outline, joins whoever
+ * holds the patch's `by` point, in each of that state's records.
+ */
+async function applyFills(records, log) {
+  const land = JSON.parse(await readFile(join(ROOT, OUT_DIR, 'land-bce2000.json'), 'utf8'))
+  const landPolygons = land.features.flatMap((feature) =>
+    feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.coordinates)
+  for (const fill of FILLS) {
+    const shape = [fill.area]
+    const near = landPolygons.filter((polygon) => boxesMeet(bounds([polygon]), bounds([shape])))
+    const patch = polygonClipping.intersection(shape, near)
+      .map((polygon) => polygon.map((ring) => cleanRing(ring, 0.005)).filter(Boolean))
+      .filter((polygon) => polygon.length && ringArea(polygon[0]) >= 0.0005)
+      .map(orient)
+    if (!patch.length) throw new Error(`FILLS: no land in ${fill.name}`)
+    let used = false
+    records = records.map((record) => {
+      if (record.realm || record.occupation !== undefined) return record
+      if (!record.polygons.some((polygon) => pointInPolygon(fill.by, polygon))) return record
+      used = true
+      const polygons = polygonClipping.union(...record.polygons.map((polygon) => [polygon]), patch).map(orient)
+      const area = Math.round(record.area + Math.max(0, polygons.reduce((sum, polygon) => sum + polygonArea(polygon), 0)
+        - record.polygons.reduce((sum, polygon) => sum + polygonArea(polygon), 0)))
+      log.push({ name: record.name, from: record.from, to: record.to, place: fill.name })
+      return fresh(record, { polygons, area, fixed: true })
+    })
+    if (!used) console.warn(`FILLS: nobody holds ${fill.by} (${fill.name})`)
+  }
   return records
 }
 
@@ -551,7 +695,7 @@ function applyDeJure(records, disputed, entityOf, log) {
 function bridgeGaps(records, log) {
   const byEntity = new Map()
   for (const record of records) {
-    if (record.realm) continue
+    if (record.realm || record.occupation !== undefined) continue
     if (!byEntity.has(record.entity)) byEntity.set(record.entity, [])
     byEntity.get(record.entity).push(record)
   }
@@ -569,7 +713,7 @@ function bridgeGaps(records, log) {
           if (!cells.length) return false
           const held = new Set()
           for (const other of records) {
-            if (other.entity === side.entity || other.realm || other.from > year || other.to < year) continue
+            if (other.entity === side.entity || other.realm || other.occupation !== undefined || other.from > year || other.to < year) continue
             cellsOf(other)
             if (!boxesMeet(side.box, other.box)) continue
             for (const cell of common(cells, other.cells)) held.add(cell)
@@ -666,7 +810,7 @@ function chunkFile(span, records) {
       record.polygons.map((polygon) => polygon.map(ref)),
       record.label,
       record.area,
-      ...(record.umbrella ? [1] : []),
+      ...(record.umbrella ? [1] : record.occupation !== undefined ? [record.controlled ? 3 : 2, record.occupation] : []),
     ]),
   }
 }
@@ -822,7 +966,9 @@ async function main() {
         issues.push({ name: piece.name, wikipedia: Wikipedia, from: piece.from, to: piece.to, start: span.start, end: span.end })
       }
       // A renamed record keeps no article: Cliopatria's link was for the old name.
-      records.push({ ...piece, name: en, entity, realm, wiki: piece.name === source ? Wikipedia : null })
+      // A rival government inside a state is drawn as land under its control, hatched over the state.
+      const control = piece.control ? { occupation: entityOf(piece.control), controlled: true } : {}
+      records.push({ ...piece, ...control, name: en, entity, realm, wiki: piece.name === source ? Wikipedia : null })
     }
   }
   // Some records (often an umbrella) come without a Wikipedia link: they take
@@ -841,6 +987,10 @@ async function main() {
   const lawful = []
   records = resolveClaims(records, capitalsOf, dropped)
   records = applyDeJure(records, await loadDisputed(), (en, ru) => entityOf(en, ru), lawful)
+  const filled = []
+  records = await applyFills(records, filled)
+  const stale = CORRECTIONS.filter((fix) => !usedFixes.has(fix))
+  for (const fix of stale) console.warn(`CORRECTIONS: no record of "${fix.name}" in ${fix.from}–${fix.to}; stale after a Cliopatria update?`)
   records.push(...bridgeGaps(records, bridged))
   for (const record of records) {
     record.label = labelOf(record, capitalsOf)
@@ -869,11 +1019,14 @@ async function main() {
   // per entity, [first year, last year on the map, English and Russian
   // Wikipedia titles ('' when unknown)].
   const info = entities.map(() => ({ from: Infinity, to: -Infinity, wiki: null }))
+  // A state's own article rather than a period of a country's history.
+  const topic = (title) => /^(History of|List of|Timeline of)/.test(title ?? '')
   for (const record of records) {
+    if (record.occupation !== undefined) continue
     const item = info[record.entity]
     item.from = Math.min(item.from, record.from)
     item.to = Math.max(item.to, record.to)
-    item.wiki ??= record.wiki ?? null
+    if (!item.wiki || (topic(item.wiki) && record.wiki && !topic(record.wiki))) item.wiki = record.wiki ?? item.wiki
   }
   const articles = info.map(({ from, to, wiki }, i) => {
     const fixed = WIKIPEDIA[entities[i].en]
@@ -883,7 +1036,7 @@ async function main() {
   await writeFile(join(out, 'info.json'), JSON.stringify(articles))
 
   const index = {
-    source: 'Cliopatria v0.2.1, Seshat Global History Databank, CC BY 4.0 (modified)',
+    source: `Cliopatria ${CLIOPATRIA_VERSION}, Seshat Global History Databank, CC BY 4.0 (modified)`,
     entities,
     chunks,
     info: 'info.json',

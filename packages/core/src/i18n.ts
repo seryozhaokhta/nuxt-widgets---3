@@ -41,6 +41,9 @@ const en = {
   stateKind: 'state',
   cultureKind: 'culture',
   partOf: 'part of {name}',
+  occupiedBy: 'Occupied by {names}',
+  controlledBy: 'Under the control of {names}',
+  legendOccupation: 'Occupation',
 }
 
 export type MessageKey = keyof typeof en
@@ -84,6 +87,9 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     stateKind: 'государство',
     cultureKind: 'культура',
     partOf: 'в составе: {name}',
+    occupiedBy: 'Под оккупацией: {names}',
+    controlledBy: 'Под контролем: {names}',
+    legendOccupation: 'Оккупация',
   },
 }
 

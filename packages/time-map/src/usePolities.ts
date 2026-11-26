@@ -21,6 +21,13 @@ export interface Polity {
   realm: boolean
   /** The state across its records; keys its card info. */
   entity: number
+  /**
+   * Set on land a state held in war while it stayed another's under
+   * international law: the entity whose land it is. Drawn hatched.
+   */
+  occupying?: number
+  /** Held by an unrecognised authority rather than occupied by a state. */
+  controlled?: boolean
 }
 
 /** What a state's card shows: its years on the map and its Wikipedia articles. */
@@ -46,7 +53,9 @@ type RawRecord = [
   polygons: number[][],
   label: LonLat,
   area: number,
-  umbrella?: 1,
+  /** 1: an umbrella over other states; 2: an occupation of `owner`'s land; 3: control of it by an unrecognised authority. */
+  kind?: 0 | 1 | 2 | 3,
+  owner?: number,
 ]
 
 interface RawChunk {
@@ -102,11 +111,12 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
       })
       .then((chunk) => {
         const rings = chunk.rings.map(decodeRing)
-        const polities = chunk.records.map(([entity, from, to, polygons, label, area, umbrella]): Polity => ({
+        const polities = chunk.records.map(([entity, from, to, polygons, label, area, kind, owner]): Polity => ({
           // The same record sits in every chunk it spans; one key keeps its shape across them.
-          key: [entity, from, to, label].join(':'),
+          key: [entity, from, to, label, kind && kind >= 2 ? owner : ''].join(':'),
           name: entities[entity] ?? '',
-          realm: !!entities[entity]?.realm || umbrella === 1,
+          realm: !!entities[entity]?.realm || kind === 1,
+          ...(kind && kind >= 2 ? { occupying: owner, controlled: kind === 3 } : {}),
           entity,
           from,
           to,
@@ -140,21 +150,24 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
     }, { immediate: true })
   })
 
-  // Larger states first, so smaller ones inside them (vassals, enclaves) are drawn on top.
+  // Larger states first, so smaller ones inside them (vassals, enclaves) are
+  // drawn on top. Occupations are kept apart: they belong to no one's borders.
   const polities = shallowRef<Polity[]>([])
+  const occupations = shallowRef<Polity[]>([])
   watchEffect(() => {
     const chunk = index.value?.chunks[chunkIndex.value]
     if (!chunk) {
       polities.value = []
+      occupations.value = []
       return
     }
     const records = loaded.value.get(chunk.file)
     // While the chunk for a new year loads, the last year's states stay up
     // instead of the map going blank.
     if (!records) return
-    polities.value = records
-      .filter((polity) => polity.from <= year.value && year.value <= polity.to)
-      .sort((a, b) => b.area - a.area)
+    const now = records.filter((polity) => polity.from <= year.value && year.value <= polity.to)
+    polities.value = now.filter((polity) => polity.occupying === undefined).sort((a, b) => b.area - a.area)
+    occupations.value = now.filter((polity) => polity.occupying !== undefined)
   })
 
   // Card info for all states, fetched on the first click on a state.
@@ -178,5 +191,5 @@ export function usePolities(indexUrl: () => string | undefined, year: Ref<number
     return (await info)?.[polity.entity] ?? null
   }
 
-  return { polities, polityInfo, source: computed(() => index.value?.source ?? '') }
+  return { polities, occupations, polityInfo, source: computed(() => index.value?.source ?? '') }
 }

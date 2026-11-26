@@ -12,6 +12,7 @@
             <IconButton class="time-map-panel__close" icon="close" size="sm" :label="t('close')" @click="close" />
         </div>
         <h2 class="time-map-panel__title">{{ title }}</h2>
+        <p v-if="note" class="time-map-panel__note">{{ note }}</p>
 
         <template v-if="point">
             <div v-if="period" class="time-map-panel__period">
@@ -55,6 +56,8 @@ const props = defineProps<{
     state: { name: Localized; info: PolityInfo | null } | null
     /** What the open chapter was: a state, a culture, part of another state. */
     kind?: string
+    /** A line under the name, such as who occupied the state's land. */
+    note?: string
     /** Wikipedia articles to link, in order. */
     links: { text: string; wiki: WikiTitles }[]
 }>()
@@ -217,6 +220,14 @@ defineExpose({ open, close })
     line-height: 1.05;
 }
 
+.time-map-panel__note {
+    margin: 6px 0 0;
+    padding-left: 14px;
+    background: repeating-linear-gradient(45deg, var(--aw-map-occupation) 0 1px, transparent 1px 4px) left center / 9px 9px no-repeat;
+    color: var(--aw-color-text-muted);
+    font-size: 13px;
+}
+
 .time-map-panel__period {
     margin-top: 18px;
     padding-top: 16px;
@@ -261,7 +272,15 @@ defineExpose({ open, close })
         font-size: 24px;
     }
 
-    .time-map-panel__period {
+    .time-map-panel__note {
+    margin: 6px 0 0;
+    padding-left: 14px;
+    background: repeating-linear-gradient(45deg, var(--aw-map-occupation) 0 1px, transparent 1px 4px) left center / 9px 9px no-repeat;
+    color: var(--aw-color-text-muted);
+    font-size: 13px;
+}
+
+.time-map-panel__period {
         margin-top: 12px;
         padding-top: 12px;
     }
