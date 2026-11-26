@@ -37,6 +37,13 @@ const en = {
   legendCoast: 'Today’s coastline',
   legendBorders: 'Today’s borders',
   sources: 'Sources',
+  wikipedia: 'Wikipedia',
+  stateKind: 'state',
+  cultureKind: 'culture',
+  partOf: 'part of {name}',
+  occupiedBy: 'Occupied by {names}',
+  controlledBy: 'Under the control of {names}',
+  legendOccupation: 'Occupation',
 }
 
 export type MessageKey = keyof typeof en
@@ -76,6 +83,13 @@ const messages: Record<Locale, Record<MessageKey, string>> = {
     legendCoast: 'Нынешний берег',
     legendBorders: 'Нынешние границы',
     sources: 'Источники',
+    wikipedia: 'Википедия',
+    stateKind: 'государство',
+    cultureKind: 'культура',
+    partOf: 'в составе: {name}',
+    occupiedBy: 'Под оккупацией: {names}',
+    controlledBy: 'Под контролем: {names}',
+    legendOccupation: 'Оккупация',
   },
 }
 

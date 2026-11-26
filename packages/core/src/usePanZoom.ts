@@ -11,6 +11,12 @@ export interface PanZoomOptions {
    * "always": the wheel always zooms.
    */
   wheel?: 'modifier' | 'always'
+  /**
+   * Size of the content at zoom 1, px, when it isn't the container's (a map
+   * that keeps its proportions in a taller frame and overflows its sides);
+   * null while unknown. Default: the container's size.
+   */
+  content?: () => { width: number; height: number } | null
 }
 
 interface Point {
@@ -23,8 +29,9 @@ const HINT_MS = 1600
 const TOUCH_SCROLL = 12
 
 /**
- * Pan and zoom for content that fills `container` and is transformed with
- * `style` (origin top-left). The content can't be dragged past its edges.
+ * Pan and zoom for content that fills `container` (or, with `content`, covers
+ * it) and is transformed with `style` (origin top-left). The content can't be
+ * dragged past its edges.
  *
  * On touch screens one finger scrolls the page as usual and two fingers move
  * and pinch the content; give the container `touch-action: pan-x pan-y` so the
@@ -46,11 +53,14 @@ export function usePanZoom(container: Ref<HTMLElement | null>, options: PanZoomO
   let pinchDistance: number | null = null
   let touchStart: Point | null = null
 
+  const sizeOf = (el: HTMLElement) => options.content?.() ?? { width: el.clientWidth, height: el.clientHeight }
+
   function clamp(point: Point, atScale: number): Point {
     const el = container.value
     if (!el) return point
-    const minX = el.clientWidth * (1 - atScale)
-    const minY = el.clientHeight * (1 - atScale)
+    const { width, height } = sizeOf(el)
+    const minX = el.clientWidth - width * atScale
+    const minY = el.clientHeight - height * atScale
     return {
       x: Math.min(0, Math.max(minX, point.x)),
       y: Math.min(0, Math.max(minY, point.y)),
@@ -81,9 +91,16 @@ export function usePanZoom(container: Ref<HTMLElement | null>, options: PanZoomO
     scale.value = next
   }
 
+  /** The whole content at the smallest zoom, centred. */
   function reset() {
     scale.value = minZoom
-    position.value = { x: 0, y: 0 }
+    const el = container.value
+    if (!el) {
+      position.value = { x: 0, y: 0 }
+      return
+    }
+    const { width, height } = sizeOf(el)
+    position.value = clamp({ x: (el.clientWidth - width * minZoom) / 2, y: (el.clientHeight - height * minZoom) / 2 }, minZoom)
   }
 
   /** Centres a point of the content, given as fractions of its size, at a zoom. */
@@ -91,11 +108,12 @@ export function usePanZoom(container: Ref<HTMLElement | null>, options: PanZoomO
     const el = container.value
     if (!el) return
     const next = Math.min(Math.max(zoom, minZoom), maxZoom)
+    const { width, height } = sizeOf(el)
     scale.value = next
     position.value = clamp(
       {
-        x: el.clientWidth / 2 - fractionX * el.clientWidth * next,
-        y: el.clientHeight / 2 - fractionY * el.clientHeight * next,
+        x: el.clientWidth / 2 - fractionX * width * next,
+        y: el.clientHeight / 2 - fractionY * height * next,
       },
       next,
     )

@@ -3,7 +3,7 @@
   areas and points appear and disappear with their dates.
 -->
 <template>
-    <div class="time-map" :lang="locale" @keydown.esc="panelRef?.close()">
+    <div class="time-map" :lang="locale" @keydown.esc="onEscape">
         <header class="time-map__header">
             <div class="time-map__heading">
                 <p v-if="data.title" class="time-map__eyebrow">{{ l(data.title) }}</p>
@@ -13,18 +13,29 @@
         </header>
 
         <div class="time-map__stage">
-            <div ref="viewportRef" class="time-map__viewport" v-on="panZoomHandlers">
-                <div class="time-map__content" :style="panZoomStyle">
+            <div ref="viewportRef" class="time-map__viewport" v-on="panZoomHandlers" @pointerdown="onPointerDown"
+                @click="onMapClick">
+                <div class="time-map__content" :style="[panZoomStyle, contentStyle]">
                     <TimeMapGeography :geography="data.geography" :features="features" :polities="polities"
-                        :projection="projection"
+                        :highlight="highlighted" :occupations="occupations" :projection="projection"
                         :land-url="epochs[epochIndex]?.land" :year="currentYear" :zoom="scale"
                         :label="l(data.title) || t('worldMap')" />
-                    <span v-for="label in labels" :key="label.id"
-                        :class="['time-map__label', 'time-map__label--' + label.kind, { 'time-map__label--visible': label.visible }]"
-                        :style="label.style" aria-hidden="true">{{ label.text }}</span>
+                    <template v-for="label in labels" :key="label.id">
+                        <!-- A state's name opens it, by click or from the keyboard; it may
+                             stand a little off its state's centre to make room for others. -->
+                        <button v-if="label.kind === 'state'" type="button"
+                            :class="['time-map__label', 'time-map__label--state', { 'time-map__label--visible': label.visible }]"
+                            :style="label.style" :tabindex="label.visible ? 0 : -1"
+                            :aria-hidden="label.visible ? undefined : 'true'"
+                            @click.stop="onLabelClick($event, label.id)">{{ label.text }}</button>
+                        <span v-else
+                            :class="['time-map__label', 'time-map__label--' + label.kind, { 'time-map__label--visible': label.visible }]"
+                            :style="label.style" aria-hidden="true">{{ label.text }}</span>
+                    </template>
                     <TimeMapMarker v-for="marker in markers" :key="marker.point.id" :point="marker.point"
                         :name="marker.name" :x="marker.x" :y="marker.y" :visible="isOnMap(marker.point)"
-                        :active="marker.point.id === selected?.id" :zoom="scale" @select="selectPoint(marker.point)" />
+                        :active="marker.point.id === story?.id" :zoom="scale"
+                        @select="selectPoint(marker.point)" />
                 </div>
 
                 <div ref="zoomRef" class="time-map__zoom" @mousedown.stop @touchstart.stop>
@@ -39,26 +50,27 @@
                 </Transition>
             </div>
 
-            <TimeMapPanel v-if="selected" ref="panelRef" v-model:period-index="periodIndex" class="time-map__panel"
-                :point="selected" @select-period="onPeriodSelected" @closed="onPanelClosed" />
+            <TimeMapPanel v-if="subject" ref="panelRef" v-model:period-index="periodIndex" class="time-map__panel"
+                :point="story" :state="subject.kind === 'state' ? { name: subject.polity.name, info: subject.info } : null"
+                :kind="chapterKind" :note="occupiedNote" :links="panelLinks" @select-period="onPeriodSelected" @closed="onPanelClosed" />
         </div>
 
         <YearSlider v-model="currentYear" class="time-map__slider" :min="minYear" :max="maxYear" :step="yearStep"
             :scale="data.timeScale" :ticks="data.ticks" :eras="data.eras" :ideas="data.ideas" />
         <TimeMapLegend class="time-map__legend" :kinds="featureKinds" :show-coast="!!data.geography.modernCoast"
-            :show-borders="!!data.geography.borders" :credits="l(data.credits)" :sources="data.sources" />
+            :show-borders="!!data.geography.borders" :show-occupation="occupations.length > 0" :credits="l(data.credits)" :sources="data.sources" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
 import { refDebounced, useElementSize } from '@vueuse/core'
-import { geoCentroid } from 'd3-geo'
+import { geoCentroid, geoContains, type GeoPermissibleObjects } from 'd3-geo'
 import gsap from 'gsap'
 import { provideI18n, usePanZoom, type Locale, type Year } from '@art-widgets/core'
 import { IconButton } from '@art-widgets/ui'
 import TimeMapGeography from './TimeMapGeography.vue'
-import { usePolities } from './usePolities'
+import { usePolities, type Polity, type PolityInfo } from './usePolities'
 import TimeMapLegend from './TimeMapLegend.vue'
 import TimeMapMarker from './TimeMapMarker.vue'
 import TimeMapPanel from './TimeMapPanel.vue'
@@ -69,7 +81,11 @@ import type { LonLat, TimeMapData, TimeMapPeriod, TimeMapPoint } from './types'
 const props = defineProps<{
     data: TimeMapData
     locale?: Locale
+    /** Year to open at (e.g. from the page's URL); the slider reports changes with update:year. */
+    year?: Year
 }>()
+
+const emit = defineEmits<{ 'update:year': [year: Year] }>()
 
 const { t, l, year, locale } = provideI18n(() => props.locale)
 
@@ -105,8 +121,19 @@ const maxYear = computed(() => {
     return minYear.value + Math.ceil((latest - minYear.value) / yearStep.value) * yearStep.value
 })
 
-const currentYear = ref(minYear.value)
+/** A year inside the slider's range; there is no year 0. */
+function clampYear(value: number): Year {
+    const clamped = Math.round(Math.min(maxYear.value, Math.max(minYear.value, value)))
+    return clamped === 0 ? 1 : clamped
+}
+
+const currentYear = ref(props.year === undefined ? minYear.value : clampYear(props.year))
 const displayYear = refDebounced(currentYear, 100)
+
+watch(() => props.year, (next) => {
+    if (next !== undefined && clampYear(next) !== currentYear.value) currentYear.value = clampYear(next)
+})
+watch(currentYear, (next) => emit('update:year', next))
 
 const yearRef = ref<HTMLElement | null>(null)
 watch(displayYear, () => {
@@ -123,7 +150,7 @@ const seaLevelText = computed(() => {
     return level >= 0 ? t('seaLevelToday') : t('seaLevel', { value: '−' + Math.abs(level) })
 })
 
-const { polities } = usePolities(() => props.data.geography.polities, currentYear)
+const { polities, occupations, polityInfo } = usePolities(() => props.data.geography.polities, currentYear)
 
 const viewportRef = ref<HTMLElement | null>(null)
 const {
@@ -138,13 +165,68 @@ const {
     zoomOut,
     reset: resetView,
     centerOn,
-} = usePanZoom(viewportRef, { minZoom: 1, maxZoom: 8, step: 0.5 })
+} = usePanZoom(viewportRef, { minZoom: 1, maxZoom: 8, step: 0.5, content: () => (contentSize.value.width ? contentSize.value : null) })
 
-onMounted(() => {
+// The map keeps its proportions: in a frame taller than the map (a phone's),
+// it covers the frame and its sides pan.
+const { width: mapWidth, height: mapHeight } = useElementSize(viewportRef)
+const contentSize = computed(() => {
+    const width = Math.max(mapWidth.value, mapHeight.value * (MAP_WIDTH / MAP_HEIGHT))
+    return { width, height: width * (MAP_HEIGHT / MAP_WIDTH) }
+})
+const contentStyle = computed(() => (contentSize.value.width
+    ? { width: contentSize.value.width + 'px', height: contentSize.value.height + 'px' }
+    : {}))
+
+// The opening view waits for the frame's size, which the map's depends on.
+let viewShown = false
+watch(mapWidth, (width) => {
+    if (!width || viewShown) return
+    viewShown = true
     const view = props.data.view
     const center = view && toPercent(view.center)
     if (view && center) centerOn(center.x / 100, center.y / 100, view.zoom)
-})
+    else resetView()
+}, { immediate: true })
+
+// ---------------------------------------------------------------- clicks on states
+
+/** A click on a state opens it in the panel; a drag that pans the map doesn't. */
+let pressedAt: { x: number; y: number } | null = null
+
+function onPointerDown(event: PointerEvent) {
+    pressedAt = { x: event.clientX, y: event.clientY }
+}
+
+/** The topmost (so the smallest) filled state under a point of the viewport. */
+function polityAt(clientX: number, clientY: number): Polity | null {
+    const rect = viewportRef.value?.getBoundingClientRect()
+    if (!rect?.width) return null
+    const x = ((clientX - rect.left - offset.value.x) / scale.value / contentSize.value.width) * MAP_WIDTH
+    const y = ((clientY - rect.top - offset.value.y) / scale.value / contentSize.value.height) * MAP_HEIGHT
+    const at = projection.invert?.([x, y])
+    if (!at) return null
+    return [...polities.value].reverse().find((polity) => !polity.realm && geoContains(polity.geometry, at)) ?? null
+}
+
+/** A drag that pans the map ends with a click too; it opens nothing. */
+const dragged = (event: MouseEvent) =>
+    !!pressedAt && event.detail > 0 && Math.hypot(event.clientX - pressedAt.x, event.clientY - pressedAt.y) > 5
+
+function onMapClick(event: MouseEvent) {
+    if ((event.target as Element).closest('button, a') || dragged(event)) return
+    const polity = polityAt(event.clientX, event.clientY)
+    if (polity) selectState(polity)
+}
+
+function onLabelClick(event: MouseEvent, key: string) {
+    const polity = polities.value.find((item) => item.key === key)
+    if (polity && !dragged(event)) selectState(polity)
+}
+
+function onEscape() {
+    panelRef.value?.close()
+}
 
 /** A point shows from its founding until `until` or the end of its last period. */
 function isOnMap(point: TimeMapPoint): boolean {
@@ -167,7 +249,6 @@ const AREA_LABEL_ZOOM = 1.6
 const BIG_STATE = 1_500_000
 const LABEL_PRIORITY: Record<string, number> = { state: 0, culture: 1, water: 1, river: 1, ice: 1, place: 2 }
 
-const { width: mapWidth, height: mapHeight } = useElementSize(viewportRef)
 const zoomRef = ref<HTMLElement | null>(null)
 const { width: zoomWidth, height: zoomHeight } = useElementSize(zoomRef)
 // Names are placed for the part of the map in view, once a drag settles.
@@ -187,14 +268,15 @@ const overlaps = (a: Box, b: Box) =>
 
 /** Screen position (px) of a map position given in percent, at the current zoom. */
 function onScreen(position: { x: number; y: number }) {
-    const width = mapWidth.value * scale.value
+    const width = contentSize.value.width * scale.value
     return { x: (position.x / 100) * width, y: (position.y / 100) * width * (MAP_HEIGHT / MAP_WIDTH) }
 }
 
 const labels = computed(() => {
     // A state drawn in several records at once (a part joined from elsewhere)
-    // is named once, on its largest record.
-    const named = new Set<string>()
+    // is named once, on its largest record; one a civilization's point already
+    // names (Byzantium) isn't named again.
+    const named = new Set<string>(markers.value.filter((marker) => isOnMap(marker.point)).map((marker) => l(marker.name)))
     const stateLabels = polities.value
         .filter((polity) => !polity.realm)
         .sort((a, b) => b.area - a.area)
@@ -209,6 +291,7 @@ const labels = computed(() => {
                 kind: 'state' as const,
                 text,
                 position,
+                geometry: polity.geometry as GeoPermissibleObjects | null,
                 wanted: scale.value >= AREA_LABEL_ZOOM || polity.area >= BIG_STATE,
             }]
         })
@@ -224,6 +307,7 @@ const labels = computed(() => {
             kind: feature.kind,
             text: l(feature.name),
             position,
+            geometry: (feature.kind === 'river' ? null : geometry) as GeoPermissibleObjects | null,
             wanted: active && (feature.kind === 'place' || scale.value >= AREA_LABEL_ZOOM),
         }]
     })
@@ -252,7 +336,19 @@ const labels = computed(() => {
     })
     const inView = (box: Box) => box.x - box.width / 2 >= view.left && box.x + box.width / 2 <= view.right
         && box.y - box.height / 2 >= view.top && box.y + box.height / 2 <= view.bottom
-    // A name that collides or runs off the view tries a few nearby spots before giving up.
+    // Nudges are in screen pixels; positions are in percent of the zoomed map.
+    const zoomedWidth = Math.max(1, contentSize.value.width * scale.value)
+    const zoomedHeight = zoomedWidth * (MAP_HEIGHT / MAP_WIDTH)
+    /** Whether a spot of the zoomed map (px) lies in the named area. */
+    const within = (geometry: GeoPermissibleObjects | null, x: number, y: number) => {
+        if (!geometry) return true
+        const at = projection.invert?.([(x / zoomedWidth) * MAP_WIDTH, (y / zoomedHeight) * MAP_HEIGHT])
+        return !!at && geoContains(geometry, at)
+    }
+
+    // A name that collides or runs off the view tries a few nearby spots before
+    // giving up; a spot outside its own area would name a neighbour, so it
+    // doesn't count.
     const shown = new Map<string, { x: number; y: number }>()
     const order = candidates
         .filter((label) => label.wanted)
@@ -264,15 +360,12 @@ const labels = computed(() => {
         for (const [dx, dy] of nudges) {
             const box = { x: center.x + dx, y: center.y + dy, width, height: 15 }
             if (!inView(box) || placed.some((other) => overlaps(box, other))) continue
+            if ((dx || dy) && !within(label.geometry, box.x, box.y)) continue
             placed.push(box)
             shown.set(label.id, { x: dx, y: dy })
             break
         }
     }
-
-    // Nudges are in screen pixels; positions are in percent of the zoomed map.
-    const zoomedWidth = Math.max(1, mapWidth.value * scale.value)
-    const zoomedHeight = zoomedWidth * (MAP_HEIGHT / MAP_WIDTH)
 
     return candidates.map((label) => {
         const nudge = shown.get(label.id) ?? { x: 0, y: 0 }
@@ -290,28 +383,40 @@ const labels = computed(() => {
     })
 })
 
-// Panel of the selected point. Selecting another point while the panel is
-// open closes it first and reopens it with the new point.
+// ---------------------------------------------------------------- panel
+
+/**
+ * What the panel shows: a civilization, its story open at the chapter of the
+ * year (a click on its point or on one of its states), or a state that is no
+ * civilization's chapter.
+ */
+type Subject =
+    | { kind: 'civilization'; point: TimeMapPoint }
+    | { kind: 'state'; polity: Polity; info: PolityInfo | null }
+
+// Opening something else while the panel is open closes it first and reopens
+// it with the new subject.
 const panelRef = ref<InstanceType<typeof TimeMapPanel> | null>(null)
-const selected = ref<TimeMapPoint | null>(null)
+const subject = ref<Subject | null>(null)
 const periodIndex = ref(0)
-let pending: TimeMapPoint | null = null
+let pending: Subject | null = null
 
 function periodIndexAt(point: TimeMapPoint, at: Year): number {
     return point.periods?.findIndex((period) => at >= period.start && at <= period.end) ?? -1
 }
 
-function show(point: TimeMapPoint) {
-    selected.value = point
-    periodIndex.value = Math.max(0, periodIndexAt(point, currentYear.value))
+function show(next: Subject) {
+    subject.value = next
+    if (next.kind === 'civilization') periodIndex.value = Math.max(0, periodIndexAt(next.point, currentYear.value))
+    else if (!next.info) loadInfo(next.polity)
 }
 
-function selectPoint(point: TimeMapPoint) {
-    if (selected.value) {
-        pending = point
+function open(next: Subject) {
+    if (subject.value) {
+        pending = next
         panelRef.value?.close()
     } else {
-        show(point)
+        show(next)
     }
 }
 
@@ -321,9 +426,126 @@ function onPanelClosed() {
         pending = null
         nextTick(() => panelRef.value?.open())
     } else {
-        selected.value = null
+        subject.value = null
     }
 }
+
+async function loadInfo(polity: Polity) {
+    const info = await polityInfo(polity)
+    const current = subject.value
+    if (current?.kind === 'state' && current.polity.entity === polity.entity) subject.value = { ...current, info }
+}
+
+/** A state's English name, the one chapters list. */
+const englishName = (polity: Polity) => (typeof polity.name === 'string' ? polity.name : polity.name.en) ?? ''
+
+/** The civilization on the map now that has this state among its chapters. */
+function civilizationOf(polity: Polity): TimeMapPoint | null {
+    const name = englishName(polity)
+    return points.value.find((point) =>
+        isOnMap(point) && point.periods?.some((period) => period.states?.includes(name))) ?? null
+}
+
+function selectPoint(point: TimeMapPoint) {
+    const current = subject.value
+    if (current?.kind === 'civilization' && current.point.id === point.id) return
+    open({ kind: 'civilization', point })
+}
+
+function selectState(polity: Polity) {
+    const civilization = civilizationOf(polity)
+    if (civilization) return selectPoint(civilization)
+    const current = subject.value
+    if (current?.kind === 'state' && current.polity.entity === polity.entity) return
+    open({ kind: 'state', polity, info: null })
+}
+
+// What is no longer on the map leaves the panel: a state that has gone, a
+// civilization past its last chapter.
+function onMapNow(item: Subject): boolean {
+    if (item.kind === 'civilization') return isOnMap(item.point)
+    return polities.value.some((polity) => polity.entity === item.polity.entity)
+}
+
+watch([polities, currentYear], () => {
+    // While the panel closes to open something else, only that something counts.
+    if (pending) {
+        if (!onMapNow(pending)) pending = null
+        return
+    }
+    if (subject.value && !onMapNow(subject.value)) panelRef.value?.close()
+})
+
+// ---------------------------------------------------------------- chapter
+
+const story = computed(() => (subject.value?.kind === 'civilization' ? subject.value.point : null))
+const chapter = computed(() => story.value?.periods?.[periodIndex.value] ?? null)
+
+/** States on the map now with one of these names; the largest first. */
+const shownNamed = (names: string[] | undefined) => (names?.length
+    ? polities.value.filter((polity) => names.includes(englishName(polity)))
+    : [])
+
+/** The one standing where the point does (the capital's), else the largest. */
+function atPoint(list: Polity[]): Polity | null {
+    const at = chapter.value?.at ?? story.value?.at
+    return (at && list.find((polity) => !polity.realm && geoContains(polity.geometry, at))) || list[0] || null
+}
+
+const chapterStates = computed(() => shownNamed(chapter.value?.states).filter((polity) => !polity.realm))
+const chapterState = computed(() => atPoint(chapterStates.value))
+
+/** State, culture, or whose land it was ("part of the Abbasid Caliphate"). */
+const chapterKind = computed(() => {
+    const period = chapter.value
+    if (!period) return ''
+    if (chapterStates.value.length) return t('stateKind')
+    const ruler = atPoint(shownNamed(period.under))
+    if (ruler) return t('partOf', { name: l(ruler.name) })
+    if (period.states?.length) return t('stateKind')
+    return period.under?.length ? '' : t('cultureKind')
+})
+
+const chapterInfo = ref<PolityInfo | null>(null)
+watch(() => chapterState.value?.entity, async (entity) => {
+    chapterInfo.value = null
+    const polity = chapterState.value
+    if (entity === undefined || !polity) return
+    const info = await polityInfo(polity)
+    if (chapterState.value?.entity === entity) chapterInfo.value = info
+}, { immediate: true })
+
+/** Wikipedia articles: the civilization's and its chapter's, or the state's. */
+const panelLinks = computed(() => {
+    const current = subject.value
+    if (!current) return []
+    if (current.kind === 'state') return current.info?.wiki ? [{ text: l(current.polity.name), wiki: current.info.wiki }] : []
+    const links = current.point.wiki ? [{ text: l(current.point.name), wiki: current.point.wiki }] : []
+    const wiki = chapterInfo.value?.wiki
+    if (chapterState.value && wiki?.en && !links.some((link) => link.wiki.en === wiki.en)) {
+        links.push({ text: l(chapterState.value.name), wiki })
+    }
+    return links
+})
+
+/** Who held the open state's (or chapter's) land while it stayed its own: occupiers, unrecognised authorities. */
+const occupiedNote = computed(() => {
+    const current = subject.value
+    const owners = new Set(current?.kind === 'state' ? [current.polity.entity] : chapterStates.value.map((polity) => polity.entity))
+    const held = occupations.value.filter((polity) => polity.occupying !== undefined && owners.has(polity.occupying))
+    const names = (controlled: boolean) => [...new Set(held.filter((polity) => !!polity.controlled === controlled).map((polity) => l(polity.name)))].join(', ')
+    return [
+        names(false) && t('occupiedBy', { names: names(false) }),
+        names(true) && t('controlledBy', { names: names(true) }),
+    ].filter(Boolean).join('. ')
+})
+
+/** Drawn brighter on the map: the open state, or the open chapter's states. */
+const highlighted = computed(() => {
+    const current = subject.value
+    if (current?.kind === 'state') return polities.value.filter((polity) => polity.entity === current.polity.entity).map((polity) => polity.key)
+    return chapterStates.value.map((polity) => polity.key)
+})
 
 // Year and period follow each other: picking a period moves the slider to its
 // middle; moving the slider out of the shown period switches to the matching one.
@@ -333,7 +555,7 @@ function onPeriodSelected(period: TimeMapPeriod) {
 }
 
 watch(currentYear, (now) => {
-    const point = selected.value
+    const point = story.value
     if (!point) return
     const shown = point.periods?.[periodIndex.value]
     if (shown && now >= shown.start && now <= shown.end) return
@@ -416,7 +638,12 @@ watch(currentYear, (now) => {
 
 .time-map__label {
     position: absolute;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
     color: var(--aw-color-text-muted);
+    font-family: inherit;
     font-size: 11px;
     line-height: 1;
     white-space: nowrap;
@@ -435,6 +662,17 @@ watch(currentYear, (now) => {
     color: var(--aw-color-gold-bright);
     font-weight: 600;
     letter-spacing: 0.01em;
+}
+
+.time-map__label--state.time-map__label--visible {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.time-map__label--state:focus-visible {
+    border-radius: 2px;
+    box-shadow: var(--aw-focus-ring);
+    outline: none;
 }
 
 .time-map__label--culture,
@@ -515,6 +753,13 @@ watch(currentYear, (now) => {
 
     .time-map__legend {
         order: 3;
+    }
+}
+
+/* A phone's frame is taller than the map's 16:9; the map's sides pan. */
+@container (max-width: 520px) {
+    .time-map__viewport {
+        aspect-ratio: 4 / 3;
     }
 }
 
